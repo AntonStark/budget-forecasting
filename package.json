@@ -1,0 +1,15 @@
+{
+  "name": "budget-forecasting",
+  "version": "1.0.0",
+  "description": "App to track and estimate funds",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Iakovlev",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "electron": "^27.0.0"
+  }
+}
