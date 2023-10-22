@@ -31,6 +31,18 @@ app.on('window-all-closed', () => {
 })
 
 
-ipcMain.on('numb1', (event, value) => {
-    console.log(`Received: ${value}`)
+ipcMain.handle('get-all-data', async () => {
+    return {
+        dates: ['2023-10-11', '2023-10-12', '2023-10-13', '2023-10-15'],
+        accounts: [
+            {
+                name: 'rub',
+                balances: [100, 90, 70, 60],
+            },
+            {
+                name: 'usd',
+                balances: [50, 48, 45, 44],
+            }
+        ]
+    }
 })

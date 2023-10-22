@@ -1,3 +1,14 @@
 .version-number {
     color: green;
 }
+
+#account_by_days_table {
+    border-spacing: 0;
+}
+#account_by_days_table__body tr {
+    background: lightgray;
+    border-bottom: 1px solid gray;
+}
+#account_by_days_table td {
+    border-right: 1px solid gray;
+}

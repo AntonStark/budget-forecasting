@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>Hello World!</title>
     <link href="style.css" rel="stylesheet">
-    <script defer src="client.js"></script>
+    <script defer src="client.js" type="module"></script>
 </head>
 <body>
-<h1>Hello World!</h1>
+<h1>Lets account!</h1>
 
 <ul>
     <li>We are using Node.js <span id="node-version" class="version-number"></span></li>
@@ -18,10 +18,17 @@
 </ul>
 
 <form>
-    <label for="numb1">Число:</label>
-    <input id="numb1" type="number">
-    <input type="button" value="Send" id="send_button">
+    <input type="button" value="Get data" id="get_data_button">
 </form>
+
+<table id="account_by_days_table">
+    <thead>
+        <tr id="account_by_days_table__dates_row"></tr>
+    </thead>
+    <tbody id="account_by_days_table__body">
+
+    </tbody>
+</table>
 
 </body>
 </html>

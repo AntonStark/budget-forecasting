@@ -1,9 +1,11 @@
-function handleSend(e) {
-    const input = document.getElementById('numb1')
-    const number = Number(input.value)
+"use strict";
 
-    console.log(number)
-    window.send.sendNumber(number)
+import { displayAccountTableData } from "./ui.js"
+
+
+async function requestData(e) {
+    const data = await window.data.getAll()
+    displayAccountTableData(data)
 }
 
-document.getElementById('send_button').addEventListener('click', handleSend)
+document.getElementById('get_data_button').addEventListener('click', requestData)

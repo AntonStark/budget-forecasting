@@ -13,6 +13,6 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 
-contextBridge.exposeInMainWorld('send', {
-    sendNumber: (value) => ipcRenderer.send('numb1', value),
+contextBridge.exposeInMainWorld('data', {
+    getAll: () => ipcRenderer.invoke('get-all-data'),
 })
