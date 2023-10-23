@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('node:path')
+const sqlite3 = require('sqlite3').verbose();
 
 
 const createWindow = () => {
@@ -30,6 +31,26 @@ app.on('window-all-closed', () => {
     }
 })
 
+
+// DATABASE
+
+let db = new sqlite3.Database(':memory:', (err) => {
+    if (err) {
+        return console.error(err.message)
+    }
+    console.log('Connected to the in-memory SQlite database.')
+});
+
+app.on('quit', () => {
+    db.close((err) => {
+        if (err) {
+            return console.error(err.message)
+        }
+        console.log('Close the database connection.')
+    })
+})
+
+// IPC
 
 ipcMain.handle('get-all-data', async () => {
     return {
