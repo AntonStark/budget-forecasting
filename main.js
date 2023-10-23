@@ -3,24 +3,50 @@ const path = require('node:path')
 const sqlite3 = require('sqlite3').verbose();
 
 
-const createWindow = () => {
-    const win = new BrowserWindow({
+let mainBrowserWindow = null
+let checkpointBrowserWindow = null
+
+const createMainWindow = () => {
+    const win = mainBrowserWindow = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload_main.js')
         },
     })
 
-    win.loadFile('index.html')
+    win.loadFile('index_main.html')
 }
 
+const createCheckpointWindow = () => {
+    const win = checkpointBrowserWindow = new BrowserWindow({
+        width: 300,
+        height: 200,
+        parent: mainBrowserWindow,
+        modal: true,
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload_checkpoint.js')
+        },
+    })
+
+    win.loadFile('index_checkpoint.html')
+}
+
+const displayCheckpointWindow = () => {
+    if (!checkpointBrowserWindow || checkpointBrowserWindow.isDestroyed()) {
+        createCheckpointWindow()
+    }
+    checkpointBrowserWindow.show()
+}
+
+
 app.whenReady().then(() => {
-    createWindow()
+    createMainWindow()
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
+            createMainWindow()
         }
     })
 })
@@ -67,3 +93,5 @@ ipcMain.handle('get-all-data', async () => {
         ]
     }
 })
+
+ipcMain.on('display-checkpoint', displayCheckpointWindow)

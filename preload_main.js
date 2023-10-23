@@ -16,3 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
 contextBridge.exposeInMainWorld('data', {
     getAll: () => ipcRenderer.invoke('get-all-data'),
 })
+
+contextBridge.exposeInMainWorld('gui', {
+    displayCheckpointWindow: () => ipcRenderer.send('display-checkpoint'),
+})
