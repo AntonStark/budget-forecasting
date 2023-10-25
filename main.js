@@ -11,11 +11,11 @@ const createMainWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'windows/main/preload_main.js')
+            preload: path.join(__dirname, 'windows/main/preload.js')
         },
     })
 
-    win.loadFile('windows/main/index_main.html')
+    win.loadFile('windows/main/index.html')
 }
 
 const createCheckpointWindow = () => {
@@ -26,20 +26,12 @@ const createCheckpointWindow = () => {
         modal: true,
         show: false,
         webPreferences: {
-            preload: path.join(__dirname, 'windows/checkpoint/preload_checkpoint.js')
+            preload: path.join(__dirname, 'windows/checkpoint/preload.js')
         },
     })
 
-    win.loadFile('windows/checkpoint/index_checkpoint.html')
+    win.loadFile('windows/checkpoint/index.html')
 }
-
-const displayCheckpointWindow = () => {
-    if (!checkpointBrowserWindow || checkpointBrowserWindow.isDestroyed()) {
-        createCheckpointWindow()
-    }
-    checkpointBrowserWindow.show()
-}
-
 
 app.whenReady().then(() => {
     createMainWindow()
@@ -94,4 +86,9 @@ ipcMain.handle('get-all-data', async () => {
     }
 })
 
-ipcMain.on('display-checkpoint', displayCheckpointWindow)
+ipcMain.on('display-checkpoint', () => {
+    if (!checkpointBrowserWindow || checkpointBrowserWindow.isDestroyed()) {
+        createCheckpointWindow()
+    }
+    checkpointBrowserWindow.show()
+})
