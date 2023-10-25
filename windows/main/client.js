@@ -1,9 +1,9 @@
 "use strict";
 
-import { displayAccountTableData } from "./ui.js"
+import { displayAccountTableData } from "../../common/ui.js"
 
 
-async function requestData(e) {
+async function requestData() {
     const data = await window.data.getAll()
     displayAccountTableData(data)
 }

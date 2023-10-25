@@ -11,11 +11,11 @@ const createMainWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload_main.js')
+            preload: path.join(__dirname, 'windows/main/preload_main.js')
         },
     })
 
-    win.loadFile('index_main.html')
+    win.loadFile('windows/main/index_main.html')
 }
 
 const createCheckpointWindow = () => {
@@ -26,11 +26,11 @@ const createCheckpointWindow = () => {
         modal: true,
         show: false,
         webPreferences: {
-            preload: path.join(__dirname, 'preload_checkpoint.js')
+            preload: path.join(__dirname, 'windows/checkpoint/preload_checkpoint.js')
         },
     })
 
-    win.loadFile('index_checkpoint.html')
+    win.loadFile('windows/checkpoint/index_checkpoint.html')
 }
 
 const displayCheckpointWindow = () => {
