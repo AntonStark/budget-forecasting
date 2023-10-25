@@ -4,27 +4,31 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
+    <title>Budget forecasting</title>
     <link href="../../common/style.css" rel="stylesheet">
     <script defer src="client.js" type="module"></script>
 </head>
 <body>
 <h1>Lets account!</h1>
 
-<form>
-    <input type="button" value="Get data" id="get_data_button">
-</form>
+<p id="dates_setting_block">
+    Dates:
+    <input type="radio" id="previous_7_days" name="dates" value="previous_7_days" checked>
+    <label for="previous_7_days">previous 7 days</label>
+</p>
 
-<table id="account_by_days_table">
-    <thead>
-        <tr id="account_by_days_table__dates_row"></tr>
-    </thead>
-    <tbody id="account_by_days_table__body">
+<div id="account_by_days_table_wrapper">
+    <table id="account_by_days_table" class="styled-table">
+        <thead>
+            <tr id="account_by_days_table__dates_row"></tr>
+        </thead>
+        <tbody id="account_by_days_table__body"></tbody>
+    </table>
+</div>
 
-    </tbody>
-</table>
-
-<input type="button" value="Write checkpoint" id="display_checkpoint_window_button">
+<p>
+    <input type="button" value="Write checkpoint" id="display_checkpoint_window_button">
+</p>
 
 </body>
 </html>

@@ -1,3 +1,5 @@
+"use strict";
+
 export function displayAccountTableData(data) {
     console.log('displayAccountTableData called')
     console.log(data)

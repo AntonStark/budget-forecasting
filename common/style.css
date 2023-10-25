@@ -1,14 +1,25 @@
-.version-number {
-    color: green;
+#account_by_days_table_wrapper {
+    margin: 10px 20px;
 }
 
-#account_by_days_table {
+.styled-table {
     border-spacing: 0;
 }
-#account_by_days_table__body tr {
-    background: lightgray;
-    border-bottom: 1px solid gray;
+
+.styled-table thead tr:last-child td {
+    border-bottom: 2px solid black;
 }
-#account_by_days_table td {
-    border-right: 1px solid gray;
+.styled-table td:not(:first-child) {
+    border-left: 1px solid black;
+}
+.styled-table tr td:first-child {
+    padding-left: 20px;
+    padding-right: 10px;
+}
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody td {
+    text-align: right;
 }
