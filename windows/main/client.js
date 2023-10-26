@@ -1,41 +1,38 @@
 "use strict";
 
 import { displayAccountTableData } from "../../common/ui.js"
+import { AccountsDAO } from "../../common/accounts_dao.js"
 
+function getDates() {
+    let dateStart, dateEnd
+
+    const datesSettingBlock = document.getElementById('dates_setting_block')
+    const datesSetting = (
+        Array.from(datesSettingBlock.children)
+            .filter(elem => elem.tagName === 'INPUT' && elem.checked)
+    )[0].value
+
+    if (datesSetting === 'previous_7_days') {
+        dateStart = new Date()
+        dateStart.setDate(-7)
+        dateEnd = new Date()
+        dateEnd.setDate(2)
+    }
+
+    return [dateStart, dateEnd]
+}
 
 async function requestData() {
     const data = await window.data.getAll()
     displayAccountTableData(data)
+
+    const accounts_dao = new AccountsDAO()
+    accounts_dao.setDates(...getDates())
 }
 requestData()
 
 document.getElementById('display_checkpoint_window_button').addEventListener('click', () => {
     window.gui.displayCheckpointWindow()
 })
-
-function getDates() {
-    let dates = null
-    const datesSettingBlock = document.getElementById('dates_setting_block')
-    const datesSetting = (
-        Array.from(datesSettingBlock.children)
-        .filter(elem => elem.tagName === 'INPUT' && elem.checked)
-    )[0].value
-
-    if (datesSetting === 'previous_7_days') {
-        const today = new Date()
-        const arrayRange = (start, stop, step) => Array.from(
-            { length: (stop - start) / step + 1 },
-            (value, index) => start + index * step
-        )
-        const dateDeltas = arrayRange(-7, 2, 1)
-        dates = dateDeltas.map(days => {
-            let res = new Date(today)
-            res.setDate(res.getDate() + days)
-            return res
-        })
-    }
-
-    return dates
-}
 
 console.log(getDates())
