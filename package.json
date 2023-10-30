@@ -2,17 +2,16 @@
   "name": "budget-forecasting",
   "version": "1.0.0",
   "description": "App to track and estimate funds",
-  "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "dev": "next dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Anton Iakovlev",
   "license": "UNLICENSED",
-  "devDependencies": {
-    "electron": "^27.0.0"
-  },
   "dependencies": {
+    "next": "^14.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sqlite3": "^5.1.6"
   }
 }

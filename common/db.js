@@ -1,16 +1,20 @@
-"use strict";
+import { verbose } from "sqlite3"
 
-import { displayAccountTableData } from "../../common/ui.js"
+const sqlite3 = verbose()
 
 
-async function requestData() {
-    const data = await window.data.getAll()
-    displayAccountTableData(data)
-}
-requestData()
+let db = new sqlite3.Database(':memory:', (err) => {
+    if (err) {
+        return console.error(err.message)
+    }
+    console.log('Connected to the in-memory SQlite database.')
+});
 
-document.getElementById('display_checkpoint_window_button').addEventListener('click', () => {
-    window.gui.displayCheckpointWindow()
+db.close((err) => {
+    if (err) {
+        return console.error(err.message)
+    }
+    console.log('Close the database connection.')
 })
 
 function getDates() {
@@ -18,7 +22,7 @@ function getDates() {
     const datesSettingBlock = document.getElementById('dates_setting_block')
     const datesSetting = (
         Array.from(datesSettingBlock.children)
-        .filter(elem => elem.tagName === 'INPUT' && elem.checked)
+            .filter(elem => elem.tagName === 'INPUT' && elem.checked)
     )[0].value
 
     if (datesSetting === 'previous_7_days') {
