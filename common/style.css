@@ -4,6 +4,7 @@
 
 .styled-table {
     border-spacing: 0;
+    white-space: nowrap;
 }
 
 .styled-table thead tr:last-child td {
