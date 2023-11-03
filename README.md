@@ -1,9 +1,9 @@
 # budget-forecasting
 
-App to track spendings and forecast available funds. 
+App to track expenses and predict available funds. 
 
-Based on Electron framework. All the data saved locally with sqlite db.
+Based on Next.js framework. All the data saved locally with sqlite db.
 
 ## setup
 
-Start with `npm run start`
+Start with `npm run dev`
