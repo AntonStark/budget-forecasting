@@ -1,12 +1,14 @@
+import Link from "next/link";
+
 export default function Checkpoint() {
     return (
         <div>
             Checkpoint form will be there
 
             <p>
-                <a href={"/main"}>
+                <Link href="/main">
                     <input type="button" value="Go back"/>
-                </a>
+                </Link>
             </p>
         </div>
     )

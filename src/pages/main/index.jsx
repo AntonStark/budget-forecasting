@@ -3,6 +3,7 @@
 import {useEffect, useState} from "react";
 
 import {AccountTableWrapper} from "../../components/accounts_table";
+import Link from "next/link";
 
 
 function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
@@ -51,9 +52,9 @@ export default function Main() {
             <AccountTableWrapper data={data}/>
 
             <p>
-                <a href={"/checkpoint"}>
+                <Link href="/checkpoint">
                     <input type="button" value="Write checkpoint"/>
-                </a>
+                </Link>
             </p>
         </div>
     )
