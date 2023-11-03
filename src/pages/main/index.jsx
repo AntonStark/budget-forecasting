@@ -51,7 +51,9 @@ export default function Main() {
             <AccountTableWrapper data={data}/>
 
             <p>
-                <input type="button" value="Write checkpoint" id="display_checkpoint_window_button"/>
+                <a href={"/checkpoint"}>
+                    <input type="button" value="Write checkpoint"/>
+                </a>
             </p>
         </div>
     )
