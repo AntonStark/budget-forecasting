@@ -31,7 +31,7 @@ export default function Main() {
     const [dateRangeSetting, setDateRangeSetting] = useState("previous_7_days")
 
     useEffect(() => {
-        fetch('/api/get-accounts-data')
+        fetch('/api/get-accounts')
             .then((res) => res.json())
             .then((data) => {
                 setData(data)

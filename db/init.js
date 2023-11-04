@@ -31,7 +31,7 @@ db.serialize(() => {
     db.exec(
         `CREATE TABLE IF NOT EXISTS currencies (
             id INTEGER PRIMARY KEY,
-            name TEXT
+            iso_code TEXT
         )`,
         createTableErrorHandlerFabric("currencies")
     ).exec(
@@ -53,7 +53,7 @@ db.serialize(() => {
         "EUR",
     ];
 
-    const insertSql = `INSERT INTO currencies(id, name) VALUES(?, ?)`;
+    const insertSql = `INSERT INTO currencies(id, iso_code) VALUES(?, ?)`;
 
     db.run(insertSql, values1, function (err) {
         if (err) {

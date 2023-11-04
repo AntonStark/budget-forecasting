@@ -7,6 +7,10 @@ Table `currencies`
 - `iso_code` TEXT
 
 Обозначает валюту
+Содержит:
+- 1, USD
+- 2, RUB
+- 3, EUR
 
 ## Account
 
