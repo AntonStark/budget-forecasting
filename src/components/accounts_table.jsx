@@ -1,5 +1,3 @@
-import {useState} from "react";
-
 export function AccountTableWrapper({data}) {
     return (
         <div id="account_by_days_table_wrapper">
