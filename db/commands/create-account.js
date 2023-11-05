@@ -1,7 +1,27 @@
-const sqlite3 = require("sqlite3").verbose();
+const parseArgs = require('minimist')
+const argv = parseArgs(process.argv, opts={
+    string: ['n'],
+    alias: {
+        'currencyId': 'c',
+        'name': 'n',
+    }
+})
 
-// [title, currency_id]
-const ACCOUNT_PARAMS = ["альфа", 2]
+const accountName = argv['n']
+if (!accountName) {
+    console.error('Account name required after "-n" or "--name" key')
+    return
+}
+
+const currencyId = argv['currencyId']
+if (!currencyId) {
+    console.error('Currency id required after "-c" or "--currencyId" key')
+    return
+}
+
+const ACCOUNT_PARAMS = [accountName, currencyId]
+
+const sqlite3 = require("sqlite3").verbose();
 
 // Connecting to or creating a new SQLite database file
 const db = new sqlite3.Database(
