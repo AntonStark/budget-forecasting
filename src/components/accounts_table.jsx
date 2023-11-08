@@ -49,7 +49,7 @@ const AccountRow = ({accountData}) => {
         <tr>
             <td key={"title"}>{name}</td>
             {balances.map((balanceObj, index) =>
-                <td key={index}>{balanceObj.value}</td>)
+                <td key={index} className={balanceObj.inferred ? 'inferred' : ''}>{balanceObj.value}</td>)
             }
         </tr>
     )
