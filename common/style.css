@@ -1,5 +1,9 @@
 #account_by_days_table_wrapper {
     margin: 10px 20px;
+    overflow: scroll;
+}
+#account_by_days_table_wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .styled-table {

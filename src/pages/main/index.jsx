@@ -1,9 +1,11 @@
 "use strict";
 
 import {useEffect, useState} from "react";
+import Link from "next/link";
 
 import {AccountTableWrapper} from "../../components/accounts_table";
-import Link from "next/link";
+import {settingToDateStringsArray, settingToIntervalBounds} from "../../utils/dates";
+import {getAccounts} from "../../utils/accounts";
 
 
 function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
@@ -31,16 +33,18 @@ export default function Main() {
     const [dateRangeSetting, setDateRangeSetting] = useState("previous_7_days")
 
     useEffect(() => {
-        fetch('/api/get-accounts')
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data)
-            })
-    }, [])
+        const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
+        getAccounts({dateStart, dateEnd})
+            .then((data) => setData(data))
+    }, [dateRangeSetting])
 
     const setDateRangeSettingCombinator = (value) => {
         setDateRangeSetting(value)
-        setData({...data, dateRange: value})
+        const dateRange = settingToDateStringsArray(value)
+
+        if (dateRange) {
+            setData({...data, dates: dateRange})
+        }
     }
 
     return (
