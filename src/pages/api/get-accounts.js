@@ -1,6 +1,6 @@
 import sqlite3 from "sqlite3";
 import {open} from "sqlite";
-import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "../../utils/dates";
+import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
 
 let db = null
 
@@ -41,7 +41,7 @@ export default async (req, res) => {
         }
         console.log("Select account_date_balances done")
     })
-    console.log(balances)
+    // console.log(balances)
 
     // console.log("query", [req.query.date_start, req.query.date_end])
     const dates = dateIntervalToDatesArray(
@@ -57,33 +57,30 @@ export default async (req, res) => {
 }
 
 function accountToJson(accountObj, balanceData, dates) {
-    console.log("dates", dates)
+    // console.log("dates", dates)
     const dbAccountBalances = balanceData.filter(balanceObj => balanceObj.account_id === accountObj.id)
     const dateToBalance = Object.fromEntries(dbAccountBalances.map(balance => [balance.at_date, balance]))
     const indexToDate = dates.map(dateToISODateString)
 
-    const balancesBuf = new Array(dates.length)
+    const balancesArray = new Array(dates.length)
     let previousDayBalance
     for (let i = 0; i < dates.length; i++) {
         const dateBalance = dateToBalance[indexToDate[i]]
         if (!dateBalance) {
             if (previousDayBalance) {
                 // take from previous as inferred
-                balancesBuf[i] = {...previousDayBalance, inferred: true}
+                balancesArray[i] = {...previousDayBalance, inferred: true}
             } else {  // no previous balance, todo need additional query for last available balance
-                balancesBuf[i] = {value: '?'}
+                balancesArray[i] = {value: '?'}
             }
         } else {
-            balancesBuf[i] = previousDayBalance = dateBalance
+            balancesArray[i] = previousDayBalance = dateBalance
         }
     }
-    console.log("dateToBalance", dateToBalance)
-    // todo append calculated values for dates
-    //  пройти по массиву дат (делая из них строки ISO даты)
-    //  1. если на дату нет значения смотреть на прошлый день
-    //  2. если вообще нет = надо делать дозапрос...
+    // console.log("dateToBalance", dateToBalance)
+
     return {
         name: `${accountObj.title}, ${accountObj.iso_code}`,
-        balances: balancesBuf
+        balances: balancesArray,
     }
 }

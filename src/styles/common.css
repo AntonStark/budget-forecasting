@@ -28,3 +28,6 @@
 .styled-table tbody td {
     text-align: right;
 }
+.styled-table tbody td.inferred {
+    color: lightgray;
+}
