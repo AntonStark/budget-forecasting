@@ -7,7 +7,7 @@ export function AccountTableWrapper({data}) {
 }
 
 function AccountsTable({data}) {
-    console.log(data)
+    // console.log(data)
     if (!data) return
 
     const {accounts, dates} = data

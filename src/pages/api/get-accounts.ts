@@ -1,10 +1,11 @@
 import sqlite3 from "sqlite3";
 import {open} from "sqlite";
 import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
+import {NextApiRequest, NextApiResponse} from "next";
 
 let db = null
 
-export default async (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log(req)
 
     // Check if the database instance has been initialized
