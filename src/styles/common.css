@@ -27,7 +27,29 @@
 
 .styled-table tbody td {
     text-align: right;
+    width: 68px;
+    height: 19px;
 }
-.styled-table tbody td.inferred {
+.styled-table tbody td.inferred:not(.today) {
     color: lightgray;
+}
+.styled-table tbody td.today {
+    color: gray;
+}
+.styled-table td.today {
+    background: #FFFACD;
+}
+
+.styled-table tbody td input {
+    width: calc(100% - 4px);
+    height: 100%;
+    border: none;
+    outline: none;
+}
+
+.styled-table tbody td input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+
+    -moz-appearance: textfield;
 }

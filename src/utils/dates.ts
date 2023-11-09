@@ -1,4 +1,4 @@
-export function settingToDateStringsArray(datesSetting) {
+export function settingToDateStringsArray(datesSetting): Array<string> | undefined {
     const today = new Date()
 
     let depth, dates
@@ -26,7 +26,7 @@ export function settingToDateStringsArray(datesSetting) {
 export const dateToDateString = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()+1}-${date.getUTCDate()}`
 export const dateToISODateString = (date) => date.toISOString().slice(0, 10)
 
-export function settingToIntervalBounds(datesSetting) {
+export function settingToIntervalBounds(datesSetting): [string, string] {
     const today = new Date()
     const advance = 2
 
@@ -47,7 +47,7 @@ export function settingToIntervalBounds(datesSetting) {
     return bounds
 }
 
-export function dateIntervalToDatesArray([dateStartStr, dateEndStr]) {
+export function dateIntervalToDatesArray([dateStartStr, dateEndStr]): Array<Date> {
     const d1 = new Date(dateStartStr + ' 00:00:00.000Z')
     const d2 = new Date(dateEndStr + ' 00:00:00.000Z')
 

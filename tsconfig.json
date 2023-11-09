@@ -16,7 +16,8 @@
       "@/styles/*": ["styles/*"],
       "@/components/*": ["components/*"],
       "@/pages/*": ["pages/*"],
-      "@/utils/*": ["utils/*"]
+      "@/utils/*": ["utils/*"],
+      "@/types": ["types"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

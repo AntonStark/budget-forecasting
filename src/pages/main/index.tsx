@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import Link from "next/link";
 
-import {AccountTableWrapper} from "@/components/accounts_table";
+import {AccountTableWrapper} from "@/components/accounts-table";
 import {settingToDateStringsArray, settingToIntervalBounds} from "@/utils/dates";
 import {getAccounts} from "@/utils/accounts";
 
