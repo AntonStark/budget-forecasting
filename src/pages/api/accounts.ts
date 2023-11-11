@@ -73,9 +73,9 @@ function accountToJson(accountObj, balanceData: Array<BalanceData>, dates): Acco
         if (!dateBalance) {
             if (previousDayBalance) {
                 // take from previous as inferred
-                balancesArray[i] = {...previousDayBalance, inferred: true}
+                balancesArray[i] = {...previousDayBalance, inferred: true, at_date: indexToDate[i]}
             } else {  // no previous balance, todo need additional query for last available balance
-                balancesArray[i] = {value: '?'}
+                balancesArray[i] = {value: '?', at_date: indexToDate[i]}
             }
         } else {
             balancesArray[i] = previousDayBalance = dateBalance
@@ -84,6 +84,7 @@ function accountToJson(accountObj, balanceData: Array<BalanceData>, dates): Acco
     // console.log("dateToBalance", dateToBalance)
 
     return {
+        id: accountObj.id,
         name: `${accountObj.title}, ${accountObj.iso_code}`,
         balances: balancesArray,
     }

@@ -5,7 +5,14 @@ export interface BalanceData {
     inferred?: boolean
 }
 
+export interface AccountBalance {
+    at_date: string
+    value: number
+    inferred?: boolean
+}
+
 export interface AccountData {
+    id: number
     name: string
-    balances: Array<BalanceData>
+    balances: Array<AccountBalance>
 }
