@@ -1,11 +1,11 @@
 import sqlite3 from "sqlite3";
-import {open} from "sqlite";
+import {open, Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
 import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
 import {AccountData, BalanceData} from "@/types";
 
-let db = null
+let db: Database = null
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log(req)

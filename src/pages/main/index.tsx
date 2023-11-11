@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import {createContext, useEffect, useState} from "react";
 import Link from "next/link";
 
 import {AccountTableWrapper} from "@/components/accounts-table";
 import {settingToDateStringsArray, settingToIntervalBounds} from "@/utils/dates";
-import {getAccounts} from "@/utils/accounts";
+import {getAccounts} from "@/utils/api";
 
 
 function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
@@ -26,15 +26,25 @@ function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
 }
 
 
+export const refreshBalancesEvent = new Event('refreshBalances')
+
+
 export default function Main() {
     const [data, setData] = useState(null)
     const [dateRangeSetting, setDateRangeSetting] = useState("previous_7_days")
 
     useEffect(() => {
         const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
-        getAccounts({dateStart, dateEnd})
-            .then((data) => setData(data))
+        getAccounts({dateStart, dateEnd}).then((data) => setData(data))
     }, [dateRangeSetting])
+    useEffect(() => {
+        document.addEventListener(refreshBalancesEvent.type, () => {
+            // console.log(`Got event ${refreshBalancesEvent.type}`)
+            // todo обновление данных не перерендерит остальные ячейки
+            const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
+            getAccounts({dateStart, dateEnd}).then((data) => setData(data))
+        })
+    }, [])
 
     const setDateRangeSettingCombinator = (value) => {
         setDateRangeSetting(value)

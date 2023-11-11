@@ -51,7 +51,7 @@ const AccountsTableHeader = ({dates}) => {
 }
 
 const AccountRow = ({accountData, isoDates}) => {
-    const {name, balances}: AccountData = accountData
+    const {id, name, balances}: AccountData = accountData
 
     const makeOptions = (index) => {
         const options = {}
@@ -71,8 +71,8 @@ const AccountRow = ({accountData, isoDates}) => {
             <td key={"title"}>{name}</td>
             {
                 balances.map((balanceObj, index) =>
-                    <BalanceCell balance={balanceObj} date={isoDates[index]} options={makeOptions(index)}
-                                 key={`account_${balanceObj.account_id}-${isoDates[index]}`}/>)
+                    <BalanceCell balance={balanceObj} accountId={id} date={isoDates[index]} options={makeOptions(index)}
+                                 key={`account_${id}-${isoDates[index]}`}/>)
             }
         </tr>
     )

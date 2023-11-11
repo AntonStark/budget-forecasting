@@ -1,42 +1,59 @@
 import {useState} from "react";
-import {BalanceData} from "@/types";
+import {AccountBalance} from "@/types";
+import {setBalance} from "@/utils/api";
+import {refreshBalancesEvent} from "@/pages/main";
 
 type BalanceCellProps = {
-    balance: BalanceData,
+    accountId: number
+    balance: AccountBalance,
     date: string,
     options?: any
 }
 
-export const BalanceCell = ({balance, date, options}: BalanceCellProps) => {
-    const classNames = []
+export const BalanceCell = ({accountId, balance, date, options}: BalanceCellProps) => {
+    const classNames = new Set()
     if (balance.inferred) {
-        classNames.push("inferred")
+        classNames.add("inferred")
     }
     if (options && options.today) {
-        classNames.push("today")
+        classNames.add("today")
     }
 
+    const [cellValue, setCellValue] = useState<any>(balance.value)
+    // todo state focusCell должен быть на уровне таблицы, тогда может и стрелки заработают
     const [focusCell, setFocusCell] = useState<any>()
-    const isFocusedCell = () => focusCell && focusCell.account === balance.account_id && focusCell.date === date
+    const isFocusedCell = () => focusCell && focusCell.account === accountId && focusCell.date === date
 
-    const handleCellClick = (e) => {
+    const handleCellClick = () => {
         setFocusCell({
-            account: balance.account_id,
+            account: accountId,
             date: date
         })
-        e.stopPropagation()
-        e.preventDefault()
-
     }
     const handleInputBlur = (e) => {
+        const value = e.target.value;
+        // console.log("value", value)
+        console.log('handleInputBlur balance', balance)
+        if (value) {
+            setBalance({
+                accountId: accountId,
+                atDate: date,
+                value: value
+            }).then((rep) => {
+                // console.log('setBalance rep.value: ', rep.value)
+                document.dispatchEvent(refreshBalancesEvent)
+                setCellValue(rep.value)
+            })
+        }
         setFocusCell(undefined)
-        console.log("value", e.target.value)    // todo submit
     }
     const handleInputKeyDown = (e) => {
         switch (e.key) {
             case "Enter":
-            case "Escape":
                 e.target.blur()
+                break;
+            case "Escape":
+                setFocusCell(undefined)
                 break;
             case "ArrowUp":
                 setFocusCell({
@@ -56,7 +73,7 @@ export const BalanceCell = ({balance, date, options}: BalanceCellProps) => {
 
     let cellContent
     if (!isFocusedCell()) {
-        cellContent = balance.value
+        cellContent = cellValue
     } else {
         cellContent = (
             <input type="number" autoFocus onBlur={handleInputBlur} onKeyDown={handleInputKeyDown}
@@ -64,17 +81,16 @@ export const BalanceCell = ({balance, date, options}: BalanceCellProps) => {
         )
     }
 
-    if (options && options.protected) {
-        return (
-            <td className={classNames.join(' ')} data-date={date}
-                onDoubleClickCapture={handleCellClick}
-            >{cellContent}</td>
-        )
-    } else {
-        return (
-            <td className={classNames.join(' ')} data-date={date}
-                onClick={handleCellClick}
-            >{cellContent}</td>
-        )
+    const cellProps = {
+        "data-date": date,
     }
+    if (options && options.protected) {
+        cellProps["onDoubleClick"] = handleCellClick
+    } else {
+        cellProps["onClick"] = handleCellClick
+    }
+
+    return (
+        <td className={Array.from(classNames).join(' ')} {...cellProps}>{cellContent}</td>
+    )
 }
