@@ -29,6 +29,7 @@ Table `account_date_balances`
 - `account_id` INTEGER
 - `at_date` TEXT
 - `value` REAL
+Index `account_date_balances_account_id_at_date on (account_id, at_date)`
 
 Данные об остатке на счету в заданную дату
 
