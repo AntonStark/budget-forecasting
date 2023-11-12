@@ -36,13 +36,27 @@ const AccountsTableHeader = ({dates}) => {
     // console.log(dates)
     const today = new Date()
 
+    const makeClassNamesStr = (dateStr, index) => {
+        const classNames = new Set()
+        const date = new Date(dateStr)
+
+        if (dateStr === dateToDateString(today)) {
+            classNames.add("today")
+        }
+        if (date.getDay() === 6 || date.getDay() === 0) {
+            classNames.add("weekend")
+        }
+
+        return (classNames.size ? Array.from(classNames).join(' ') : undefined)
+    }
+
     return (
         <tr id="account_by_days_table__dates_row">
             <td key={"corner"}/>
             {/*insert empty cell at the corner*/}
             {
                 dates.map((dateStr, index) =>
-                    <td key={index} className={(dateStr === dateToDateString(today) ? "today" : "")}>
+                    <td key={index} className={makeClassNamesStr(dateStr, index)}>
                         {dateStr}
                     </td>)
             }

@@ -89,7 +89,9 @@ export const BalanceCell = ({accountId, value, inferred, date, options}: Balance
         cellProps["onClick"] = handleCellClick
     }
 
+    const classNameStr = (classNames.size ? Array.from(classNames).join(' ') : undefined)
+
     return (
-        <td className={Array.from(classNames).join(' ')} {...cellProps}>{cellContent}</td>
+        <td className={classNameStr} {...cellProps}>{cellContent}</td>
     )
 }

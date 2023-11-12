@@ -25,9 +25,16 @@
     background-color: #f3f3f3;
 }
 
+.styled-table thead {
+    text-align: center;
+}
+.styled-table thead td.weekend {
+    color: red;
+}
+
 .styled-table tbody td {
     text-align: right;
-    width: 68px;
+    width: 75px;
     height: 19px;
 }
 .styled-table tbody td.inferred {
