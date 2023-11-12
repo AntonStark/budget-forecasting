@@ -1,25 +1,26 @@
 import {useState} from "react";
-import {AccountBalance} from "@/types";
 import {setBalance} from "@/utils/api";
 import {refreshBalancesEvent} from "@/pages/main";
 
 type BalanceCellProps = {
     accountId: number
-    balance: AccountBalance,
-    date: string,
+    value: number
+    inferred?: boolean
+    date: string
     options?: any
 }
 
-export const BalanceCell = ({accountId, balance, date, options}: BalanceCellProps) => {
+export const BalanceCell = ({accountId, value, inferred, date, options}: BalanceCellProps) => {
+    // console.log(`[RENDER BalanceCell:${accountId}:${date}] value=${value}`)
+
     const classNames = new Set()
-    if (balance.inferred) {
+    if (inferred) {
         classNames.add("inferred")
     }
     if (options && options.today) {
         classNames.add("today")
     }
 
-    const [cellValue, setCellValue] = useState<any>(balance.value)
     // todo state focusCell должен быть на уровне таблицы, тогда может и стрелки заработают
     const [focusCell, setFocusCell] = useState<any>()
     const isFocusedCell = () => focusCell && focusCell.account === accountId && focusCell.date === date
@@ -31,18 +32,16 @@ export const BalanceCell = ({accountId, balance, date, options}: BalanceCellProp
         })
     }
     const handleInputBlur = (e) => {
-        const value = e.target.value;
+        const inputValue = e.target.value;
         // console.log("value", value)
-        console.log('handleInputBlur balance', balance)
-        if (value) {
+        if (inputValue) {
             setBalance({
                 accountId: accountId,
                 atDate: date,
-                value: value
+                value: inputValue
             }).then((rep) => {
                 // console.log('setBalance rep.value: ', rep.value)
                 document.dispatchEvent(refreshBalancesEvent)
-                setCellValue(rep.value)
             })
         }
         setFocusCell(undefined)
@@ -73,11 +72,11 @@ export const BalanceCell = ({accountId, balance, date, options}: BalanceCellProp
 
     let cellContent
     if (!isFocusedCell()) {
-        cellContent = cellValue
+        cellContent = value
     } else {
         cellContent = (
             <input type="number" autoFocus onBlur={handleInputBlur} onKeyDown={handleInputKeyDown}
-                   defaultValue={!balance.inferred ? balance.value : ""}/>
+                   defaultValue={!inferred ? value : ""}/>
         )
     }
 

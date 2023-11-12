@@ -52,6 +52,7 @@ const AccountsTableHeader = ({dates}) => {
 
 const AccountRow = ({accountData, isoDates}) => {
     const {id, name, balances}: AccountData = accountData
+    // console.log(`[RENDER AccountRow:${id}]`)
 
     const makeOptions = (index) => {
         const options = {}
@@ -71,8 +72,8 @@ const AccountRow = ({accountData, isoDates}) => {
             <td key={"title"}>{name}</td>
             {
                 balances.map((balanceObj, index) =>
-                    <BalanceCell balance={balanceObj} accountId={id} date={isoDates[index]} options={makeOptions(index)}
-                                 key={`account_${id}-${isoDates[index]}`}/>)
+                    <BalanceCell accountId={id} date={isoDates[index]} {...balanceObj}
+                                 options={makeOptions(index)} key={`account_${id}-${isoDates[index]}`}/>)
             }
         </tr>
     )

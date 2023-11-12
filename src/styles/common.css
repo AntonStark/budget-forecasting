@@ -30,11 +30,8 @@
     width: 68px;
     height: 19px;
 }
-.styled-table tbody td.inferred:not(.today) {
+.styled-table tbody td.inferred {
     color: lightgray;
-}
-.styled-table tbody td.today {
-    color: gray;
 }
 .styled-table td.today {
     background: #FFFACD;

@@ -6,7 +6,7 @@ let db: Database = null
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log(req)
-    console.log('POST /balance/', req.body)
+    console.log('POST /api/balance/', req.body)
     const {account_id, at_date, value} = req.body
 
     // Check if the database instance has been initialized
@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
     }
 
-    db.run(
+    await db.run(
         `INSERT INTO account_date_balances (account_id, at_date, value)
         VALUES (?, ?, ?)
         ON CONFLICT ( account_id, at_date ) DO
@@ -32,5 +32,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }, (err) => {
         console.error(err)
         res.status(500).json({error: true})
+        throw err
     })
 }

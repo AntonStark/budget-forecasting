@@ -40,9 +40,11 @@ export default function Main() {
     useEffect(() => {
         document.addEventListener(refreshBalancesEvent.type, () => {
             // console.log(`Got event ${refreshBalancesEvent.type}`)
-            // todo обновление данных не перерендерит остальные ячейки
             const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
-            getAccounts({dateStart, dateEnd}).then((data) => setData(data))
+            getAccounts({dateStart, dateEnd}).then((data) => {
+                setData(data)
+                console.log('refreshBalancesEvent')
+            })
         })
     }, [])
 

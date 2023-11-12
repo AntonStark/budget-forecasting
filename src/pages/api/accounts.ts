@@ -9,6 +9,7 @@ let db: Database = null
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log(req)
+    console.log('GET /api/accounts/', req.body)
 
     // Check if the database instance has been initialized
     if (!db) {
@@ -25,11 +26,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const accounts = await db.all(`
         SELECT * FROM accounts
         JOIN currencies on accounts.currency_id = currencies.id
-    `, (err) => {
-        if (err) {
-            return console.error(err.message);
-        }
-        console.log("Select accounts done")
+    `).then((result) => {
+        // console.log("Select accounts done")
+        return result
+    }, (err) => {
+        console.error(err.message)
+        res.status(500).json({error: true})
+        throw err
     })
     // console.log(accounts)
 
@@ -37,12 +40,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         SELECT * FROM account_date_balances
         WHERE at_date BETWEEN ? AND ?
         ORDER BY at_date
-    `, [req.query.date_start, req.query.date_end],
-    (err) => {
-        if (err) {
-            return console.error(err.message);
-        }
-        console.log("Select account_date_balances done")
+    `, [req.query.date_start, req.query.date_end]
+    ).then((result) => {
+        // console.log("Select account_date_balances done")
+        return result
+    }, (err) => {
+        console.error(err.message)
+        res.status(500).json({error: true})
+        throw err
     })
     // console.log(balances)
 
