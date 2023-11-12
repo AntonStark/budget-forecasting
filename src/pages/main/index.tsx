@@ -64,12 +64,6 @@ export default function Main() {
             <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSettingCombinator}/>
 
             <AccountTableWrapper data={data}/>
-
-            <p>
-                <Link href="/checkpoint">
-                    <input type="button" value="Write checkpoint"/>
-                </Link>
-            </p>
         </div>
     )
 }
