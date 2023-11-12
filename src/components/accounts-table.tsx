@@ -1,7 +1,13 @@
 import {AccountData} from "@/types";
 import {dateToDateString, dateToISODateString} from "@/utils/dates";
 import {BalanceCell} from "@/components/balance-cell";
+import {useState} from "react";
 
+
+export type FocusCell = {
+    account: number
+    date: string
+}
 
 export function AccountTableWrapper({data}) {
     return (
@@ -11,11 +17,13 @@ export function AccountTableWrapper({data}) {
     )
 }
 
+
 function AccountsTable({data}) {
     // console.log(data)
     if (!data) return
 
     const {accounts, dates, isoDates} = data
+    const [focusCell, setFocusCell] = useState(undefined)
 
     return (
         <table id="account_by_days_table" className="styled-table">
@@ -25,7 +33,11 @@ function AccountsTable({data}) {
             <tbody id="account_by_days_table__body">{
                 accounts.map(
                     (accountData) =>
-                        <AccountRow accountData={accountData} isoDates={isoDates} key={accountData.name}/>
+                        <AccountRow accountData={accountData}
+                                    isoDates={isoDates}
+                                    focusCell={focusCell}
+                                    setFocusCell={setFocusCell}
+                                    key={accountData.name}/>
                 )
             }</tbody>
         </table>
@@ -64,7 +76,7 @@ const AccountsTableHeader = ({dates}) => {
     )
 }
 
-const AccountRow = ({accountData, isoDates}) => {
+const AccountRow = ({accountData, isoDates, focusCell, setFocusCell}) => {
     const {id, name, balances}: AccountData = accountData
     // console.log(`[RENDER AccountRow:${id}]`)
 
@@ -86,8 +98,13 @@ const AccountRow = ({accountData, isoDates}) => {
             <td key={"title"}>{name}</td>
             {
                 balances.map((balanceObj, index) =>
-                    <BalanceCell accountId={id} date={isoDates[index]} {...balanceObj}
-                                 options={makeOptions(index)} key={`account_${id}-${isoDates[index]}`}/>)
+                    <BalanceCell accountId={id}
+                                 date={isoDates[index]}
+                                 options={makeOptions(index)}
+                                 {...balanceObj}
+                                 focusCell={focusCell}
+                                 setFocusCell={setFocusCell}
+                                 key={`account_${id}-${isoDates[index]}`}/>)
             }
         </tr>
     )
