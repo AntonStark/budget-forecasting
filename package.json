@@ -4,6 +4,8 @@
   "description": "App to track and estimate funds",
   "scripts": {
     "dev": "next dev",
+    "start": "next start",
+    "start-and-open": "concurrently \"npm run start\" \"sleepms 650 && open http://localhost:3000/main\"",
     "build": "next build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "20.9.0",
-    "@types/react": "18.2.37"
+    "@types/react": "18.2.37",
+    "concurrently": "^8.2.2",
+    "sleep-ms": "^2.0.1"
   }
 }
