@@ -13,11 +13,12 @@
     "moduleResolution": "node",
     "noEmit": true,
     "paths": {
-      "@/styles/*": ["styles/*"],
       "@/components/*": ["components/*"],
       "@/pages/*": ["pages/*"],
+      "@/schema/*": ["schema/*"],
+      "@/styles/*": ["styles/*"],
+      "@/types": ["types"],
       "@/utils/*": ["utils/*"],
-      "@/types": ["types"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

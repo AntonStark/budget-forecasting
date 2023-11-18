@@ -32,7 +32,7 @@
     color: red;
 }
 
-.styled-table tbody td {
+.styled-table tbody td.balance-cell {
     text-align: right;
     width: 75px;
     height: 19px;
@@ -44,7 +44,7 @@
     background: #FFFACD;
 }
 
-.styled-table tbody td input {
+.styled-table tbody td .balance-input {
     width: calc(100% - 4px);
     height: 100%;
     border: none;
@@ -56,4 +56,8 @@
     margin: 0;
 
     -moz-appearance: textfield;
+}
+
+.flag-in-use {
+    color: gray;
 }

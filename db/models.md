@@ -19,6 +19,7 @@ Table `accounts`
 - `title` TEXT
 - `currency_id` INTEGER
 - `created_at` TEXT
+- `in_use` INTEGER DEFAULT TRUE
 
 Обозначает счёт
 

@@ -11,8 +11,12 @@ export interface AccountBalance {
     inferred?: boolean
 }
 
-export interface AccountData {
+export interface AccountShortData {
     id: number
     name: string
+    in_use: boolean
+}
+
+export interface AccountData extends AccountShortData{
     balances: Array<AccountBalance>
 }

@@ -18,6 +18,7 @@ export const BalanceCell = ({accountId, value, inferred, date, options, focusCel
     // console.log(`[RENDER BalanceCell:${accountId}:${date}] value=${value}`)
 
     const classNames = new Set()
+    classNames.add("balance-cell")
     if (inferred) {
         classNames.add("inferred")
     }
@@ -93,7 +94,8 @@ export const BalanceCell = ({accountId, value, inferred, date, options, focusCel
         cellContent = value
     } else {
         cellContent = (
-            <input type="number" autoFocus onBlur={handleInputBlur} onKeyDown={handleInputKeyDown}
+            <input type="number" className="balance-input"
+                   autoFocus onBlur={handleInputBlur} onKeyDown={handleInputKeyDown}
                    defaultValue={!inferred ? value : ""}/>
         )
     }

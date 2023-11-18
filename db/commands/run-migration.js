@@ -15,7 +15,7 @@ if (!fileName) {
 // const migrationFile = `./db/migrations/${fileName}`
 const migrationFile = `../migrations/${fileName}`
 const migration = require(migrationFile)
-console.log(migration)
+console.log('Running: ', migration)
 
 const sqlite3 = require("sqlite3").verbose();
 

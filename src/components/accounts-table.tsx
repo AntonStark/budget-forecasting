@@ -2,6 +2,7 @@ import {AccountData} from "@/types";
 import {dateToDateString, dateToISODateString} from "@/utils/dates";
 import {BalanceCell} from "@/components/balance-cell";
 import {useState} from "react";
+import {updateAccount} from "@/utils/api";
 
 
 export type FocusCell = {
@@ -52,6 +53,7 @@ const AccountsTableHeader = ({dates}) => {
         const classNames = new Set()
         const date = new Date(dateStr)
 
+        classNames.add("balance-cell")
         if (dateStr === dateToDateString(today)) {
             classNames.add("today")
         }
@@ -66,6 +68,7 @@ const AccountsTableHeader = ({dates}) => {
         <tr id="account_by_days_table__dates_row">
             <td key={"corner"}/>
             {/*insert empty cell at the corner*/}
+            <td className="flag-in-use">In use?</td>
             {
                 dates.map((dateStr, index) =>
                     <td key={index} className={makeClassNamesStr(dateStr, index)}>
@@ -77,7 +80,8 @@ const AccountsTableHeader = ({dates}) => {
 }
 
 const AccountRow = ({accountData, isoDates, focusCell, setFocusCell}) => {
-    const {id, name, balances}: AccountData = accountData
+    const {id, name, in_use, balances}: AccountData = accountData
+    // console.log('accountData', accountData)
     // console.log(`[RENDER AccountRow:${id}]`)
 
     const makeOptions = (index) => {
@@ -93,18 +97,30 @@ const AccountRow = ({accountData, isoDates, focusCell, setFocusCell}) => {
         return options
     }
 
+    const switchAccountUseFlag = async (e) => {
+        // console.log('switchAccountUseFlag', e.target.checked)
+        const res = await updateAccount(id, {inUse: e.target.checked})
+        if (res.error) {
+            // restore value in UI
+            e.target.checked = !e.target.checked
+        }
+    }
+
     return (
         <tr>
             <td key={"title"}>{name}</td>
+            <td className="flag-in-use"><input type="checkbox" defaultChecked={Boolean(in_use)} onChange={switchAccountUseFlag}/></td>
             {
                 balances.map((balanceObj, index) =>
-                    <BalanceCell accountId={id}
-                                 date={isoDates[index]}
-                                 options={makeOptions(index)}
-                                 {...balanceObj}
-                                 focusCell={focusCell}
-                                 setFocusCell={setFocusCell}
-                                 key={`account_${id}-${isoDates[index]}`}/>)
+                    <BalanceCell
+                        accountId={id}
+                        date={isoDates[index]}
+                        options={makeOptions(index)}
+                        {...balanceObj}
+                        focusCell={focusCell}
+                        setFocusCell={setFocusCell}
+                        key={`account_${id}-${isoDates[index]}`}
+                    />)
             }
         </tr>
     )

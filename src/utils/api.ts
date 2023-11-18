@@ -19,3 +19,16 @@ export async function setBalance({accountId, atDate, value}) {
         })
     }).then((res) => res.json())
 }
+
+export async function updateAccount(id, {inUse}) {
+    console.log(`updateAccount id:${id}`, {inUse})
+    return fetch('/api/accounts/' + id, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            in_use: inUse,
+        })
+    }).then((res) => res.json())
+}
