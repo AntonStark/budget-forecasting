@@ -6,6 +6,17 @@
     display: none;
 }
 
+#account_by_days_table_annotation {
+    font-size: small;
+}
+
+#account_by_days_table_annotation a {
+    color: gray;
+}
+#account_by_days_table_annotation a:hover {
+    text-decoration: underline;
+}
+
 .styled-table {
     border-spacing: 0;
     white-space: nowrap;
@@ -60,4 +71,6 @@
 
 .flag-in-use {
     color: gray;
+    font-size: small;
+    text-align: center;
 }

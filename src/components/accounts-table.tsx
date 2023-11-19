@@ -1,8 +1,9 @@
-import {AccountData} from "@/types";
-import {dateToDateString, dateToISODateString} from "@/utils/dates";
-import {BalanceCell} from "@/components/balance-cell";
 import {useState} from "react";
+
+import {BalanceCell} from "@/components/balance-cell";
+import {AccountData} from "@/types";
 import {updateAccount} from "@/utils/api";
+import {dateToDateString, dateToISODateString} from "@/utils/dates";
 
 
 export type FocusCell = {
@@ -11,28 +12,45 @@ export type FocusCell = {
 }
 
 export function AccountTableWrapper({data}) {
+    const [hideNotInUse, setHideNotInUse] = useState(true)
+    const spanAccountsHidden = (
+        <span id="account_by_days_table_annotation">
+            Accounts not in use are hidden <a onClick={() => setHideNotInUse(false)}>show</a>
+        </span>
+    )
+    const spanAccountsNotHidden = (
+        <span id="account_by_days_table_annotation">
+            Accounts not in use are shown <a onClick={() => setHideNotInUse(true)}>hide</a>
+        </span>
+    )
+
     return (
         <div id="account_by_days_table_wrapper">
-            <AccountsTable data={data}/>
+            <AccountsTable data={data} hideNotInUse={hideNotInUse}/>
+            {hideNotInUse ? spanAccountsHidden : spanAccountsNotHidden}
         </div>
     )
 }
 
 
-function AccountsTable({data}) {
+function AccountsTable({data, hideNotInUse}) {
     // console.log(data)
     if (!data) return
 
     const {accounts, dates, isoDates} = data
     const [focusCell, setFocusCell] = useState(undefined)
 
+    const accountsInUse = accounts.filter(accountData => accountData.in_use)
+    const accountsToDisplay = (hideNotInUse ? accountsInUse : accounts)
+
     return (
         <table id="account_by_days_table" className="styled-table">
             <thead>
                 <AccountsTableHeader dates={dates}/>
             </thead>
-            <tbody id="account_by_days_table__body">{
-                accounts.map(
+            <tbody id="account_by_days_table__body">
+            {
+                accountsToDisplay.map(
                     (accountData) =>
                         <AccountRow accountData={accountData}
                                     isoDates={isoDates}
@@ -68,7 +86,7 @@ const AccountsTableHeader = ({dates}) => {
         <tr id="account_by_days_table__dates_row">
             <td key={"corner"}/>
             {/*insert empty cell at the corner*/}
-            <td className="flag-in-use">In use?</td>
+            <td className="flag-in-use">in use</td>
             {
                 dates.map((dateStr, index) =>
                     <td key={index} className={makeClassNamesStr(dateStr, index)}>
