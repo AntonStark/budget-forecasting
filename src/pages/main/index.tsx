@@ -1,9 +1,9 @@
-import {createContext, useEffect, useState} from "react";
-import Link from "next/link";
+import {useEffect, useState} from "react";
 
 import {AccountTableWrapper} from "@/components/accounts-table";
-import {settingToDateStringsArray, settingToIntervalBounds} from "@/utils/dates";
+import {settingToIntervalBounds} from "@/utils/dates";
 import {getAccounts} from "@/utils/api";
+import {DateRangeSettings} from "@/types";
 
 
 function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
@@ -14,13 +14,13 @@ function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
 
     return (
         <p id="dates_setting_block">
-            Dates:
-            <label htmlFor="previous_7_days">previous 7 days</label>
-            <input type="radio" id="previous_7_days" name="dates" value="previous_7_days"
-                   checked={dateRangeSetting === "previous_7_days"} onChange={handleChange}/>
-            <label htmlFor="previous_30_days">previous 30 days</label>
-            <input type="radio" id="previous_30_days" name="dates" value="previous_30_days"
-                   checked={dateRangeSetting === "previous_30_days"} onChange={handleChange}/>
+            <label htmlFor="select_date_range">Display:</label>
+            <select id="select_date_range" name="select_date_range" defaultValue={dateRangeSetting} onChange={handleChange}>
+                <option value={DateRangeSettings.Previous_7_Days}>Previous 7 days</option>
+                <option value={DateRangeSettings.Weekly}>Weekly</option>
+                <option value={DateRangeSettings.Monthly}>Monthly</option>
+                <option value={DateRangeSettings.Previous_30_Days}>Previous 30 days</option>
+            </select>
         </p>
     )
 }
@@ -34,13 +34,13 @@ export default function Main() {
     const [dateRangeSetting, setDateRangeSetting] = useState("previous_7_days")
 
     useEffect(() => {
-        const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
+        const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
         getAccounts({dateStart, dateEnd}).then((data) => setData(data))
     }, [dateRangeSetting])
     useEffect(() => {
         document.addEventListener(refreshBalancesEvent.type, () => {
             // console.log(`Got event ${refreshBalancesEvent.type}`)
-            const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting)
+            const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
             getAccounts({dateStart, dateEnd}).then((data) => {
                 setData(data)
                 console.log('refreshBalancesEvent')
@@ -48,20 +48,11 @@ export default function Main() {
         })
     }, [])
 
-    const setDateRangeSettingCombinator = (value) => {
-        setDateRangeSetting(value)
-        const dateRange = settingToDateStringsArray(value)
-
-        if (dateRange) {
-            setData({...data, dates: dateRange})
-        }
-    }
-
     return (
         <div>
             <h1>Lets account!</h1>
 
-            <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSettingCombinator}/>
+            <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSetting}/>
 
             <AccountTableWrapper data={data}/>
         </div>

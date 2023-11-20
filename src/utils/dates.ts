@@ -1,50 +1,55 @@
-export function settingToDateStringsArray(datesSetting): Array<string> | undefined {
+import {DateRangeSettings} from "@/types";
+
+function settingToIntervalDates(datesSetting: DateRangeSettings): [Date, Date] {
     const today = new Date()
 
-    let depth, dates
-    if (datesSetting === "previous_7_days") {
-        depth = -7
-    } else if (datesSetting === "previous_30_days") {
-        depth = -30
+    let dateStart, dateEnd, deltas
+    switch (datesSetting) {
+        case DateRangeSettings.Weekly:
+            // go back `getUTCDay` number of days returns previous Sunday (count starts from Sunday)
+            // and +1 makes this week's Monday
+            // 0..6 = sunday .. saturday
+            // +6 % 7
+            // 6, 0, 1, .. 5 = sunday .. saturday
+            const properWeekDay = (today.getUTCDay() + 6) % 7
+            dateStart = new Date(today)
+            dateStart.setUTCDate(dateStart.getUTCDate() - properWeekDay)
+            dateEnd = new Date(dateStart)
+            dateEnd.setUTCDate(dateEnd.getUTCDate() + 6)
+            break
+        case DateRangeSettings.Monthly:
+            dateStart = new Date(today)
+            dateStart.setUTCDate(1)
+            dateEnd = new Date(dateStart)
+            dateEnd.setUTCMonth(dateEnd.getUTCMonth() + 1, 0)
+            break
+        case DateRangeSettings.Previous_7_Days:
+            deltas = [-7, 2]
+            break
+        case DateRangeSettings.Previous_30_Days:
+            deltas = [-30, 2]
+            break
+        default:
+            throw Error('Unknown type in datesSetting: ' + datesSetting)
     }
 
-    if (depth) {
-        const arrayRange = (start, stop, step) => Array.from(
-            {length: (stop - start) / step + 1},
-            (value, index) => start + index * step
-        )
-        const dateDeltas = arrayRange(depth, 2, 1)
-        dates = dateDeltas.map(days => {
-            let res = new Date(today)
-            res.setDate(res.getDate() + days)
-            return res.toLocaleDateString('en', {month: "short", day: "numeric"})
-        })
+    if (dateStart) {
+        return [dateStart, dateEnd]
     }
-    return dates
+    return deltas.map(days => {
+        let res = new Date(today)
+        res.setUTCDate(res.getUTCDate() + days)
+        return res
+    })
 }
 
 export const dateToDateString = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()+1}-${date.getUTCDate()}`
 export const dateToISODateString = (date) => date.toISOString().slice(0, 10)
 
-export function settingToIntervalBounds(datesSetting): [string, string] {
-    const today = new Date()
-    const advance = 2
-
-    let depth, bounds
-    if (datesSetting === "previous_7_days") {
-        depth = -7
-    } else if (datesSetting === "previous_30_days") {
-        depth = -30
-    }
-
-    if (depth) {
-        bounds = [depth, advance].map(days => {
-            let res = new Date(today)
-            res.setDate(res.getDate() + days)
-            return dateToISODateString(res)
-        })
-    }
-    return bounds
+export function settingToIntervalBounds(datesSetting: DateRangeSettings): [string, string] {
+    const dateBounds = settingToIntervalDates(datesSetting)
+    // @ts-ignore
+    return dateBounds.map(dateToISODateString)
 }
 
 export function dateIntervalToDatesArray([dateStartStr, dateEndStr]): Array<Date> {
