@@ -1,9 +1,8 @@
-#dates_setting_block {
+#accounts_panel {
     margin: 10px 20px;
 }
 
 #account_by_days_table_wrapper {
-    margin: 10px 20px;
     overflow: scroll;
 }
 #account_by_days_table_wrapper::-webkit-scrollbar {
@@ -49,7 +48,7 @@
 
 .styled-table tbody td.balance-cell {
     text-align: right;
-    width: 75px;
+    width: 60px;
     height: 19px;
 }
 .styled-table tbody td.inferred {

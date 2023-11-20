@@ -46,7 +46,7 @@ function AccountsTable({data, hideNotInUse}) {
     return (
         <table id="account_by_days_table" className="styled-table">
             <thead>
-                <AccountsTableHeader dates={dates}/>
+                <AccountsTableHeader dates={dates} isoDates={isoDates}/>
             </thead>
             <tbody id="account_by_days_table__body">
             {
@@ -63,13 +63,13 @@ function AccountsTable({data, hideNotInUse}) {
     )
 }
 
-const AccountsTableHeader = ({dates}) => {
+const AccountsTableHeader = ({dates, isoDates}) => {
     // console.log(dates)
     const today = new Date()
 
     const makeClassNamesStr = (dateStr, index) => {
         const classNames = new Set()
-        const date = new Date(dateStr)
+        const date = new Date(isoDates[index])
 
         classNames.add("balance-cell")
         if (dateStr === dateToDateString(today)) {

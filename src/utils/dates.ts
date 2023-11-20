@@ -26,9 +26,6 @@ function settingToIntervalDates(datesSetting: DateRangeSettings): [Date, Date] {
         case DateRangeSettings.Previous_7_Days:
             deltas = [-7, 2]
             break
-        case DateRangeSettings.Previous_30_Days:
-            deltas = [-30, 2]
-            break
         default:
             throw Error('Unknown type in datesSetting: ' + datesSetting)
     }
@@ -43,7 +40,7 @@ function settingToIntervalDates(datesSetting: DateRangeSettings): [Date, Date] {
     })
 }
 
-export const dateToDateString = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()+1}-${date.getUTCDate()}`
+export const dateToDateString = (date) => `${date.getUTCDate()}`
 export const dateToISODateString = (date) => date.toISOString().slice(0, 10)
 
 export function settingToIntervalBounds(datesSetting: DateRangeSettings): [string, string] {

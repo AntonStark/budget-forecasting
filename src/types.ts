@@ -23,7 +23,6 @@ export interface AccountData extends AccountShortData{
 
 export enum DateRangeSettings {
     Previous_7_Days = "previous_7_days",
-    Previous_30_Days = "previous_30_days",
     Weekly = "weekly",
     Monthly = "monthly"
 }
