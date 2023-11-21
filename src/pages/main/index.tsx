@@ -6,11 +6,14 @@ import {getAccounts} from "@/utils/api";
 import {DateRangeSettings} from "@/types";
 
 
-function DatesSettingBlock({dateRangeSetting, setDateRangeSetting, periodTitle}) {
+function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
     const handleChange = (e) => {
         setDateRangeSetting(e.target.value)
         console.log("dateRangeSetting will be:", e.target.value)
     }
+
+    const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
+    const periodTitle = new Date(dateStart).toLocaleDateString('en', {"month": "long", "year": "numeric"})
 
     return (
         <>
@@ -45,18 +48,12 @@ export default function Main() {
         document.addEventListener(refreshBalancesEvent.type, fetchAccountsData)
     }, [])
 
-    // todo calc periodTitle
-
     return (
         <div>
             <h1>Lets account!</h1>
 
             <div id="accounts_panel">
-                <DatesSettingBlock
-                    periodTitle={"November 2023"}
-                    dateRangeSetting={dateRangeSetting}
-                    setDateRangeSetting={setDateRangeSetting}
-                />
+                <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSetting}/>
                 <AccountTableWrapper data={data}/>
             </div>
         </div>

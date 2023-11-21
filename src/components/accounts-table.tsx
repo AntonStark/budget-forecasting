@@ -84,8 +84,8 @@ const AccountsTableHeader = ({dates, isoDates}) => {
 
     return (
         <tr id="account_by_days_table__dates_row">
-            <td key={"corner"}/>
             {/*insert empty cell at the corner*/}
+            <td key={"corner"}/>
             <td className="flag-in-use">in use</td>
             {
                 dates.map((dateStr, index) =>
