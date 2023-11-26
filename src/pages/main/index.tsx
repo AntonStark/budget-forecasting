@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import {AccountTableWrapper} from "@/components/accounts-table";
 import {settingToIntervalBounds} from "@/utils/dates";
-import {getAccounts} from "@/utils/api";
+import {exportAccountData, getAccounts} from "@/utils/api";
 import {DateRangeSettings} from "@/types";
 
 
@@ -18,7 +18,7 @@ function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
     return (
         <>
             <p>
-                <label htmlFor="select_date_range">Display:</label>
+                <label htmlFor="select_date_range">Display </label>
                 <select id="select_date_range" name="select_date_range"
                         defaultValue={dateRangeSetting} onChange={handleChange}>
                     <option value={DateRangeSettings.Previous_7_Days}>Previous 7 days</option>
@@ -48,14 +48,30 @@ export default function Main() {
         document.addEventListener(refreshBalancesEvent.type, fetchAccountsData)
     }, [])
 
+    const requestExportData = () => {
+        const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
+        exportAccountData({dateStart, dateEnd}).then(res => {
+            if (res.error) {
+                window.alert('Error occurred\n' + res.message)
+            } else if (res.success) {
+                window.alert('File created in db/exports')
+            } else {
+                window.alert('Something went wrong')
+            }
+        })
+        console.log('requestExportData')
+    }
+
     return (
         <div>
-            <h1>Lets account!</h1>
+            <h1>Lets account! ✍️💸📚</h1>
 
             <div id="accounts_panel">
                 <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSetting}/>
                 <AccountTableWrapper data={data}/>
             </div>
+
+            <input type="button" value="Export data" onClick={requestExportData}/>
         </div>
     )
 }
