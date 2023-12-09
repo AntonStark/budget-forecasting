@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>budget_forecasting</string>
+
+        <key>WorkingDirectory</key>
+        <string>/Users/anton/develop/budget_forecasting/</string>
+
+        <key>Program</key>
+        <string>/usr/local/bin/npm</string>
+
+        <key>ProgramArguments</key>
+        <array>
+            <string>run</string>
+            <string>start</string>
+        </array>
+
+        <key>KeepAlive</key>
+        <dict>
+            <key>SuccessfulExit</key>
+            <true/>
+        </dict>
+        <!--    implies   RunAtLoad     -->
+        <!--        <key>RunAtLoad</key>-->
+        <!--        <true/>-->
+
+        <key>StandardOutPath</key>
+        <string>/Users/anton/develop/budget_forecasting/service/logs/budget_forecasting.log</string>
+        <key>StandardErrorPath</key>
+        <string>/Users/anton/develop/budget_forecasting/service/logs/budget_forecasting.log</string>
+
+        <key>EnvironmentVariables</key>
+        <dict>
+            <key>PATH</key>
+            <string>/Users/anton/develop/budget_forecasting/node_modules/.bin:/usr/local/bin/:/bin/</string>
+        </dict>
+
+    </dict>
+</plist>
