@@ -5,6 +5,13 @@ export async function getAccounts({dateStart, dateEnd}) {
     })).then((res) => res.json())
 }
 
+export async function getAccountsByCurrency({dateStart, dateEnd}) {
+    return fetch('/api/accounts/by_currency?' + new URLSearchParams({
+        date_start: dateStart,
+        date_end: dateEnd,
+    })).then((res) => res.json())
+}
+
 export async function setBalance({accountId, atDate, value}) {
     console.log('setBalance', {accountId, atDate, value})
     return fetch('/api/balance', {

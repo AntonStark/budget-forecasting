@@ -2,21 +2,22 @@
     margin: 10px 20px;
 }
 
-#account_by_days_table_wrapper {
+.account_by_days_table_wrapper {
     overflow: scroll;
+    margin: 80px 0;
 }
-#account_by_days_table_wrapper::-webkit-scrollbar {
+.account_by_days_table_wrapper::-webkit-scrollbar {
     display: none;
 }
 
-#account_by_days_table_annotation {
+.account_by_days_table_annotation {
     font-size: small;
 }
 
-#account_by_days_table_annotation a {
+.account_by_days_table_annotation a {
     color: gray;
 }
-#account_by_days_table_annotation a:hover {
+.account_by_days_table_annotation a:hover {
     text-decoration: underline;
 }
 

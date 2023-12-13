@@ -12,28 +12,41 @@ export type FocusCell = {
 }
 
 export function AccountTableWrapper({data}) {
+    if (!data) return
+    const {spendingGroups, savingAccountsGroup} = data
+
+    return (<>
+        {
+            spendingGroups.map(groupData => <AccountsGroupTableWrapper data={groupData} key={groupData.groupInfo.title}/>)
+        }
+        <AccountsGroupTableWrapper data={savingAccountsGroup}/>
+    </>)
+
+}
+
+function AccountsGroupTableWrapper({data: groupData}) {
     const [hideNotInUse, setHideNotInUse] = useState(true)
     const spanAccountsHidden = (
-        <span id="account_by_days_table_annotation">
+        <span className="account_by_days_table_annotation">
             Accounts not in use are hidden <a onClick={() => setHideNotInUse(false)}>show</a>
         </span>
     )
     const spanAccountsNotHidden = (
-        <span id="account_by_days_table_annotation">
+        <span className="account_by_days_table_annotation">
             Accounts not in use are shown <a onClick={() => setHideNotInUse(true)}>hide</a>
         </span>
     )
 
     return (
-        <div id="account_by_days_table_wrapper">
-            <AccountsTable data={data} hideNotInUse={hideNotInUse}/>
+        <div className="account_by_days_table_wrapper">
+            <AccountsTable data={groupData} hideNotInUse={hideNotInUse} title={groupData.groupInfo.title}/>
             {hideNotInUse ? spanAccountsHidden : spanAccountsNotHidden}
         </div>
     )
 }
 
 
-function AccountsTable({data, hideNotInUse}) {
+function AccountsTable({data, hideNotInUse, title}) {
     // console.log(data)
     if (!data) return
 
@@ -46,7 +59,7 @@ function AccountsTable({data, hideNotInUse}) {
     return (
         <table id="account_by_days_table" className="styled-table">
             <thead>
-                <AccountsTableHeader dates={dates} isoDates={isoDates}/>
+                <AccountsTableHeader dates={dates} isoDates={isoDates} title={title}/>
             </thead>
             <tbody id="account_by_days_table__body">
             {
@@ -63,7 +76,7 @@ function AccountsTable({data, hideNotInUse}) {
     )
 }
 
-const AccountsTableHeader = ({dates, isoDates}) => {
+const AccountsTableHeader = ({dates, isoDates, title}) => {
     // console.log(dates)
     const today = new Date()
 
@@ -85,7 +98,7 @@ const AccountsTableHeader = ({dates, isoDates}) => {
     return (
         <tr id="account_by_days_table__dates_row">
             {/*insert empty cell at the corner*/}
-            <td key={"corner"}/>
+            <td key={"corner"}>{title}</td>
             <td className="flag-in-use">in use</td>
             {
                 dates.map((dateStr, index) =>

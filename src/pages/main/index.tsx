@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import {AccountTableWrapper} from "@/components/accounts-table";
 import {settingToIntervalBounds} from "@/utils/dates";
-import {exportAccountData, getAccounts} from "@/utils/api";
+import {exportAccountData, getAccounts, getAccountsByCurrency} from "@/utils/api";
 import {DateRangeSettings} from "@/types";
 
 
@@ -41,7 +41,7 @@ export default function Main() {
 
     const fetchAccountsData = () => {
         const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
-        getAccounts({dateStart, dateEnd}).then((data) => setData(data))
+        getAccountsByCurrency({dateStart, dateEnd}).then((data) => setData(data))
     }
     useEffect(fetchAccountsData, [dateRangeSetting])
     useEffect(() => {

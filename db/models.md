@@ -20,8 +20,19 @@ Table `accounts`
 - `currency_id` INTEGER
 - `created_at` TEXT
 - `in_use` INTEGER DEFAULT TRUE
+- `is_saving_account` INTEGER DEFAULT FALSE
 
 Обозначает счёт
+
+## AccountGroupsByCurrency
+
+Table `accounts_group_by_currency`
+- `id` INTEGER PRIMARY KEY
+- `currency_id` INTEGER
+- `order_number` INTEGER
+- `in_use` INTEGER DEFAULT TRUE
+
+Содержит дополнительную информацию для группировки счетов по валютам
 
 ## AccountDateBalance
 
