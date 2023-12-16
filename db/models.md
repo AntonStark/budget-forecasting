@@ -50,10 +50,10 @@ Index `account_date_balances_account_id_at_date on (account_id, at_date)`
 
 Table `one_time_payments`
 - `id` INTEGER PRIMARY KEY
-- `account_id` INTEGER
+- `description` TEXT
 - `at_date` TEXT
 - `amount` REAL
 - `currency_id` INTEGER
-- `description` TEXT
+- `account_id` INTEGER
 
 Запланированный платёж (в случае положительного `amount`) или доход (отрицательный `amount`)

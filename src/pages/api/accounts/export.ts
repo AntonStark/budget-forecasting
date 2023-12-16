@@ -1,7 +1,8 @@
 import * as fs from 'node:fs/promises';
-import sqlite3 from "sqlite3";
-import {Database, open} from "sqlite";
+import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
+
+import {connect} from "@/utils/database";
 import {accountToJson} from "@/schema/account";
 import {dateIntervalToDatesArray, dateToDateString} from "@/utils/dates";
 
@@ -12,14 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('GET /api/accounts/export/')
     const [dateStartStr, dateEndStr] = [req.query.date_start, req.query.date_end]
 
-    // Check if the database instance has been initialized
-    if (!db) {
-        // If the database instance is not initialized, open the database connection
-        db = await open({
-            filename: "./db/data.db",
-            driver: sqlite3.Database,
-        });
-    }
+    db = await connect(db)
 
     const dates = dateIntervalToDatesArray([dateStartStr, dateEndStr])
     // console.log('dates', dates.map(dateToDateString))

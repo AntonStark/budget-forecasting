@@ -1,7 +1,7 @@
-import sqlite3 from "sqlite3";
-import {Database, open} from "sqlite";
+import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
+import {connect} from "@/utils/database";
 import {accountToJsonShort} from "@/schema/account";
 
 let db: Database = null
@@ -12,14 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const {in_use} = req.body
     console.log(`${req.method} /api/account/${id}/`, req.body)
 
-    // Check if the database instance has been initialized
-    if (!db) {
-        // If the database instance is not initialized, open the database connection
-        db = await open({
-            filename: "./db/data.db",
-            driver: sqlite3.Database,
-        });
-    }
+    db = await connect(db)
 
     if (req.method === "PATCH") {
         await db.run(`

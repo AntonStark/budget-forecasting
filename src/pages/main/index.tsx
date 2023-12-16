@@ -71,6 +71,10 @@ export default function Main() {
                 <AccountTableWrapper data={data}/>
             </div>
 
+            <div id='payments_panel'>
+
+            </div>
+
             <input type="button" value="Export data" onClick={requestExportData}/>
         </div>
     )

@@ -1,6 +1,7 @@
-import sqlite3 from "sqlite3";
-import {Database, open} from "sqlite";
+import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
+
+import {connect} from "@/utils/database";
 import {accountToJson} from "@/schema/account";
 import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
 
@@ -11,14 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('GET /api/accounts/by_currency/')
     const [dateStartStr, dateEndStr] = [req.query.date_start, req.query.date_end]
 
-    // Check if the database instance has been initialized
-    if (!db) {
-        // If the database instance is not initialized, open the database connection
-        db = await open({
-            filename: "./db/data.db",
-            driver: sqlite3.Database,
-        });
-    }
+    db = await connect(db)
 
     const groupsByCurrency = await db.all(`
         SELECT * FROM accounts_group_by_currency ag 
@@ -27,6 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     `)
     // console.log(groupsByCurrency)
 
+    // todo вынести получение данных в models.ts и переиспользовать в разных api-файлах
     const accounts = await db.all(`
         SELECT acc.*, cur.iso_code FROM accounts acc
         JOIN currencies cur on acc.currency_id = cur.id

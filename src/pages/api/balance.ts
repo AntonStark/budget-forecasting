@@ -1,6 +1,7 @@
-import sqlite3 from "sqlite3";
-import {open, Database} from "sqlite";
+import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
+
+import {connect} from "@/utils/database";
 
 let db: Database = null
 
@@ -9,14 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('POST /api/balance/', req.body)
     const {account_id, at_date, value} = req.body
 
-    // Check if the database instance has been initialized
-    if (!db) {
-        // If the database instance is not initialized, open the database connection
-        db = await open({
-            filename: "./db/data.db",
-            driver: sqlite3.Database,
-        });
-    }
+    db = await connect(db)
 
     await db.run(
         `INSERT INTO account_date_balances (account_id, at_date, value)

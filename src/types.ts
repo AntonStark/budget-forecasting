@@ -28,3 +28,12 @@ export enum DateRangeSettings {
     Weekly = "weekly",
     Monthly = "monthly"
 }
+
+export interface PaymentData {
+    id: number
+    description: string
+    at_date: string
+    amount: number
+    currency_iso_code: string
+    account_id: number
+}
