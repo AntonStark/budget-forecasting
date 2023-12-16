@@ -52,6 +52,7 @@ Table `one_time_payments`
 - `account_id` INTEGER
 - `at_date` TEXT
 - `amount` REAL
+- `currency_id` INTEGER
 - `description` TEXT
 
 Запланированный платёж (в случае положительного `amount`) или доход (отрицательный `amount`)
