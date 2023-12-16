@@ -5,6 +5,7 @@
 Table `currencies`
 - `id` INTEGER PRIMARY KEY
 - `iso_code` TEXT
+- `symbol` TEXT
 
 Обозначает валюту
 Содержит:

@@ -46,3 +46,10 @@ export async function exportAccountData({dateStart, dateEnd}) {
         date_end: dateEnd,
     })).then((res) => res.json())
 }
+
+export async function getPayments({dateStart, dateEnd}) {
+    return fetch('/api/payments?' + new URLSearchParams({
+        date_start: dateStart,
+        date_end: dateEnd,
+    })).then((res) => res.json())
+}

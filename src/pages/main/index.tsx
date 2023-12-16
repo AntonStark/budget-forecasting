@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 
-import {AccountTableWrapper} from "@/components/accounts-table";
+import {AccountTableWrapper} from "@/components/accountsTable";
+import {PaymentsTable} from "@/components/paymentsTable";
 import {settingToIntervalBounds} from "@/utils/dates";
-import {exportAccountData, getAccounts, getAccountsByCurrency} from "@/utils/api";
+import {exportAccountData, getAccountsByCurrency} from "@/utils/api";
 import {DateRangeSettings} from "@/types";
 
 
@@ -41,7 +42,7 @@ export default function Main() {
 
     const fetchAccountsData = () => {
         const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
-        getAccountsByCurrency({dateStart, dateEnd}).then((data) => setData(data))
+        getAccountsByCurrency({dateStart, dateEnd}).then(data => setData(data))
     }
     useEffect(fetchAccountsData, [dateRangeSetting])
     useEffect(() => {
@@ -66,16 +67,20 @@ export default function Main() {
         <div>
             <h1>Lets account! ✍️💸📚</h1>
 
-            <div id="accounts_panel">
-                <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSetting}/>
-                <AccountTableWrapper data={data}/>
+            <div id="main_content">
+                <div id="accounts_panel">
+                    <DatesSettingBlock dateRangeSetting={dateRangeSetting} setDateRangeSetting={setDateRangeSetting}/>
+                    <AccountTableWrapper data={data}/>
+                </div>
+
+                <div id="payments_panel">
+                    <PaymentsTable dateRangeSetting={dateRangeSetting}/>
+                </div>
             </div>
 
-            <div id='payments_panel'>
-
+            <div>
+                <input type="button" value="Export data" onClick={requestExportData}/>
             </div>
-
-            <input type="button" value="Export data" onClick={requestExportData}/>
         </div>
     )
 }

@@ -35,5 +35,6 @@ export interface PaymentData {
     at_date: string
     amount: number
     currency_iso_code: string
+    currency_symbol: string
     account_id: number
 }

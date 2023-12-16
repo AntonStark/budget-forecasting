@@ -1,6 +1,6 @@
 import {setBalance} from "@/utils/api";
 import {refreshBalancesEvent} from "@/pages/main";
-import {FocusCell} from "@/components/accounts-table";
+import {FocusCell} from "@/components/accountsTable";
 import {dateToISODateString} from "@/utils/dates";
 
 

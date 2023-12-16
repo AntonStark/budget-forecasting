@@ -13,9 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     db = await connect(db)
 
     const payments = await db.all(`
-        SELECT * FROM one_time_payments
-        WHERE at_date BETWEEN ? AND ?
-        ORDER BY at_date
+        SELECT otp.*, cur.iso_code as currency_iso_code, cur.symbol as currency_symbol
+        FROM one_time_payments otp
+        LEFT JOIN currencies cur on otp.currency_id = cur.id
+        WHERE otp.at_date IS NULL OR otp.at_date BETWEEN ? AND ?
+        ORDER BY otp.at_date NULLS FIRST, otp.amount NULLS LAST
     `, [req.query.date_start, req.query.date_end]
     ).then((result) => {
         return result
@@ -42,8 +44,8 @@ function serializePaymentValue(paymentObj): string {
         return ''
     }
     if (paymentObj.currency_iso_code.toUpperCase() === 'RUB') {
-        return `${paymentObj.amount}${paymentObj.currency_iso_code}`
+        return `${paymentObj.amount}${paymentObj.currency_symbol}`
     } else {
-        return `${paymentObj.currency_iso_code}${paymentObj.amount}`
+        return `${paymentObj.currency_symbol}${paymentObj.amount}`
     }
 }

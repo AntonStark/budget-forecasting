@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {BalanceCell} from "@/components/balance-cell";
+import {BalanceCell} from "@/components/balanceCell";
 import {AccountData} from "@/types";
 import {updateAccount} from "@/utils/api";
 import {dateToDateString, dateToISODateString} from "@/utils/dates";
@@ -15,12 +15,11 @@ export function AccountTableWrapper({data}) {
     if (!data) return
     const {spendingGroups, savingAccountsGroup} = data
 
-    const spendingGroupTables = spendingGroups.map(
-        groupData => <AccountsGroupTableWrapper data={groupData} key={groupData.groupInfo.title}/>
-    );
     return (<>
-        {spendingGroupTables}
-        <AccountsGroupTableWrapper data={savingAccountsGroup} displayConfig={{currencyInName: true}}/>
+        {spendingGroups.map(
+            groupData => <AccountsGroupTableWrapper data={groupData} key={groupData.groupInfo.title}/>
+        )}
+        <AccountsGroupTableWrapper data={savingAccountsGroup} key={"сбережения"} displayConfig={{currencyInName: true}}/>
     </>)
 
 }

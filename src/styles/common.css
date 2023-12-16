@@ -1,5 +1,11 @@
 #accounts_panel {
+    display: inline-block;
     margin: 10px 20px;
+}
+
+#payments_panel {
+    display: inline-block;
+    vertical-align: top;
 }
 
 .account_by_days_table_wrapper {
