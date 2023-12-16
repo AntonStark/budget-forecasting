@@ -13,6 +13,8 @@ export interface AccountBalance {
 
 export interface AccountShortData {
     id: number
+    title: string
+    iso_code: string
     name: string
     in_use: boolean
 }

@@ -4,6 +4,8 @@ import {dateToISODateString} from "@/utils/dates";
 export function accountToJsonShort(accountObj): AccountShortData {
     return {
         id: accountObj.id,
+        title: accountObj.title,
+        iso_code: accountObj.iso_code,
         name: `${accountObj.title}, ${accountObj.iso_code}`,
         in_use: accountObj.in_use,
     }

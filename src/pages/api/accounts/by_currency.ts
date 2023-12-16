@@ -28,8 +28,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log(groupsByCurrency)
 
     const accounts = await db.all(`
-        SELECT * FROM accounts
-        JOIN currencies on accounts.currency_id = currencies.id
+        SELECT acc.*, cur.iso_code FROM accounts acc
+        JOIN currencies cur on acc.currency_id = cur.id
+        ORDER BY acc.order_number
     `).then((result) => {
         // console.log("Select accounts done")
         return result

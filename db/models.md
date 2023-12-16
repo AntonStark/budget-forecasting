@@ -21,6 +21,7 @@ Table `accounts`
 - `created_at` TEXT
 - `in_use` INTEGER DEFAULT TRUE
 - `is_saving_account` INTEGER DEFAULT FALSE
+- `order_number` INTEGER
 
 Обозначает счёт
 

@@ -15,16 +15,17 @@ export function AccountTableWrapper({data}) {
     if (!data) return
     const {spendingGroups, savingAccountsGroup} = data
 
+    const spendingGroupTables = spendingGroups.map(
+        groupData => <AccountsGroupTableWrapper data={groupData} key={groupData.groupInfo.title}/>
+    );
     return (<>
-        {
-            spendingGroups.map(groupData => <AccountsGroupTableWrapper data={groupData} key={groupData.groupInfo.title}/>)
-        }
-        <AccountsGroupTableWrapper data={savingAccountsGroup}/>
+        {spendingGroupTables}
+        <AccountsGroupTableWrapper data={savingAccountsGroup} displayConfig={{currencyInName: true}}/>
     </>)
 
 }
 
-function AccountsGroupTableWrapper({data: groupData}) {
+function AccountsGroupTableWrapper({data: groupData, displayConfig = {}}) {
     const [hideNotInUse, setHideNotInUse] = useState(true)
     const spanAccountsHidden = (
         <span className="account_by_days_table_annotation">
@@ -39,14 +40,14 @@ function AccountsGroupTableWrapper({data: groupData}) {
 
     return (
         <div className="account_by_days_table_wrapper">
-            <AccountsTable data={groupData} hideNotInUse={hideNotInUse} title={groupData.groupInfo.title}/>
+            <AccountsTable data={groupData} displayConfig={displayConfig} hideNotInUse={hideNotInUse} title={groupData.groupInfo.title}/>
             {hideNotInUse ? spanAccountsHidden : spanAccountsNotHidden}
         </div>
     )
 }
 
 
-function AccountsTable({data, hideNotInUse, title}) {
+function AccountsTable({data, hideNotInUse, title, displayConfig}) {
     // console.log(data)
     if (!data) return
 
@@ -69,6 +70,7 @@ function AccountsTable({data, hideNotInUse, title}) {
                                     isoDates={isoDates}
                                     focusCell={focusCell}
                                     setFocusCell={setFocusCell}
+                                    displayConfig={displayConfig}
                                     key={accountData.name}/>
                 )
             }</tbody>
@@ -110,10 +112,13 @@ const AccountsTableHeader = ({dates, isoDates, title}) => {
     )
 }
 
-const AccountRow = ({accountData, isoDates, focusCell, setFocusCell}) => {
-    const {id, name, in_use, balances}: AccountData = accountData
+const AccountRow = ({accountData, isoDates, focusCell, setFocusCell, displayConfig}) => {
+    const {id, name, title, in_use, balances}: AccountData = accountData
     // console.log('accountData', accountData)
     // console.log(`[RENDER AccountRow:${id}]`)
+
+    const currencyInName = displayConfig.currencyInName
+    const _name = (currencyInName ? name : title)
 
     const makeOptions = (index) => {
         const options = {}
@@ -139,7 +144,7 @@ const AccountRow = ({accountData, isoDates, focusCell, setFocusCell}) => {
 
     return (
         <tr>
-            <td key={"title"}>{name}</td>
+            <td key={"title"}>{_name}</td>
             <td className="flag-in-use"><input type="checkbox" defaultChecked={Boolean(in_use)} onChange={switchAccountUseFlag}/></td>
             {
                 balances.map((balanceObj, index) =>
