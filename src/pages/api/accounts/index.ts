@@ -1,9 +1,10 @@
 import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
+import {selectAccounts, selectBalances} from "@/models";
 import {accountToJson} from "@/schema/account";
 import {connect} from "@/utils/database";
+import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
 
 let db: Database = null
 
@@ -16,33 +17,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const currencies = await db.all("SELECT * FROM currencies")
     // console.log(currencies)
 
-    const accounts = await db.all(`
-        SELECT * FROM accounts
-        JOIN currencies on accounts.currency_id = currencies.id
-    `).then((result) => {
-        // console.log("Select accounts done")
-        return result
-    }, (err) => {
-        console.error(err.message)
-        res.status(500).json({error: true})
-        throw err
-    })
+    const accounts = await selectAccounts(db, res)
     // console.log(accounts)
 
-    const balances = await db.all(`
-        SELECT adb.*, cur.iso_code as currency_iso_code 
-        FROM account_date_balances adb
-        JOIN currencies cur on adb.currency_id = cur.id
-        WHERE adb.at_date BETWEEN ? AND ?
-        ORDER BY adb.at_date
-    `, [req.query.date_start, req.query.date_end]
-    ).then((result) => {
-        // console.log("Select account_date_balances done")
-        return result
-    }, (err) => {
-        console.error(err.message)
-        res.status(500).json({error: true})
-        throw err
+    const balances = await selectBalances(db, res, {
+        dateStart: req.query.date_start,
+        dateEnd: req.query.date_end,
     })
     // console.log(balances)
 

@@ -1,6 +1,7 @@
 import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
+import {selectPayments} from "@/models";
 import {connect} from "@/utils/database";
 import {PaymentData} from "@/types";
 
@@ -12,19 +13,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     db = await connect(db)
 
-    const payments = await db.all(`
-        SELECT otp.*, cur.iso_code as currency_iso_code, cur.symbol as currency_symbol
-        FROM one_time_payments otp
-        LEFT JOIN currencies cur on otp.currency_id = cur.id
-        WHERE otp.at_date IS NULL OR otp.at_date BETWEEN ? AND ?
-        ORDER BY otp.at_date NULLS FIRST, otp.amount NULLS LAST
-    `, [req.query.date_start, req.query.date_end]
-    ).then((result) => {
-        return result
-    }, (err) => {
-        console.error(err.message)
-        res.status(500).json({error: true})
-        throw err
+    const payments = await selectPayments(db, res, {
+        dateStart: req.query.date_start,
+        dateEnd: req.query.date_end,
     })
     // console.log(payments)
 
