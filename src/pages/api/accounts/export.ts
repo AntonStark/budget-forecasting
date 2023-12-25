@@ -2,7 +2,7 @@ import * as fs from 'node:fs/promises';
 import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {selectAccounts, selectBalances} from "@/models";
+import {selectAccounts, selectBalances, selectLastBalancesBeforeDate} from "@/models";
 import {accountToJson} from "@/schema/account";
 import {connect} from "@/utils/database";
 import {dateIntervalToDatesArray, dateToDateString} from "@/utils/dates";
@@ -20,11 +20,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // console.log('dates', dates.map(dateToDateString))
     const accounts = await selectAccounts(db, res)
     // console.log(accounts)
+
     const balances = await selectBalances(db, res, {
         dateStart: dateStartStr,
         dateEnd: dateEndStr,
     })
-    const accountsData = accounts.map(accObj => accountToJson(accObj, balances, dates))
+
+    const lastPreviousBalances = await selectLastBalancesBeforeDate(db, res, {
+        accounts: accounts,
+        beforeDate: req.query.date_start
+    })
+
+    const accountsData = accounts.map(accObj => accountToJson(accObj, balances, lastPreviousBalances[accObj.id], dates))
     // console.log('accountsData', accountsData)
 
     const fileName = ['data', dateStartStr, dateEndStr].join('_') + '.csv'

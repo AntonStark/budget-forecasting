@@ -11,7 +11,7 @@ export function accountToJsonShort(accountObj): AccountShortData {
     }
 }
 
-export function accountToJson(accountObj, balanceData: Array<BalanceData>, dates): AccountData {
+export function accountToJson(accountObj, balanceData: Array<BalanceData>, lastBalanceBefore: BalanceData, dates): AccountData {
     // console.log("dates", dates)
     const dbAccountBalances = balanceData.filter(balanceObj => balanceObj.account_id === accountObj.id)
     const dateToBalance = Object.fromEntries(dbAccountBalances.map(balance => [balance.at_date, balance]))
@@ -25,8 +25,8 @@ export function accountToJson(accountObj, balanceData: Array<BalanceData>, dates
             if (previousDayBalance) {
                 // take from previous as inferred
                 balancesArray[i] = {...previousDayBalance, inferred: true, at_date: indexToDate[i]}
-            } else {  // no previous balance, todo need additional query for last available balance
-                balancesArray[i] = {value: '?', at_date: indexToDate[i]}
+            } else {  // no previous balance
+                balancesArray[i] = {...lastBalanceBefore, inferred: true, at_date: indexToDate[i]}
             }
         } else {
             balancesArray[i] = previousDayBalance = dateBalance

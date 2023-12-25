@@ -1,7 +1,7 @@
 import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {selectAccounts, selectBalances} from "@/models";
+import {selectAccounts, selectBalances, selectLastBalancesBeforeDate} from "@/models";
 import {accountToJson} from "@/schema/account";
 import {connect} from "@/utils/database";
 import {dateIntervalToDatesArray, dateToDateString, dateToISODateString} from "@/utils/dates";
@@ -30,6 +30,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
     // console.log(balances)
 
+    const lastPreviousBalances = await selectLastBalancesBeforeDate(db, res, {
+        accounts: accounts,
+        beforeDate: req.query.date_start
+    })
+
     // console.log("query", [req.query.date_start, req.query.date_end])
     const dates = dateIntervalToDatesArray(
         [req.query.date_start, req.query.date_end]
@@ -41,7 +46,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             accounts: (
                 accounts
                 .filter(accObj => accObj.currency_id === group.currency_id && !accObj.is_saving_account)
-                .map(accObj => accountToJson(accObj, balances, dates))
+                .map(accObj => accountToJson(accObj, balances, lastPreviousBalances[accObj.id], dates))
             ),
             dates: dates.map(dateToDateString),
             isoDates: dates.map(dateToISODateString),
@@ -54,7 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         savingAccountsGroup: {
             accounts: (
                 accounts.filter(accObj => accObj.is_saving_account)
-                .map(accObj => accountToJson(accObj, balances, dates))
+                .map(accObj => accountToJson(accObj, balances, lastPreviousBalances[accObj.id], dates))
             ),
             dates: dates.map(dateToDateString),
             isoDates: dates.map(dateToISODateString),

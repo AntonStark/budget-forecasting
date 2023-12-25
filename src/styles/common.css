@@ -10,7 +10,7 @@
 
 .account_by_days_table_wrapper {
     overflow: scroll;
-    margin: 80px 0;
+    margin: 60px 0;
 }
 .account_by_days_table_wrapper::-webkit-scrollbar {
     display: none;

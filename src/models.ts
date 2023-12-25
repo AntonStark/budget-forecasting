@@ -33,6 +33,38 @@ export async function selectBalances(db: Database, res: NextApiResponse, {dateSt
     })
 }
 
+async function selectAccountBalanceBeforeDate(db: Database, res: NextApiResponse, {accountId, beforeDate}) {
+    const result = await db.all(`
+        SELECT adb.*
+        FROM account_date_balances adb
+        WHERE adb.account_id = ? AND adb.at_date < ?
+        ORDER BY adb.at_date DESC 
+        LIMIT 1
+    `, [accountId, beforeDate]
+    ).then((result) => {
+        return result
+    }, (err) => {
+        console.error(err.message)
+        res.status(500).json({error: true})
+        throw err
+    })
+
+    const defaultBalance = {value: 0, account_id: accountId}
+    return (result.length > 0 ? result[0] : defaultBalance)
+}
+
+export async function selectLastBalancesBeforeDate(db: Database, res: NextApiResponse, {accounts, beforeDate}) {
+    const result = {}
+    for (const accountObj of accounts) {
+        result[accountObj.id] = await selectAccountBalanceBeforeDate(db, res, {
+            accountId: accountObj.id,
+            beforeDate: beforeDate,
+        })
+    }
+    // console.log(result)
+    return result
+}
+
 export async function selectPayments(db: Database, res: NextApiResponse, {dateStart, dateEnd}) {
     return await db.all(`
         SELECT otp.*, cur.iso_code as currency_iso_code, cur.symbol as currency_symbol
