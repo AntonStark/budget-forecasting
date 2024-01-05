@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
 
 import {AccountTableWrapper} from "@/components/accountsTable";
 import {PaymentsTable} from "@/components/paymentsTable";
@@ -14,14 +15,17 @@ function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
     }
 
     const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
-    const periodTitle = new Date(dateStart).toLocaleDateString('en', {"month": "long", "year": "numeric"})
+    const periodTitle = new Date(dateStart).toLocaleDateString('en', {
+        month: "long",
+        year: "numeric",
+    })
 
     return (
         <>
             <p>
                 <label htmlFor="select_date_range">Display </label>
                 <select id="select_date_range" name="select_date_range"
-                        defaultValue={dateRangeSetting} onChange={handleChange}>
+                        value={dateRangeSetting} onChange={handleChange}>
                     <option value={DateRangeSettings.Previous_7_Days}>Previous 7 days</option>
                     <option value={DateRangeSettings.Weekly}>Weekly</option>
                     <option value={DateRangeSettings.Monthly}>Monthly</option>
@@ -35,10 +39,25 @@ function DatesSettingBlock({dateRangeSetting, setDateRangeSetting}) {
 
 export const refreshBalancesEvent = new Event('refreshBalances')
 
+const TIME_DISPLAY_PARAM = 'dates-display'
+
 
 export default function Main() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const dateRangeParam = searchParams.get(TIME_DISPLAY_PARAM)
+
     const [data, setData] = useState(null)
-    const [dateRangeSetting, setDateRangeSetting] = useState(DateRangeSettings.Previous_7_Days)
+    const [dateRangeSetting, _setDateRangeSetting] = useState(DateRangeSettings.Previous_7_Days)
+
+    if (dateRangeParam && dateRangeParam !== dateRangeSetting) {
+        _setDateRangeSetting(dateRangeParam as DateRangeSettings)
+    }
+
+    const setDateRangeSetting = (value) => {
+        _setDateRangeSetting(value)
+        router.push(`/main?${TIME_DISPLAY_PARAM}=${value}`)
+    }
 
     const fetchAccountsData = () => {
         const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
@@ -47,7 +66,10 @@ export default function Main() {
     useEffect(fetchAccountsData, [dateRangeSetting])
     useEffect(() => {
         document.addEventListener(refreshBalancesEvent.type, fetchAccountsData)
-    }, [])
+        return () => {
+            document.removeEventListener(refreshBalancesEvent.type, fetchAccountsData)
+        }
+    }, [dateRangeSetting])
 
     const requestExportData = () => {
         const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
