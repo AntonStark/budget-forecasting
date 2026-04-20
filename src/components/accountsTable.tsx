@@ -11,6 +11,7 @@ export type FocusCell = {
     date: string
 }
 
+// @ts-ignore
 export function AccountTableWrapper({data}) {
     if (!data) return
     const {spendingGroups, savingAccountsGroup} = data

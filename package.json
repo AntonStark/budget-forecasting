@@ -12,12 +12,16 @@
   "author": "Anton Iakovlev",
   "license": "UNLICENSED",
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "framer-motion": "^12.38.0",
     "minimist": "^1.2.8",
     "next": "^14.0.1",
+    "postcss": "^8.5.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.6",
+    "tailwindcss": "^4.2.2",
     "typescript": "^4.5.2"
   },
   "devDependencies": {
