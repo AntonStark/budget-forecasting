@@ -1,14 +1,25 @@
 import {Database} from "sqlite";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {selectPayments} from "@/models";
+import {createPayment, selectPayments} from "@/models";
 import {connect} from "@/utils/database";
 import {PaymentData} from "@/types";
 
 let db: Database = null
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, rep: NextApiResponse) => {
     // console.log(req)
+    switch (req.method) {
+        case 'GET':
+            await handleListPayments(req, rep);
+            break;
+        case 'POST':
+            await handleCreatePayment(req, rep);
+            break;
+    }
+}
+
+async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
     console.log('GET /api/payments/')
 
     db = await connect(db)
@@ -30,7 +41,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
 }
 
-function serializePaymentValue(paymentObj): string {
+async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
+    console.log('POST /api/payments/')
+
+    db = await connect(db)
+
+    await createPayment(db, {
+        description: req.body['description'],
+        amount: req.body['amount'],
+        at_date: req.body['at_date'],
+    })
+}
+
+function serializePaymentValue(paymentObj: PaymentData): string {
     if (!(paymentObj.currency_iso_code && paymentObj.amount)) {
         return ''
     }

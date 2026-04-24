@@ -1,12 +1,14 @@
 import React, {useState} from "react";
+import { motion } from "framer-motion";
 
 import ModeSwitcher from "@/components/widgets/ModeSwitcher";
-import { motion } from "framer-motion";
 import WeekTable from "@/components/widgets/WeekTable";
 import MonthTable from "@/components/widgets/MonthTable";
+import ExpenseModal from "@/components/widgets/ExpenseModal";
 
 export default function PaymentsPlanner() {
   const [mode, setMode] = useState("week");
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -15,7 +17,7 @@ export default function PaymentsPlanner() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <ModeSwitcher mode={mode} setMode={setMode} />
+          <ModeSwitcher mode={mode} setMode={setMode} onAdd={() => setShowModal(true)} />
         </motion.div>
 
         <motion.div
@@ -27,6 +29,8 @@ export default function PaymentsPlanner() {
           {mode === "week" ? <WeekTable /> : <MonthTable />}
         </motion.div>
       </div>
+
+      {showModal && <ExpenseModal onClose={() => setShowModal(false)} />}
     </div>
   );
 }

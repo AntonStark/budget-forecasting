@@ -41,7 +41,7 @@ export async function updateAccount(id, {inUse}) {
 }
 
 export async function exportAccountData({dateStart, dateEnd}) {
-    return fetch('api/accounts/export?' + new URLSearchParams({
+    return fetch('/api/accounts/export?' + new URLSearchParams({
         date_start: dateStart,
         date_end: dateEnd,
     })).then((res) => res.json())
@@ -52,4 +52,11 @@ export async function getPayments({dateStart, dateEnd}) {
         date_start: dateStart,
         date_end: dateEnd,
     })).then((res) => res.json())
+}
+
+export async function saveOnceOfPayment({description, amount, atDate}) {
+    return fetch('/api/payments', {
+        method: 'POST',
+        body: JSON.stringify({description, amount, at_date: atDate})
+    }).then((res) => res.json())
 }

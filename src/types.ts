@@ -38,3 +38,9 @@ export interface PaymentData {
     currency_symbol: string
     account_id: number
 }
+
+export interface PaymentInSchema {
+    description: string
+    at_date: string
+    amount: number
+}
