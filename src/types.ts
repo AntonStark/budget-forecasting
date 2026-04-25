@@ -36,11 +36,21 @@ export interface PaymentData {
     amount: number
     currency_iso_code: string
     currency_symbol: string
-    account_id: number
+    account_id?: number
 }
 
 export interface PaymentInSchema {
     description: string
     at_date: string
     amount: number
+}
+
+
+export type PaymentType = "once" | "monthly";
+
+export interface ExpenseFormData {
+    type: PaymentType
+    amount: number
+    description: string
+    plannedAt: {dayOfMonth: number} | {date: string}
 }

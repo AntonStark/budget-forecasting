@@ -5,6 +5,7 @@ import ModeSwitcher from "@/components/widgets/ModeSwitcher";
 import WeekTable from "@/components/widgets/WeekTable";
 import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
+import {savePayment} from "@/utils/api";
 
 export default function PaymentsPlanner() {
   const [mode, setMode] = useState("week");
@@ -30,7 +31,7 @@ export default function PaymentsPlanner() {
         </motion.div>
       </div>
 
-      {showModal && <ExpenseModal onClose={() => setShowModal(false)} />}
+      {showModal && <ExpenseModal onClose={() => setShowModal(false)} onSubmit={savePayment} />}
     </div>
   );
 }

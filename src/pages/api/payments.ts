@@ -1,9 +1,9 @@
-import {Database} from "sqlite";
+import {Database} from "better-sqlite3";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {createPayment, selectPayments} from "@/models";
 import {connect} from "@/utils/database";
 import {PaymentData} from "@/types";
+import {createOneTimePayment, listOneTimePayments} from "@/sqlite/payments";
 
 let db: Database = null
 
@@ -22,9 +22,9 @@ export default async (req: NextApiRequest, rep: NextApiResponse) => {
 async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
     console.log('GET /api/payments/')
 
-    db = await connect(db)
+    db = await connect(db);
 
-    const payments = await selectPayments(db, res, {
+    const payments = listOneTimePayments(db, {
         dateStart: req.query.date_start,
         dateEnd: req.query.date_end,
     })
@@ -45,12 +45,15 @@ async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
     console.log('POST /api/payments/')
 
     db = await connect(db)
+    console.log('description', req.body['description']);
 
-    await createPayment(db, {
+    createOneTimePayment(db, {
         description: req.body['description'],
         amount: req.body['amount'],
         at_date: req.body['at_date'],
     })
+
+    res.status(200).json(JSON.stringify({status: "OK"}));
 }
 
 function serializePaymentValue(paymentObj: PaymentData): string {

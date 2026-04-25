@@ -1,3 +1,5 @@
+import {ExpenseFormData} from "@/types";
+
 export async function getAccounts({dateStart, dateEnd}) {
     return fetch('/api/accounts?' + new URLSearchParams({
         date_start: dateStart,
@@ -54,9 +56,21 @@ export async function getPayments({dateStart, dateEnd}) {
     })).then((res) => res.json())
 }
 
-export async function saveOnceOfPayment({description, amount, atDate}) {
+async function saveOnceOfPayment({description, amount, atDate}) {
     return fetch('/api/payments', {
         method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify({description, amount, at_date: atDate})
     }).then((res) => res.json())
+}
+
+export async function savePayment(expenseFormData: ExpenseFormData) {
+    const {amount, description} = expenseFormData;
+    if (expenseFormData.type === "once") {
+        // @ts-ignore
+        const atDate = expenseFormData.plannedAt.date;
+        await saveOnceOfPayment({amount, description, atDate});
+    }
 }

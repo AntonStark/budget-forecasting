@@ -1,6 +1,6 @@
-import {Database} from "sqlite";
+import {Database} from "better-sqlite3";
 import {NextApiResponse} from "next";
-import {PaymentData, PaymentInSchema} from "@/types";
+import {PaymentData} from "@/types";
 
 export async function selectAccounts(db: Database, res: NextApiResponse) {
     return await db.all(`
@@ -64,28 +64,4 @@ export async function selectLastBalancesBeforeDate(db: Database, res: NextApiRes
     }
     // console.log(result)
     return result
-}
-
-export async function selectPayments(db: Database, res: NextApiResponse, {dateStart, dateEnd}) {
-    return await db.all<PaymentData[]>(`
-        SELECT otp.*, cur.iso_code as currency_iso_code, cur.symbol as currency_symbol
-        FROM one_time_payments otp
-        LEFT JOIN currencies cur on otp.currency_id = cur.id
-        WHERE otp.at_date IS NULL OR otp.at_date BETWEEN ? AND ?
-        ORDER BY otp.at_date NULLS FIRST, otp.amount NULLS LAST
-    `, [dateStart, dateEnd]
-    ).then((result) => {
-        return result
-    }, (err) => {
-        console.error(err.message)
-        res.status(500).json({error: true})
-        throw err
-    })
-}
-
-export async function createPayment(db: Database, item: PaymentInSchema) {
-    return await db.run(`
-        INSERT INTO one_time_payments (amount, description, at_date)
-        VALUES (?, ?, ?)
-    `, [item.amount, item.description, item.at_date])
 }
