@@ -45,6 +45,18 @@ export interface PaymentInSchema {
     amount: number
 }
 
+export type Mode = "week" | "month";
+
+type PlannerState = {
+  mode: Mode;
+  setMode: (m: Mode) => void;
+
+  currentDate: Date;
+  setCurrentDate: (d: Date) => void;
+
+  next: () => void;
+  prev: () => void;
+};
 
 export type PaymentType = "once" | "monthly";
 

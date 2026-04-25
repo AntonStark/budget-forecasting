@@ -65,3 +65,23 @@ export function dateIntervalToDatesArray([dateStartStr, dateEndStr]): Array<Date
         return res
     })
 }
+
+export function formatMonth(date: Date) {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export function formatWeek(date: Date) {
+  const start = new Date(date);
+  const day = start.getDay() || 7;
+  start.setDate(start.getDate() - day + 1);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  return `${start.getDate()}–${end.getDate()} ${end.toLocaleDateString("en-US", {
+    month: "short",
+  })}`;
+}

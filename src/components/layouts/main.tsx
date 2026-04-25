@@ -1,37 +1,48 @@
 import React, {useState} from "react";
 import { motion } from "framer-motion";
 
-import ModeSwitcher from "@/components/widgets/ModeSwitcher";
+import Header from "@/components/widgets/Header";
 import WeekTable from "@/components/widgets/WeekTable";
 import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
-import {savePayment} from "@/utils/api";
+import {PlannerProvider, usePlannerContext} from "@/components/context/PlannerContext";
+
+import {savePayment, getPayments} from "@/utils/api";
+
+function Content() {
+  const { mode } = usePlannerContext();
+
+  return (
+    <motion.div
+      key={mode}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {mode === "week" ? <WeekTable /> : <MonthTable />}
+    </motion.div>
+  );
+}
 
 export default function PaymentsPlanner() {
-  const [mode, setMode] = useState("week");
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <ModeSwitcher mode={mode} setMode={setMode} onAdd={() => setShowModal(true)} />
-        </motion.div>
+    <PlannerProvider>
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <Header onAdd={() => setShowModal(true)}/>
 
-        <motion.div
-          key={mode}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          {mode === "week" ? <WeekTable /> : <MonthTable />}
-        </motion.div>
+          <Content/>
+        </div>
+
+        {showModal &&
+            <ExpenseModal
+                onClose={() => setShowModal(false)}
+                onSubmit={savePayment}
+            />
+        }
       </div>
-
-      {showModal && <ExpenseModal onClose={() => setShowModal(false)} onSubmit={savePayment} />}
-    </div>
+    </PlannerProvider>
   );
 }
