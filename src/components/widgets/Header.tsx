@@ -1,30 +1,70 @@
 import { motion } from "framer-motion";
 
 import {usePlannerContext} from "@/components/context/PlannerContext";
-import ModeSwitcher from "@/components/widgets/ModeSwitcher";
+import HeaderTools from "@/components/widgets/HeaderTools";
+
 import {formatMonth, formatWeek} from "@/utils/dates";
 
 export default function Header({ onAdd }) {
-  const { mode, setMode, next, prev, currentDate } = usePlannerContext();
+  const { mode, setMode, currentDate, next, prev, setCurrentDate } = usePlannerContext();
+
+  const goToday = () => setCurrentDate(new Date());
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm px-4 py-3">
+      {/* LEFT: navigation */}
       <div className="flex items-center gap-2">
-        <button onClick={prev}>←</button>
+        <button
+          onClick={prev}
+          className="w-9 h-9 rounded-xl hover:bg-gray-100 transition"
+        >←</button>
 
-        <span>
+        <div className="text-sm font-medium min-w-[140px] text-center">
           {mode === "week" ? formatWeek(currentDate) : formatMonth(currentDate)}
-        </span>
+        </div>
 
-        <button onClick={next}>→</button>
+        <button
+          onClick={next}
+          className="w-9 h-9 rounded-xl hover:bg-gray-100 transition"
+        >→</button>
       </div>
 
-      <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-        <ModeSwitcher mode={mode} setMode={setMode} onAdd={onAdd}/>
-      </motion.div>
+      {/* CENTER: segmented control */}
+      <div className="relative flex bg-gray-100 rounded-xl p-1">
+        <SegmentButton active={mode === "week"} onClick={() => setMode("week")}>
+          Week
+        </SegmentButton>
+        <SegmentButton active={mode === "month"} onClick={() => setMode("month")}>
+          Month
+        </SegmentButton>
+
+        <motion.div
+          layout
+          className="absolute top-1 bottom-1 w-1/2 bg-white rounded-lg shadow-sm"
+          animate={{ x: mode === "week" ? 0 : "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      </div>
+
+      {/* RIGHT: actions */}
+      <div className="flex items-center gap-2">
+        <HeaderTools goToday={goToday} onAdd={onAdd}/>
+      </div>
+
     </div>
+  );
+}
+
+
+function SegmentButton({ active, children, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative z-10 px-4 py-1.5 text-sm rounded-lg transition ${
+        active ? "text-black" : "text-gray-500"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

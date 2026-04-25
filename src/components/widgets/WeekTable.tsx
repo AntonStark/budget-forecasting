@@ -4,7 +4,7 @@ export default function WeekTable() {
   const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
   return (
-    <div className="rounded-2xl shadow-sm">
+    <div className="bg-white rounded-2xl shadow-sm">
       <div className="p-4">
         <div className="grid grid-cols-7 gap-2">
           {days.map((day) => (
