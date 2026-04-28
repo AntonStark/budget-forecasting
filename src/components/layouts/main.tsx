@@ -1,17 +1,27 @@
-import React, {useState} from "react";
-import { motion } from "framer-motion";
+import React, {useEffect, useState} from "react";
+import {motion} from "framer-motion";
 
 import Header from "@/components/widgets/Header";
 import WeekTable from "@/components/widgets/WeekTable";
 import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
-import {PlannerProvider, usePlannerContext} from "@/components/context/PlannerContext";
+import {usePlannerContext} from "@/components/context/PlannerContext";
 
-import {savePayment, getPayments} from "@/utils/api";
+import {getPayments, savePayment} from "@/utils/api";
+import {Mode, PaymentData} from "@/types";
+import {settingToIntervalDates} from "@/utils/dates";
 
 export default function PaymentsPlanner() {
   const [showModal, setShowModal] = useState(false);
-  const { mode } = usePlannerContext();
+  const { mode, currentDate } = usePlannerContext();
+
+  const [payments, setPayments] = useState<PaymentData[]>([]);
+
+  useEffect(() => {
+    const [dateStart, dateEnd] = settingToIntervalDates(mode, currentDate);
+    getPayments(dateStart, dateEnd).then(data => setPayments(data.payments));
+  }, [mode, currentDate]);
+  console.log(payments);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -24,7 +34,7 @@ export default function PaymentsPlanner() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {mode === "week" ? <WeekTable /> : <MonthTable />}
+          {mode === Mode.week ? <WeekTable payments={payments} /> : <MonthTable payments={payments} />}
         </motion.div>
       </div>
 

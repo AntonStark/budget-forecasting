@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function MonthTable() {
+export default function MonthTable({payments}) {
   const weeks = ["Неделя 1", "Неделя 2", "Неделя 3", "Неделя 4"];
 
   return (

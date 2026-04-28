@@ -1,14 +1,8 @@
 import {ExpenseFormData} from "@/types";
+import {dateToISODateString} from "@/utils/dates";
 
 export async function getAccounts({dateStart, dateEnd}) {
     return fetch('/api/accounts?' + new URLSearchParams({
-        date_start: dateStart,
-        date_end: dateEnd,
-    })).then((res) => res.json())
-}
-
-export async function getAccountsByCurrency({dateStart, dateEnd}) {
-    return fetch('/api/accounts/by_currency?' + new URLSearchParams({
         date_start: dateStart,
         date_end: dateEnd,
     })).then((res) => res.json())
@@ -49,10 +43,10 @@ export async function exportAccountData({dateStart, dateEnd}) {
     })).then((res) => res.json())
 }
 
-export async function getPayments({dateStart, dateEnd}) {
+export async function getPayments(dateStart: Date, dateEnd: Date) {
     return fetch('/api/payments?' + new URLSearchParams({
-        date_start: dateStart,
-        date_end: dateEnd,
+        date_start: dateToISODateString(dateStart),
+        date_end: dateToISODateString(dateEnd),
     })).then((res) => res.json())
 }
 

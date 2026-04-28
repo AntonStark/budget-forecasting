@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import {createContext, useContext, useEffect, useState} from "react";
+import {usePathname, useRouter} from "next/navigation";
 
-import {Mode} from "@/types";
+import {Mode, PlannerState} from "@/types";
+import {dateToISODateString} from "@/utils/dates";
 
 const PlannerContext = createContext(null);
 
@@ -14,14 +15,14 @@ export function PlannerProvider({ searchParams, children }) {
   const initialDate = searchParams.date ? new Date(searchParams.date) : new Date();
 
   const [mode, setMode] = useState<Mode>(initialMode);
-  const [currentDate, setCurrentDate] = useState(initialDate);
+  const [currentDate, setCurrentDate] = useState<Date>(initialDate);
 
   // --- SYNC TO URL ---
   useEffect(() => {
     const params = new URLSearchParams();
 
     params.set("mode", mode);
-    params.set("date", currentDate.toISOString().slice(0, 10));
+    params.set("date", dateToISODateString(currentDate));
 
     router.replace(`${pathname}?${params.toString()}`);
   }, [mode, currentDate]);
@@ -30,7 +31,7 @@ export function PlannerProvider({ searchParams, children }) {
   const next = () => {
     setCurrentDate((prev) => {
       const d = new Date(prev);
-      if (mode === "week") d.setDate(d.getDate() + 7);
+      if (mode === Mode.week) d.setDate(d.getDate() + 7);
       else d.setMonth(d.getMonth() + 1);
       return d;
     });
@@ -39,7 +40,7 @@ export function PlannerProvider({ searchParams, children }) {
   const prev = () => {
     setCurrentDate((prev) => {
       const d = new Date(prev);
-      if (mode === "week") d.setDate(d.getDate() - 7);
+      if (mode === Mode.week) d.setDate(d.getDate() - 7);
       else d.setMonth(d.getMonth() - 1);
       return d;
     });
@@ -54,4 +55,4 @@ export function PlannerProvider({ searchParams, children }) {
   );
 }
 
-export const usePlannerContext = () => useContext(PlannerContext);
+export const usePlannerContext = () => useContext<PlannerState>(PlannerContext);

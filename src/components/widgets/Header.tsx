@@ -1,9 +1,10 @@
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 
 import {usePlannerContext} from "@/components/context/PlannerContext";
 import HeaderTools from "@/components/widgets/HeaderTools";
 
 import {formatMonth, formatWeek} from "@/utils/dates";
+import {Mode} from "@/types";
 
 export default function Header({ onAdd }) {
   const { mode, setMode, currentDate, next, prev, setCurrentDate } = usePlannerContext();
@@ -20,7 +21,7 @@ export default function Header({ onAdd }) {
         >←</button>
 
         <div className="text-sm font-medium min-w-[140px] text-center">
-          {mode === "week" ? formatWeek(currentDate) : formatMonth(currentDate)}
+          {mode === Mode.week ? formatWeek(currentDate) : formatMonth(currentDate)}
         </div>
 
         <button
@@ -30,18 +31,18 @@ export default function Header({ onAdd }) {
       </div>
 
       {/* CENTER: segmented control */}
-      <div className="relative flex bg-gray-100 rounded-xl p-1">
-        <SegmentButton active={mode === "week"} onClick={() => setMode("week")}>
+      <div className="relative flex bg-gray-100 rounded-xl py-1">
+        <SegmentButton active={mode === Mode.week} onClick={() => setMode(Mode.week)}>
           Week
         </SegmentButton>
-        <SegmentButton active={mode === "month"} onClick={() => setMode("month")}>
+        <SegmentButton active={mode === Mode.month} onClick={() => setMode(Mode.month)}>
           Month
         </SegmentButton>
 
         <motion.div
           layout
           className="absolute top-1 bottom-1 w-1/2 bg-white rounded-lg shadow-sm"
-          animate={{ x: mode === "week" ? 0 : "100%" }}
+          animate={{ x: mode === Mode.week ? 0 : "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         />
       </div>

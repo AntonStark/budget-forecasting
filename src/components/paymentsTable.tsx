@@ -1,16 +1,16 @@
-import {settingToIntervalBounds} from "@/utils/dates";
-import {DateRangeSettings} from "@/types";
+import {settingToIntervalDates} from "@/utils/dates";
+import {Mode} from "@/types";
 import {useEffect, useState} from "react";
 import {getPayments} from "@/utils/api";
 
-export function PaymentsTable({dateRangeSetting}) {
+export function PaymentsTable({mode}: {mode: Mode}) {
     const [payments, setPayments] = useState(null)
 
     const fetchPaymentsData = () => {
-        const [dateStart, dateEnd] = settingToIntervalBounds(dateRangeSetting as DateRangeSettings)
-        getPayments({dateStart, dateEnd}).then(data => setPayments(data.payments))
+        const [dateStart, dateEnd] = settingToIntervalDates(mode);
+        getPayments(dateStart, dateEnd).then(data => setPayments(data.payments))
     }
-    useEffect(fetchPaymentsData, [dateRangeSetting])
+    useEffect(fetchPaymentsData, [mode]);
 
     if (!payments) return
     // console.log('PaymentsTable', payments)

@@ -1,4 +1,4 @@
-import {Database} from "sqlite";
+import {Database} from "better-sqlite3";
 import {NextApiRequest, NextApiResponse} from "next";
 
 import {selectAccounts, selectBalances, selectLastBalancesBeforeDate} from "@/models";
@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     db = await connect(db)
 
-    const currencies = await db.all("SELECT * FROM currencies")
+    const currencies = db.prepare("SELECT * FROM currencies").all();
     // console.log(currencies)
 
     const accounts = await selectAccounts(db, res)

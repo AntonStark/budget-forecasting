@@ -23,11 +23,7 @@ export interface AccountData extends AccountShortData{
     balances: Array<AccountBalance>
 }
 
-export enum DateRangeSettings {
-    Previous_7_Days = "previous_7_days",
-    Weekly = "weekly",
-    Monthly = "monthly"
-}
+export enum Mode {week = "week", month = "month"}
 
 export interface PaymentData {
     id: number
@@ -45,9 +41,7 @@ export interface PaymentInSchema {
     amount: number
 }
 
-export type Mode = "week" | "month";
-
-type PlannerState = {
+export type PlannerState = {
   mode: Mode;
   setMode: (m: Mode) => void;
 

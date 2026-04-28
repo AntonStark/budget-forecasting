@@ -1,5 +1,5 @@
 import * as fs from 'node:fs/promises';
-import {Database} from "sqlite";
+import {Database} from "better-sqlite3";
 import {NextApiRequest, NextApiResponse} from "next";
 
 import {selectAccounts, selectBalances, selectLastBalancesBeforeDate} from "@/models";
@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const dates = dateIntervalToDatesArray([dateStartStr, dateEndStr])
     // console.log('dates', dates.map(dateToDateString))
-    const accounts = await selectAccounts(db, res)
+    const accounts = await selectAccounts(db, res);
     // console.log(accounts)
 
     const balances = await selectBalances(db, res, {
