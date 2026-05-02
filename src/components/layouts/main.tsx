@@ -30,11 +30,14 @@ export default function PaymentsPlanner() {
 
         <motion.div
           key={mode}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.2}}
         >
-          {mode === Mode.week ? <WeekTable payments={payments} /> : <MonthTable payments={payments} />}
+          {mode === Mode.week ?
+            <WeekTable currentDate={currentDate} payments={payments}/> :
+            <MonthTable currentDate={currentDate} payments={payments}/>
+          }
         </motion.div>
       </div>
 

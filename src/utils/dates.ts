@@ -1,18 +1,28 @@
-import {Mode} from "@/types";
+import {startOfMonth, endOfMonth, startOfWeek, addWeeks, endOfWeek, format} from "date-fns";
 
-function weekBounds(weekday: Date): [Date, Date] {
+import {Mode} from "@/types";
+import {ru} from "date-fns/locale";
+
+export function euroWeekOffset(date: Date) {
   // go back `getUTCDay` number of days returns previous Sunday (count starts from Sunday)
   // 0..6 = Sunday .. Saturday
   // +6 % 7 makes
   // 6, 0, 1, .. 5 = Sunday .. Saturday => 0..6 = Monday .. Sunday
-  const euroWeekOffset = (weekday.getUTCDay() + 6) % 7;
+  return (date.getUTCDay() + 6) % 7;
+}
 
-  let dateMonday = new Date(weekday);
-  dateMonday.setUTCDate(dateMonday.getUTCDate() - euroWeekOffset);
-  let dateSunday = new Date(dateMonday);
-  dateSunday.setUTCDate(dateSunday.getUTCDate() + 6);
+function weekBounds(date: Date): [Date, Date] {
+  const dateMonday = startOfWeek(date, { weekStartsOn: 1 });
+  const dateSunday = endOfWeek(date, { weekStartsOn: 1 });
   return [dateMonday, dateSunday];
 }
+
+export function getWeek(date: Date): Week {
+  const start = startOfWeek(date, { weekStartsOn: 1 });
+  const end = endOfWeek(date, { weekStartsOn: 1 });
+  return {start, end}
+}
+
 
 export function settingToIntervalDates(
   mode: Mode,
@@ -62,14 +72,40 @@ export function formatMonth(date: Date) {
 }
 
 export function formatWeek(date: Date) {
-  const start = new Date(date);
-  const day = start.getDay() || 7;
-  start.setDate(start.getDate() - day + 1);
+  const {start, end} = getWeek(date);
+  return `${start.getDate()}–${end.getDate()} ${end.toLocaleDateString("en-US", {month: "short"})}`;
+}
 
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
 
-  return `${start.getDate()}–${end.getDate()} ${end.toLocaleDateString("en-US", {
-    month: "short",
-  })}`;
+export const formatWeek2 = (week: Week) => (
+  `${format(week.start, "d", {locale: ru})}-${format(week.end, "d MMM", {locale: ru})}`
+);
+
+
+export interface Week {
+  start: Date,
+  end: Date
+}
+
+export function getWeeksOfMonth(date = new Date()): Week[] {
+  const monthStart = startOfMonth(date);
+  const monthEnd = endOfMonth(date);
+
+  const weeks: Week[] = [];
+
+  let current = startOfWeek(monthStart, { weekStartsOn: 1 }); // 1 = понедельник
+
+  while (current <= monthEnd) {
+    const weekStart = current;
+    const weekEnd = endOfWeek(current, { weekStartsOn: 1 });
+
+    weeks.push({
+      start: weekStart,
+      end: weekEnd,
+    });
+
+    current = addWeeks(current, 1);
+  }
+
+  return weeks;
 }

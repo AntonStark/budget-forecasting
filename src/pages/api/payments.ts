@@ -35,6 +35,7 @@ async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
             id: paymentObj.id,
             description: paymentObj.description,
             at_date: paymentObj.at_date,
+            amount: paymentObj.amount,
             value: serializePaymentValue(paymentObj),
             account_id: paymentObj.account_id,
         }))
@@ -57,12 +58,16 @@ async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
 }
 
 function serializePaymentValue(paymentObj: PaymentData): string {
-    if (!(paymentObj.currency_iso_code && paymentObj.amount)) {
+    if (!paymentObj.currency_iso_code && !paymentObj.amount) {
         return ''
     }
-    if (paymentObj.currency_iso_code.toUpperCase() === 'RUB') {
-        return `${paymentObj.amount}${paymentObj.currency_symbol}`
+    if (paymentObj.currency_iso_code) {
+        if (paymentObj.currency_iso_code.toUpperCase() === 'RUB') {
+            return `${paymentObj.amount}${paymentObj.currency_symbol}`
+        } else {
+            return `${paymentObj.currency_symbol}${paymentObj.amount}`
+        }
     } else {
-        return `${paymentObj.currency_symbol}${paymentObj.amount}`
+        return String(paymentObj.amount);
     }
 }
