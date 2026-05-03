@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 
 import {ExpenseFormData, PaymentType} from "@/types";
 
-export default function ExpenseModal(
-  { onClose, onSubmit }: {onClose: () => void, onSubmit: (arg0: ExpenseFormData) => void}) {
+export default function ExpenseModal({ onClose, onSubmit }: {
+  onClose: () => void,
+  onSubmit: (arg0: ExpenseFormData) => void
+}) {
   const ref = useRef<HTMLDivElement>();
   const [type, setType] = useState<PaymentType>("once");
   const [amount, setAmount] = useState("");

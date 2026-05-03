@@ -1,12 +1,11 @@
 import {motion} from "framer-motion";
 
 import {usePlannerContext} from "@/components/context/PlannerContext";
-import HeaderTools from "@/components/widgets/HeaderTools";
 
-import {formatMonth, formatWeek, formatWeek2, getWeek} from "@/utils/dates";
+import {formatMonth, formatWeek2, getWeek} from "@/utils/dates";
 import {Mode} from "@/types";
 
-export default function Header({ onAdd }) {
+export default function Header({ onAdd, onLog }) {
   const { mode, setMode, currentDate, next, prev, setCurrentDate } = usePlannerContext();
 
   const goToday = () => setCurrentDate(new Date());
@@ -49,7 +48,7 @@ export default function Header({ onAdd }) {
 
       {/* RIGHT: actions */}
       <div className="flex items-center gap-2">
-        <HeaderTools goToday={goToday} onAdd={onAdd}/>
+        <HeaderTools goToday={goToday} onAdd={onAdd} onLog={onLog}/>
       </div>
 
     </div>
@@ -67,5 +66,27 @@ function SegmentButton({ active, children, onClick }) {
     >
       {children}
     </button>
+  );
+}
+
+
+function HeaderTools({ goToday, onAdd, onLog }) {
+  return (
+    <>
+      <button
+        onClick={goToday}
+        className="text-sm px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
+      >Today</button>
+
+      <button
+          onClick={onAdd}
+          className="text-sm px-3 py-1.5 rounded-lg bg-black text-white hover:opacity-90 transition"
+        >+</button>
+
+      <button
+          onClick={onLog}
+          className="text-sm px-3 py-1.5 rounded-lg bg-black text-white hover:opacity-90 transition"
+        >/</button>
+    </>
   );
 }

@@ -10,9 +10,11 @@ import {usePlannerContext} from "@/components/context/PlannerContext";
 import {getPayments, savePayment} from "@/utils/api";
 import {Mode, PaymentData} from "@/types";
 import {settingToIntervalDates} from "@/utils/dates";
+import BalanceModal from "@/components/widgets/BalanceModal";
 
 export default function PaymentsPlanner() {
-  const [showModal, setShowModal] = useState(false);
+  const [showExpenseModal, setShowExpenseModal] = useState<boolean>(false);
+  const [showBalanceModal, setShowBalanceModal] = useState<boolean>(false);
   const { mode, currentDate } = usePlannerContext();
 
   const [payments, setPayments] = useState<PaymentData[]>([]);
@@ -26,7 +28,10 @@ export default function PaymentsPlanner() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto space-y-6">
-        <Header onAdd={() => setShowModal(true)}/>
+        <Header
+          onAdd={() => setShowExpenseModal(true)}
+          onLog={() => setShowBalanceModal(true)}
+        />
 
         <motion.div
           key={mode}
@@ -41,10 +46,16 @@ export default function PaymentsPlanner() {
         </motion.div>
       </div>
 
-      {showModal &&
+      {showExpenseModal &&
           <ExpenseModal
-              onClose={() => setShowModal(false)}
+              onClose={() => setShowExpenseModal(false)}
               onSubmit={savePayment}
+          />
+      }
+      {showBalanceModal &&
+          <BalanceModal
+              onClose={() => setShowBalanceModal(false)}
+              onSubmit={console.log}
           />
       }
     </div>
