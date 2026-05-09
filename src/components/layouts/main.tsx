@@ -7,8 +7,8 @@ import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
 import {usePlannerContext} from "@/components/context/PlannerContext";
 
-import {getPayments, savePayment} from "@/utils/api";
-import {Mode, PaymentData} from "@/types";
+import {getAccounts, getPayments, savePayment} from "@/utils/api";
+import {AccountData, Mode, PaymentData} from "@/types";
 import {settingToIntervalDates} from "@/utils/dates";
 import BalanceModal from "@/components/widgets/BalanceModal";
 
@@ -18,12 +18,15 @@ export default function PaymentsPlanner() {
   const { mode, currentDate } = usePlannerContext();
 
   const [payments, setPayments] = useState<PaymentData[]>([]);
+  const [accounts, setAccounts] = useState<AccountData[]>([]);
 
   useEffect(() => {
     const [dateStart, dateEnd] = settingToIntervalDates(mode, currentDate);
     getPayments(dateStart, dateEnd).then(data => setPayments(data.payments));
+    getAccounts({dateStart, dateEnd}).then(data => setAccounts(data.accounts));
   }, [mode, currentDate]);
-  console.log(payments);
+  // console.log(payments);
+  console.log(accounts);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -40,7 +43,7 @@ export default function PaymentsPlanner() {
           transition={{duration: 0.2}}
         >
           {mode === Mode.week ?
-            <WeekTable currentDate={currentDate} payments={payments}/> :
+            <WeekTable currentDate={currentDate} payments={payments} accounts={accounts}/> :
             <MonthTable currentDate={currentDate} payments={payments}/>
           }
         </motion.div>

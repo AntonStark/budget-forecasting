@@ -11,31 +11,12 @@ export function accountToJsonShort(accountObj): AccountShortData {
     }
 }
 
-export function accountToJson(accountObj, balanceData: Array<BalanceData>, lastBalanceBefore: BalanceData, dates): AccountData {
-    // console.log("dates", dates)
-    const dbAccountBalances = balanceData.filter(balanceObj => balanceObj.account_id === accountObj.id)
-    const dateToBalance = Object.fromEntries(dbAccountBalances.map(balance => [balance.at_date, balance]))
-    const indexToDate = dates.map(dateToISODateString)
-
-    const balancesArray = new Array(dates.length)
-    let previousDayBalance
-    for (let i = 0; i < dates.length; i++) {
-        const dateBalance = dateToBalance[indexToDate[i]]
-        if (!dateBalance) {
-            if (previousDayBalance) {
-                // take from previous as inferred
-                balancesArray[i] = {...previousDayBalance, inferred: true, at_date: indexToDate[i]}
-            } else {  // no previous balance
-                balancesArray[i] = {...lastBalanceBefore, inferred: true, at_date: indexToDate[i]}
-            }
-        } else {
-            balancesArray[i] = previousDayBalance = dateBalance
-        }
-    }
-    // console.log("dateToBalance", dateToBalance)
+export function accountToJson(accountObj, balanceData: Array<BalanceData>, lastBalanceBefore: BalanceData): AccountData {
+    const accountBalances = balanceData.filter(balanceObj => balanceObj.account_id === accountObj.id)
+    // console.log("accountBalances", accountBalances)
 
     return {
         ...accountToJsonShort(accountObj),
-        balances: balancesArray,
+        balances: accountBalances,
     }
 }

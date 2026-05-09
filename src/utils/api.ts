@@ -1,10 +1,11 @@
 import {ExpenseFormData} from "@/types";
 import {dateToISODateString} from "@/utils/dates";
 
-export async function getAccounts({dateStart, dateEnd}) {
+export async function getAccounts({dateStart, dateEnd, inUseOnly = true}) {
     return fetch('/api/accounts?' + new URLSearchParams({
         date_start: dateStart,
         date_end: dateEnd,
+        in_use: String(inUseOnly),
     })).then((res) => res.json())
 }
 

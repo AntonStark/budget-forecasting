@@ -47,6 +47,17 @@ export function settingToIntervalDates(
 export const dateToDateString = (date) => `${date.getUTCDate()}`
 export const dateToISODateString = (date) => date.toISOString().slice(0, 10)
 
+
+export function dateToSql(date: Date): string {
+  return format(date, 'yyyy-MM-dd');
+}
+
+export function parseJsDateToSql(dateStr: string): Date {
+  const dt = new Date(dateStr);
+  // вместо tz-aware создаём дату без таймзоны
+  return dateToSql(dt);
+}
+
 export function dateIntervalToDatesArray([dateStartStr, dateEndStr]): Array<Date> {
   const d1 = new Date(dateStartStr + ' 00:00:00.000Z')
   const d2 = new Date(dateEndStr + ' 00:00:00.000Z')
