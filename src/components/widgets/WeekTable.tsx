@@ -1,10 +1,11 @@
 import React from "react";
 
-import {dateToISODateString, dateToSql, euroWeekOffset, getWeek, Week} from "@/utils/dates";
+import {dateToSql, euroWeekOffset, getWeek, Week} from "@/utils/dates";
 import {AccountData, BalanceData, PaymentData} from "@/types";
 import PeriodPayments from "@/components/widgets/PeriodPayments";
-import AccountBalance from "@/components/widgets/AccountBalance";
+import BalanceCell from "@/components/widgets/BalanceCell";
 import {addDays} from "date-fns";
+import {saveBalance} from "@/utils/api";
 
 function groupByWeekday(items: PaymentData[]) {
   const result: PaymentData[][] = Array.from({ length: 7 }, () => []);
@@ -39,10 +40,11 @@ function balancesByWeekday(accounts: AccountData[], week: Week) {
   return result;
 }
 
-export default function WeekTable({currentDate, payments, accounts}: {
+export default function WeekTable({currentDate, payments, accounts, refreshHandle}: {
   currentDate: Date,
   payments: PaymentData[],
   accounts: AccountData[],
+  refreshHandle: () => void,
 }) {
   const week = getWeek(currentDate);
   const weekPayments = payments.filter((p) => {
@@ -83,12 +85,14 @@ export default function WeekTable({currentDate, payments, accounts}: {
           {balancesByWeekday(accounts, week).map((dayBalances, j) => (
             <div key={j} className="row-start-3 text-right text-sm">
               {dayBalances.map((bData, i) => (
-                <AccountBalance
+                <BalanceCell
                   key={i}
                   date={bData.at_date}
                   accountId={bData.account_id}
                   value={bData.value}
                   inferred={true}
+                  editable={true}
+                  onSubmit={(value: number) => saveBalance({accountId: bData.account_id, atDate: bData.at_date, value}) && refreshHandle()}
                 />
               ))}
             </div>

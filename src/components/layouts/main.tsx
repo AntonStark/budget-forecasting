@@ -19,12 +19,14 @@ export default function PaymentsPlanner() {
 
   const [payments, setPayments] = useState<PaymentData[]>([]);
   const [accounts, setAccounts] = useState<AccountData[]>([]);
+  const [needRefresh, setNeedRefresh] = useState<boolean>(false);
 
   useEffect(() => {
     const [dateStart, dateEnd] = settingToIntervalDates(mode, currentDate);
     getPayments(dateStart, dateEnd).then(data => setPayments(data.payments));
     getAccounts({dateStart, dateEnd}).then(data => setAccounts(data.accounts));
-  }, [mode, currentDate]);
+    setNeedRefresh(false);
+  }, [mode, currentDate, needRefresh]);
   // console.log(payments);
   console.log(accounts);
 
@@ -43,7 +45,7 @@ export default function PaymentsPlanner() {
           transition={{duration: 0.2}}
         >
           {mode === Mode.week ?
-            <WeekTable currentDate={currentDate} payments={payments} accounts={accounts}/> :
+            <WeekTable currentDate={currentDate} payments={payments} accounts={accounts} refreshHandle={() => setNeedRefresh(true)} /> :
             <MonthTable currentDate={currentDate} payments={payments}/>
           }
         </motion.div>

@@ -52,28 +52,12 @@ export function dateToSql(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
-export function parseJsDateToSql(dateStr: string): Date {
+export function parseJsDateToSql(dateStr: string): string {
   const dt = new Date(dateStr);
   // вместо tz-aware создаём дату без таймзоны
   return dateToSql(dt);
 }
 
-export function dateIntervalToDatesArray([dateStartStr, dateEndStr]): Array<Date> {
-  const d1 = new Date(dateStartStr + ' 00:00:00.000Z')
-  const d2 = new Date(dateEndStr + ' 00:00:00.000Z')
-
-  const _MS_PER_DAY = 1000 * 60 * 60 * 24
-  const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate())
-  const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate())
-  const daysCount = Math.floor(Math.abs(utc2 - utc1) / _MS_PER_DAY) + 1
-  const dateStart = new Date(Math.min(d1.getTime(), d2.getTime()))
-
-  return Array.from({length: daysCount}, (_, dayDiff) => {
-    let res = new Date(dateStart)
-    res.setDate(res.getDate() + dayDiff)
-    return res
-  })
-}
 
 export function formatMonth(date: Date) {
   return date.toLocaleDateString("en-US", {

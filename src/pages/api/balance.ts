@@ -2,6 +2,7 @@ import {Database} from "better-sqlite3";
 import {NextApiRequest, NextApiResponse} from "next";
 
 import {connect} from "@/utils/database";
+import {saveBalance} from "@/sqlite/balances";
 
 let db: Database = null
 
@@ -13,14 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     db = await connect(db)
 
     try {
-        db.prepare(`
-            INSERT INTO account_date_balances (account_id, at_date, value)
-            VALUES (?, ?, ?)
-            ON CONFLICT ( account_id, at_date ) 
-                DO UPDATE 
-            SET value = ?
-            WHERE account_id = ? and at_date = ?
-        `).run([account_id, at_date, value, value, account_id, at_date]);
+        saveBalance(db, account_id, at_date, value);
         res.status(200).json({value: value});
     }
     catch (err) {

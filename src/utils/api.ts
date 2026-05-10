@@ -37,13 +37,6 @@ export async function updateAccount(id, {inUse}) {
     }).then((res) => res.json())
 }
 
-export async function exportAccountData({dateStart, dateEnd}) {
-    return fetch('/api/accounts/export?' + new URLSearchParams({
-        date_start: dateStart,
-        date_end: dateEnd,
-    })).then((res) => res.json())
-}
-
 export async function getPayments(dateStart: Date, dateEnd: Date) {
     return fetch('/api/payments?' + new URLSearchParams({
         date_start: dateToISODateString(dateStart),
@@ -68,4 +61,15 @@ export async function savePayment(expenseFormData: ExpenseFormData) {
         const atDate = expenseFormData.plannedAt.date;
         await saveOnceOfPayment({amount, description, atDate});
     }
+}
+
+
+export async function saveBalance({accountId, atDate, value}) {
+    return fetch('/api/balance', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({account_id: accountId, at_date: atDate, value})
+    }).then((res) => res.json());
 }
