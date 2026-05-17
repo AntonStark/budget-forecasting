@@ -2,7 +2,7 @@ import {motion} from "framer-motion";
 
 import {usePlannerContext} from "@/components/context/PlannerContext";
 
-import {formatMonth, formatWeek2, getWeek} from "@/utils/dates";
+import {formatMonth, formatWeek, getWeek} from "@/utils/dates";
 import {Mode} from "@/types";
 
 export default function Header({ onAdd, onLog }) {
@@ -20,7 +20,7 @@ export default function Header({ onAdd, onLog }) {
         >←</button>
 
         <div className="text-sm font-medium min-w-[140px] text-center">
-          {mode === Mode.week ? formatWeek2(getWeek(currentDate)) : formatMonth(currentDate)}
+          {mode === Mode.week ? formatWeek(getWeek(currentDate)) : formatMonth(currentDate)}
         </div>
 
         <button

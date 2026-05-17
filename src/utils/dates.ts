@@ -11,18 +11,11 @@ export function euroWeekOffset(date: Date) {
   return (date.getUTCDay() + 6) % 7;
 }
 
-function weekBounds(date: Date): [Date, Date] {
-  const dateMonday = startOfWeek(date, { weekStartsOn: 1 });
-  const dateSunday = endOfWeek(date, { weekStartsOn: 1 });
-  return [dateMonday, dateSunday];
-}
-
 export function getWeek(date: Date): Week {
   const start = startOfWeek(date, { weekStartsOn: 1 });
   const end = endOfWeek(date, { weekStartsOn: 1 });
   return {start, end}
 }
-
 
 export function settingToIntervalDates(
   mode: Mode,
@@ -32,7 +25,9 @@ export function settingToIntervalDates(
 
   switch (mode) {
     case Mode.week:
-      return weekBounds(today);
+      const dateMonday = startOfWeek(today, { weekStartsOn: 1 });
+      const dateSunday = endOfWeek(today, { weekStartsOn: 1 });
+      return [dateMonday, dateSunday];
     case Mode.month:
       let monthStart = new Date(today);
       monthStart.setUTCDate(1);
@@ -66,13 +61,7 @@ export function formatMonth(date: Date) {
   });
 }
 
-export function formatWeek(date: Date) {
-  const {start, end} = getWeek(date);
-  return `${start.getDate()}–${end.getDate()} ${end.toLocaleDateString("en-US", {month: "short"})}`;
-}
-
-
-export const formatWeek2 = (week: Week) => (
+export const formatWeek = (week: Week) => (
   `${format(week.start, "d", {locale: ru})}-${format(week.end, "d MMM", {locale: ru})}`
 );
 

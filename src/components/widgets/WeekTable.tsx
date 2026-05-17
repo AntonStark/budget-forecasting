@@ -1,44 +1,12 @@
 import React from "react";
 
-import {dateToSql, euroWeekOffset, getWeek, Week} from "@/utils/dates";
-import {AccountData, BalanceData, PaymentData} from "@/types";
-import PeriodPayments from "@/components/widgets/PeriodPayments";
+import {setBalance} from "@/adapters/api";
 import BalanceCell from "@/components/widgets/BalanceCell";
-import {addDays} from "date-fns";
-import {saveBalance} from "@/utils/api";
+import PeriodPayments from "@/components/widgets/PeriodPayments";
+import {balancesByWeekday, DayBalancesInfo} from "@/domain";
+import {AccountData, PaymentData} from "@/types";
+import {getWeek} from "@/utils/dates";
 
-function groupByWeekday(items: PaymentData[]) {
-  const result: PaymentData[][] = Array.from({ length: 7 }, () => []);
-
-  for (const item of items) {
-    const weekDay = euroWeekOffset(new Date(item.at_date));
-    result[weekDay].push(item);
-  }
-
-  return result;
-}
-
-function balancesByWeekday(accounts: AccountData[], week: Week) {
-  const result: BalanceData[][] = Array.from({ length: 7 }, () => []);
-
-  const dateMonday = week.start;
-  let balancesByDate;
-  let atDate;
-  for (const account of accounts) {
-    balancesByDate = Object.fromEntries(account.balances.map(b => [b.at_date, b.value]));
-
-    for (let i = 0; i < 7; i++) {
-      atDate = dateToSql(addDays(dateMonday, i));
-      result[i].push({
-        account_id: account.id,
-        at_date: atDate,
-        value: balancesByDate[atDate],
-      });
-    }
-  }
-
-  return result;
-}
 
 export default function WeekTable({currentDate, payments, accounts, refreshHandle}: {
   currentDate: Date,
@@ -47,58 +15,69 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
   refreshHandle: () => void,
 }) {
   const week = getWeek(currentDate);
-  const weekPayments = payments.filter((p) => {
-    const d = new Date(p.at_date);
-    return week.start <= d && d <= week.end;
-  });
-  const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+  const dayTitles = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm">
       <div className="p-4">
         <div className="grid grid-cols-8 gap-1">
-          {/* Заголовки - дни недели */}
+          {/* ПЕРВАЯ КОЛОНКА */}
           <div className="row-start-1 border-bottom"/>
-          {days.map((day) => (
-            <div
-              key={day}
-              className="row-start-1 text-xs text-gray-500 border-bottom"
-            >{day}</div>
-          ))}
-
-          {/* Расходы по дням */}
           <div className="row-start-2 border-bottom"/>
-          {groupByWeekday(weekPayments).map((dayPayments, i) => (
-            <div
-              key={i}
-              className="row-start-2 bg-gray-50 p-2 h-24 text-sm text-gray-700 border-bottom"
-            >
-              <PeriodPayments payments={dayPayments}/>
-            </div>
-          ))}
-
-          {/* заголовки счетов*/}
-          <div className="row-start-3 text-right text-sm">
+          {/* Заголовки счетов*/}
+          <div className="row-start-3 text-right text-xs border-bottom">
             {accounts.map((acc) => <div key={acc.id}>{acc.title}</div>)}
           </div>
-          {/* Остатки на счетах по дням */}
-          {balancesByWeekday(accounts, week).map((dayBalances, j) => (
-            <div key={j} className="row-start-3 text-right text-sm">
-              {dayBalances.map((bData, i) => (
-                <BalanceCell
-                  key={i}
-                  date={bData.at_date}
-                  accountId={bData.account_id}
-                  value={bData.value}
-                  inferred={true}
-                  editable={true}
-                  onSubmit={(value: number) => saveBalance({accountId: bData.account_id, atDate: bData.at_date, value}) && refreshHandle()}
-                />
-              ))}
-            </div>
+          <div className="row-start-4"></div>
+
+          {balancesByWeekday(payments, accounts, week).map((dayBalances, d) => (
+            <OneDayColumn key={d} d={d} dayBalances={dayBalances} dayTitles={dayTitles} refreshHandle={refreshHandle}/>
           ))}
         </div>
       </div>
     </div>
+  );
+}
+
+
+function OneDayColumn(
+  {dayBalances, dayTitles, d, refreshHandle}:
+  {dayBalances: DayBalancesInfo, dayTitles: string[], d: number, refreshHandle: () => void }
+) {
+  return (
+    <>
+      {/* Заголовки - дни недели */}
+      <div className="row-start-1 text-center text-xs text-gray-500 border-bottom"
+      >{dayTitles[d]}</div>
+
+      {/* Расходы по дням */}
+      <div className="row-start-2 bg-gray-50 p-2 h-24 text-sm text-gray-700 border-bottom">
+        <PeriodPayments payments={dayBalances.payments}/>
+      </div>
+
+      {/* Остатки на счетах по дням */}
+      <div className="row-start-3 text-right text-xs border-bottom">
+        {dayBalances.accounts.map((balanceObj, i) => (
+          <BalanceCell
+            key={`${i},${d}`}
+            value={balanceObj.value}
+            inferred={balanceObj.inferred}
+            editable={true}
+            onSubmit={(value: number) => {
+              setBalance({
+                accountId: balanceObj.account_id,
+                atDate: balanceObj.atDate,
+                value
+              }) && refreshHandle();
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Итог за день */}
+      <div key={`${d}_sum`} className="row-start-4 text-right text-xs">
+        {dayBalances.balances_touched ? dayBalances.total : ""}
+      </div>
+    </>
   );
 }

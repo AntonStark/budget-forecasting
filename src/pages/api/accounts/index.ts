@@ -4,7 +4,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {accountToJson} from "@/schema/account";
 import {listAccounts} from "@/sqlite/accounts";
 import {getBalancesBetween, selectBalanceBeforeDate} from "@/sqlite/balances";
-import {AccountShortData, BalanceData} from "@/types";
+import {AccountShortData, AccountBalance} from "@/types";
 import {connect} from "@/utils/database";
 import {parseJsDateToSql} from "@/utils/dates";
 
@@ -39,12 +39,12 @@ async function handleListAccounts(req: NextApiRequest, res: NextApiResponse) {
     }
     // console.log(accounts)
 
-    const balances: BalanceData[] = getBalancesBetween(db, parseJsDateToSql(date_start), parseJsDateToSql(date_end));
+    const balances: AccountBalance[] = getBalancesBetween(db, parseJsDateToSql(date_start), parseJsDateToSql(date_end));
     // console.log(balances)
 
     const lastPreviousBalances = {};
     for (const accountObj of accounts) {
-        lastPreviousBalances[accountObj.id] = selectBalanceBeforeDate(db, accountObj.id, date_start);
+        lastPreviousBalances[accountObj.id] = selectBalanceBeforeDate(db, accountObj.id, parseJsDateToSql(date_start));
     }
 
     res.status(200).json({

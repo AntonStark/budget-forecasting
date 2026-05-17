@@ -18,11 +18,14 @@
     "target": "ESNext",
     "noEmit": true,
     "paths": {
+      "@/adapters/api": [
+        "adapters/api"
+      ],
       "@/components/*": [
         "components/*"
       ],
-      "@/models": [
-        "models"
+      "@/domain": [
+        "domain"
       ],
       "@/pages/*": [
         "pages/*"

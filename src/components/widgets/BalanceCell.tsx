@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function BalanceCell ({
-  date,
-  accountId,
   value,
   inferred,
-  editable = false,
+  editable = true,
   onSubmit,
+}: {
+  value: number,
+  inferred: boolean,
+  editable: boolean,
+  onSubmit: (arg0: number) => void,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draftValue, setDraftValue] = useState(value ?? '');
@@ -37,7 +40,6 @@ export default function BalanceCell ({
 
   function handleClick() {
     if (!editable) {
-      console.log({ date, accountId, value, inferred });
       return;
     }
 
@@ -91,9 +93,10 @@ export default function BalanceCell ({
           style={{width: '100%'}}
         />
       ) : (
-        <div onClick={handleClick}>
-          {value || 0}
-        </div>
+        <div
+          onClick={handleClick}
+          className={inferred? "text-gray-300" : ""}
+        >{value}</div>
       )}
     </div>
   );

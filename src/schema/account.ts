@@ -1,5 +1,4 @@
-import {AccountData, AccountShortData, BalanceData} from "@/types";
-import {dateToISODateString} from "@/utils/dates";
+import {AccountData, AccountShortData, AccountBalance, BalanceInfo} from "@/types";
 
 export function accountToJsonShort(accountObj): AccountShortData {
     return {
@@ -11,12 +10,13 @@ export function accountToJsonShort(accountObj): AccountShortData {
     }
 }
 
-export function accountToJson(accountObj, balanceData: Array<BalanceData>, lastBalanceBefore: BalanceData): AccountData {
+export function accountToJson(accountObj, balanceData: Array<AccountBalance>, lastBalanceBefore: BalanceInfo | undefined): AccountData {
     const accountBalances = balanceData.filter(balanceObj => balanceObj.account_id === accountObj.id)
     // console.log("accountBalances", accountBalances)
 
     return {
         ...accountToJsonShort(accountObj),
+        lastBalanceBefore,
         balances: accountBalances,
     }
 }

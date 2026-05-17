@@ -1,28 +1,22 @@
 import {ExpenseFormData} from "@/types";
 import {dateToISODateString} from "@/utils/dates";
 
+// ==== ACCOUNTS ====
+
+
 export async function getAccounts({dateStart, dateEnd, inUseOnly = true}) {
-    return fetch('/api/accounts?' + new URLSearchParams({
+    return doJsonGet('/api/accounts', {
         date_start: dateStart,
         date_end: dateEnd,
         in_use: String(inUseOnly),
-    })).then((res) => res.json())
+    });
 }
 
 export async function setBalance({accountId, atDate, value}) {
-    console.log('setBalance', {accountId, atDate, value})
-    return fetch('/api/balance', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            account_id: accountId,
-            at_date: atDate,
-            value: value,
-        })
-    }).then((res) => res.json())
+    console.log('setBalance', {accountId, atDate, value});
+    return doJsonPost('/api/balance', {account_id: accountId, at_date: atDate, value});
 }
+
 
 export async function updateAccount(id, {inUse}) {
     console.log(`updateAccount id:${id}`, {inUse})
@@ -37,21 +31,19 @@ export async function updateAccount(id, {inUse}) {
     }).then((res) => res.json())
 }
 
+
+// ==== PAYMENTS ====
+
+
 export async function getPayments(dateStart: Date, dateEnd: Date) {
-    return fetch('/api/payments?' + new URLSearchParams({
+    return doJsonGet('/api/payments', {
         date_start: dateToISODateString(dateStart),
         date_end: dateToISODateString(dateEnd),
-    })).then((res) => res.json())
+    })
 }
 
 async function saveOnceOfPayment({description, amount, atDate}) {
-    return fetch('/api/payments', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({description, amount, at_date: atDate})
-    }).then((res) => res.json())
+    return doJsonPost('/api/payments', {description, amount, at_date: atDate});
 }
 
 export async function savePayment(expenseFormData: ExpenseFormData) {
@@ -64,12 +56,21 @@ export async function savePayment(expenseFormData: ExpenseFormData) {
 }
 
 
-export async function saveBalance({accountId, atDate, value}) {
-    return fetch('/api/balance', {
-        method: 'POST',
+// ==== HELPERS ====
+
+async function doJsonPost(url: string, bodyArg: any) {
+    return fetch(url, {
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({account_id: accountId, at_date: atDate, value})
+        body: JSON.stringify(bodyArg)
     }).then((res) => res.json());
+}
+
+async function doJsonGet(url: string, queryparams: Record<string, any>) {
+    return fetch(
+      (url.endsWith('?') ? url : `${url}?`)
+      + new URLSearchParams(queryparams)).then((res) => res.json()
+    );
 }

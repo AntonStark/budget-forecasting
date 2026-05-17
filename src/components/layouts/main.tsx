@@ -7,7 +7,7 @@ import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
 import {usePlannerContext} from "@/components/context/PlannerContext";
 
-import {getAccounts, getPayments, savePayment} from "@/utils/api";
+import {getAccounts, getPayments, savePayment} from "@/adapters/api";
 import {AccountData, Mode, PaymentData} from "@/types";
 import {settingToIntervalDates} from "@/utils/dates";
 import BalanceModal from "@/components/widgets/BalanceModal";
@@ -28,7 +28,7 @@ export default function PaymentsPlanner() {
     setNeedRefresh(false);
   }, [mode, currentDate, needRefresh]);
   // console.log(payments);
-  console.log(accounts);
+  // console.log(accounts);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -46,7 +46,7 @@ export default function PaymentsPlanner() {
         >
           {mode === Mode.week ?
             <WeekTable currentDate={currentDate} payments={payments} accounts={accounts} refreshHandle={() => setNeedRefresh(true)} /> :
-            <MonthTable currentDate={currentDate} payments={payments}/>
+            <MonthTable currentDate={currentDate} payments={payments} accounts={accounts}/>
           }
         </motion.div>
       </div>
@@ -54,7 +54,7 @@ export default function PaymentsPlanner() {
       {showExpenseModal &&
           <ExpenseModal
               onClose={() => setShowExpenseModal(false)}
-              onSubmit={savePayment}
+              onSubmit={(formData) => savePayment(formData) && setNeedRefresh(true)}
           />
       }
       {showBalanceModal &&

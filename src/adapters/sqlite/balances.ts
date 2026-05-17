@@ -1,9 +1,9 @@
 import {Database} from "better-sqlite3";
-import {BalanceData} from "@/types";
+import {AccountBalance} from "@/types";
 
 export function getBalancesBetween(db: Database, dateStart: string, dateEnd: string) {
-  const stmt = db.prepare<any, BalanceData>(`
-    SELECT adb.* 
+  const stmt = db.prepare<any, AccountBalance>(`
+    SELECT adb.account_id, adb.at_date as atDate, adb.value
     FROM account_date_balances adb
     WHERE adb.at_date BETWEEN ? AND ?
     ORDER BY adb.at_date
@@ -12,9 +12,9 @@ export function getBalancesBetween(db: Database, dateStart: string, dateEnd: str
   return stmt.all([dateStart, dateEnd]);
 }
 
-export function selectBalanceBeforeDate(db: Database, accountId: number, beforeDate: string) {
-  const stmt = db.prepare(`
-    SELECT adb.*
+export function selectBalanceBeforeDate(db: Database, accountId: number, beforeDate: string): AccountBalance {
+  const stmt = db.prepare<any, AccountBalance>(`
+    SELECT adb.account_id, adb.value, adb.at_date as atDate
     FROM account_date_balances adb
     WHERE adb.account_id = ?
       AND adb.at_date < ?
@@ -22,9 +22,9 @@ export function selectBalanceBeforeDate(db: Database, accountId: number, beforeD
     LIMIT 1
   `);
 
-  const result = stmt.all([accountId, beforeDate]);
-  const defaultBalance = {value: 0, account_id: accountId}
-  return (result.length > 0 ? result[0] : defaultBalance)
+  const result: AccountBalance | undefined = stmt.get([accountId, beforeDate]);
+  const defaultBalance = {value: 0, account_id: accountId, atDate: undefined}
+  return (result? result : defaultBalance);
 }
 
 export function saveBalance(db: Database, accountId: number, atDate: string, value: number) {

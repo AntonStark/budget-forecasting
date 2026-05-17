@@ -1,23 +1,14 @@
 import React from "react";
 
-import {PaymentData} from "@/types";
-import {formatWeek2, getWeeksOfMonth, Week} from "@/utils/dates";
+import {formatWeek, getWeeksOfMonth} from "@/utils/dates";
 import PeriodPayments from "@/components/widgets/PeriodPayments";
-
-function groupPaymentsByWeek(payments: PaymentData[], weeks: Week[]) {
-  return weeks.map((week) => {
-    return payments.filter((p) => {
-      const d = new Date(p.at_date);
-      return week.start <= d && d <= week.end;
-    });
-  });
-}
+import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
 
 const BASE_WIDTH = 50;
 
-export default function MonthTable({currentDate, payments}) {
+export default function MonthTable({currentDate, payments, accounts}) {
   const weeks = getWeeksOfMonth(currentDate);
-  const grouped = groupPaymentsByWeek(payments, weeks);
+  const budgets = makeBudgetsByWeek(payments, accounts, weeks);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm">
@@ -33,35 +24,38 @@ export default function MonthTable({currentDate, payments}) {
           {weeks.map((week, i) => (
             <div
               key={`h${i}`}
-              className="col-span-4 row-start-1 text-xs text-gray-500"
+              className="col-span-4 row-start-1 text-center text-xs text-gray-500"
               style={{borderBottom: "1px solid black"}}
             >
-              <a href={`?mode=week&date=${week.start}`}>{formatWeek2(week)}</a>
+              <a href={`?mode=week&date=${week.start}`}>{formatWeek(week)}</a>
             </div>
           ))}
-
-          {/* Контент */}
-          {grouped.map((weekPayments, i) => (
-          <div
-            key={i}
-            className="col-span-4 row-start-2 bg-gray-50 p-2 h-40 overflow-auto"
-            style={{borderBottom: "1px solid black"}}
-          >
-            <PeriodPayments payments={weekPayments}/>
-          </div>
-          ))}
-
-          {/* Подвал */}
-          {grouped.map((weekPayments, i) => (
-          <div
-            key={i}
-            className="col-span-4 text-right"
-          >
-            итог
-          </div>
-          ))}
+          {budgets.map((weekBudget, i) => <OneWeekColumn key={i} weekBudget={weekBudget}/>)}
         </div>
       </div>
     </div>
   );
+}
+
+
+function OneWeekColumn({weekBudget}: {weekBudget: PeriodBudget}) {
+  return (
+    <>
+      {/* Контент */}
+      <div
+        className="col-span-4 row-start-2 bg-gray-50 p-2 h-40 overflow-auto"
+        style={{borderBottom: "1px solid black"}}
+      >
+        <PeriodPayments payments={weekBudget.payments}/>
+      </div>
+
+      {/* Итоги */}
+      <div className="col-span-4 row-start-3 text-right text-xs text-gray-300">
+        {weekBudget.value_after.plan}
+      </div>
+      <div className="col-span-4 row-start-4 text-right text-xs">
+        {weekBudget.value_after.fact || ""}
+      </div>
+    </>
+  )
 }

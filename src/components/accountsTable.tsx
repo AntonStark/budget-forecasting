@@ -1,8 +1,8 @@
 import {useState} from "react";
 
+import {updateAccount} from "@/adapters/api";
 import {BalanceCell} from "@/components/balanceCell";
 import {AccountData} from "@/types";
-import {updateAccount} from "@/utils/api";
 import {dateToDateString, dateToISODateString} from "@/utils/dates";
 
 

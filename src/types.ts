@@ -1,44 +1,42 @@
-export interface BalanceData {
-    account_id: number
-    at_date: string
-    value: number
-    inferred?: boolean
+export interface BalanceInfo {
+  atDate: string
+  value: number
+  inferred?: boolean
 }
 
-export interface AccountBalance {
-    at_date: string
-    value: number
-    inferred?: boolean
+export interface AccountBalance extends BalanceInfo {
+  account_id: number
 }
 
 export interface AccountShortData {
-    id: number
-    title: string
-    iso_code: string
-    name: string
-    in_use: boolean
+  id: number
+  title: string
+  iso_code: string
+  name: string
+  in_use: boolean
 }
 
 export interface AccountData extends AccountShortData{
-    balances: Array<AccountBalance>
+  balances: Array<BalanceInfo>
+  lastBalanceBefore: BalanceInfo | undefined
 }
 
 export enum Mode {week = "week", month = "month"}
 
 export interface PaymentData {
-    id: number
-    description: string
-    at_date: string
-    amount: number
-    currency_iso_code: string
-    currency_symbol: string
-    account_id?: number
+  id: number
+  description: string
+  at_date: string
+  amount: number
+  currency_iso_code: string
+  currency_symbol: string
+  account_id?: number
 }
 
 export interface PaymentInSchema {
-    description: string
-    at_date: string
-    amount: number
+  description: string
+  at_date: string
+  amount: number
 }
 
 export type PlannerState = {
@@ -55,8 +53,8 @@ export type PlannerState = {
 export type PaymentType = "once" | "monthly";
 
 export interface ExpenseFormData {
-    type: PaymentType
-    amount: number
-    description: string
-    plannedAt: {dayOfMonth: number} | {date: string}
+  type: PaymentType
+  amount: number
+  description: string
+  plannedAt: {dayOfMonth: number} | {date: string}
 }
