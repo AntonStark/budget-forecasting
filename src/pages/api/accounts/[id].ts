@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.log(`${req.method} /api/account/${id}/`, req.body);
 
     if (req.method === "PATCH") {
-        db = await connect(db)
+        db = connect(db)
         try {
             handleUpdateAccount(req, res, db);
         } catch (err) {

@@ -31,7 +31,7 @@ async function handleListAccounts(req: NextApiRequest, res: NextApiResponse) {
     date_start = Array.isArray(date_start) ? date_start[0] : date_start;
     date_end = Array.isArray(date_end) ? date_end[0] : date_end;
 
-    db = await connect(db);
+    db = connect(db);
 
     let accounts: AccountShortData[] = listAccounts(db);
     if (in_use === 'true') {

@@ -3,7 +3,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 
 import {connect} from "@/utils/database";
 import {PaymentData} from "@/types";
-import {createOneTimePayment, listOneTimePayments} from "@/sqlite/payments";
+import {createPayment, listPayments} from "@/sqlite/payments";
 
 let db: Database = null
 
@@ -20,14 +20,14 @@ export default async (req: NextApiRequest, rep: NextApiResponse) => {
 }
 
 async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
-    console.log('GET /api/payments/')
+    console.log('GET /api/payments/');
+    let {date_start, date_end} = req.query;
+    date_start = Array.isArray(date_start) ? date_start[0] : date_start;
+    date_end = Array.isArray(date_end) ? date_end[0] : date_end;
 
-    db = await connect(db);
+    db = connect(db);
 
-    const payments = listOneTimePayments(db, {
-        dateStart: req.query.date_start,
-        dateEnd: req.query.date_end,
-    })
+    const payments = listPayments(db, date_start, date_end)
     // console.log(payments)
 
     res.status(200).json({
@@ -45,10 +45,10 @@ async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
 async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
     console.log('POST /api/payments/')
 
-    db = await connect(db)
+    db = connect(db)
     console.log('description', req.body['description']);
 
-    createOneTimePayment(db, {
+    createPayment(db, {
         description: req.body['description'],
         amount: req.body['amount'],
         at_date: req.body['at_date'],

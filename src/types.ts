@@ -37,6 +37,7 @@ export interface PaymentInSchema {
   description: string
   at_date: string
   amount: number
+  payment_schedule_id?: number
 }
 
 export type PlannerState = {
@@ -57,4 +58,15 @@ export interface ExpenseFormData {
   amount: number
   description: string
   plannedAt: {dayOfMonth: number} | {date: string}
+}
+
+export type PaymentScheduleType = "monthly";
+
+export interface PaymentSchedule {
+  id: number
+  type: PaymentScheduleType
+  number: number
+  applied_until: string
+  date_start: string
+  date_end: string
 }

@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('POST /api/balance/', req.body)
     const {account_id, at_date, value} = req.body
 
-    db = await connect(db)
+    db = connect(db)
 
     try {
         saveBalance(db, account_id, at_date, value);

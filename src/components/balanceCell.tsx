@@ -1,7 +1,7 @@
 import {setBalance} from "@/adapters/api";
 import {refreshBalancesEvent} from "@/pages/main";
 import {FocusCell} from "@/components/accountsTable";
-import {dateToISODateString} from "@/utils/dates";
+import {dateToSql} from "@/utils/dates";
 
 
 type BalanceCellProps = {
@@ -69,7 +69,7 @@ export const BalanceCell = ({accountId, value, inferred, date, options, focusCel
                     tempDate.setUTCDate(tempDate.getUTCDate() - 1)
                     return {
                         account: account,
-                        date: dateToISODateString(tempDate)
+                        date: dateToSql(tempDate)
                     }
                 })
                 e.preventDefault()
@@ -80,7 +80,7 @@ export const BalanceCell = ({accountId, value, inferred, date, options, focusCel
                     tempDate.setUTCDate(tempDate.getUTCDate() + 1)
                     return {
                         account: account,
-                        date: dateToISODateString(tempDate)
+                        date: dateToSql(tempDate)
                     }
                 })
                 e.preventDefault()

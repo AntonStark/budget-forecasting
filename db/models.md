@@ -26,6 +26,7 @@ Table `accounts`
 
 Обозначает счёт
 
+
 ## AccountGroupsByCurrency
 
 Table `accounts_group_by_currency`
@@ -35,6 +36,7 @@ Table `accounts_group_by_currency`
 - `in_use` INTEGER DEFAULT TRUE
 
 Содержит дополнительную информацию для группировки счетов по валютам
+
 
 ## AccountDateBalance
 
@@ -47,14 +49,29 @@ Index `account_date_balances_account_id_at_date on (account_id, at_date)`
 
 Данные об остатке на счету в заданную дату
 
-## OneTimePayment
 
-Table `one_time_payments`
+## PaymentSchedule
+
+Table `payment_schedules`
+- `id` INTEGER PRIMARY KEY
+- `type` TEXT
+- `number` INTEGER
+- `applied_until` TEXT
+- `date_start` TEXT
+- `date_end` TEXT
+
+Повторяющиеся платежи. Порождает конкретные в заданных числах, привязанные к нему
+
+
+## Payment
+
+Table `payments`
 - `id` INTEGER PRIMARY KEY
 - `description` TEXT
 - `at_date` TEXT
 - `amount` REAL
 - `currency_id` INTEGER
 - `account_id` INTEGER
+- `payment_schedule_id` INTEGER
 
 Запланированный платёж (в случае положительного `amount`) или доход (отрицательный `amount`)

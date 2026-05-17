@@ -2,7 +2,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
 
 import {Mode, PlannerState} from "@/types";
-import {dateToISODateString} from "@/utils/dates";
+import {dateToSql} from "@/utils/dates";
 
 const PlannerContext = createContext(null);
 
@@ -22,7 +22,7 @@ export function PlannerProvider({ searchParams, children }) {
     const params = new URLSearchParams();
 
     params.set("mode", mode);
-    params.set("date", dateToISODateString(currentDate));
+    params.set("date", dateToSql(currentDate));
 
     router.replace(`${pathname}?${params.toString()}`);
   }, [mode, currentDate]);

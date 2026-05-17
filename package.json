@@ -7,7 +7,8 @@
     "start": "next start",
     "build": "next build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create-account": "node db/commands/create-account.js"
+    "create-account": "node db/commands/create-account.js",
+    "run-migration": "node db/commands/run-migration.ts"
   },
   "author": "Anton Iakovlev",
   "license": "UNLICENSED",

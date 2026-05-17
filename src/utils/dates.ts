@@ -1,4 +1,4 @@
-import {startOfMonth, endOfMonth, startOfWeek, addWeeks, endOfWeek, format} from "date-fns";
+import {startOfMonth, endOfMonth, startOfWeek, addWeeks, endOfWeek, format, addMonths, addDays} from "date-fns";
 
 import {Mode} from "@/types";
 import {ru} from "date-fns/locale";
@@ -35,17 +35,12 @@ export function settingToIntervalDates(
       monthEnd.setUTCMonth(monthEnd.getUTCMonth() + 1, 0)
       return [monthStart, monthEnd];
     default:
-      throw Error('Unknown type in mode: ' + mode)
+      throw Error('Unknown type in mode: ' + mode);
   }
 }
 
-export const dateToDateString = (date) => `${date.getUTCDate()}`
-export const dateToISODateString = (date) => date.toISOString().slice(0, 10)
-
-
-export function dateToSql(date: Date): string {
-  return format(date, 'yyyy-MM-dd');
-}
+export const dateToDateString = (date: Date): string => `${date.getUTCDate()}`;
+export const dateToSql = (date: Date): string => format(date, 'yyyy-MM-dd');
 
 export function parseJsDateToSql(dateStr: string): string {
   const dt = new Date(dateStr);
@@ -92,4 +87,22 @@ export function getWeeksOfMonth(date = new Date()): Week[] {
   }
 
   return weeks;
+}
+
+
+export const nextDay = (date: Date) => addDays(date, 1);
+
+export function makeDatesGivenDay(intervalStart: Date, intervalEnd: Date, day: number): Array<Date> {
+  const atDay = new Date(intervalStart);
+  atDay.setDate(day);
+  if (atDay < intervalStart) {
+    atDay.setMonth(atDay.getMonth() + 1);
+  }
+
+  const result: Array<Date> = []
+  while (atDay < intervalEnd) {
+    result.push(atDay);
+    atDay.setMonth(atDay.getMonth() + 1);
+  }
+  return result;
 }

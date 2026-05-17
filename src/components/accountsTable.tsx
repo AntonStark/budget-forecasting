@@ -3,7 +3,7 @@ import {useState} from "react";
 import {updateAccount} from "@/adapters/api";
 import {BalanceCell} from "@/components/balanceCell";
 import {AccountData} from "@/types";
-import {dateToDateString, dateToISODateString} from "@/utils/dates";
+import {dateToDateString, dateToSql} from "@/utils/dates";
 
 
 export type FocusCell = {
@@ -124,7 +124,7 @@ const AccountRow = ({accountData, isoDates, focusCell, setFocusCell, displayConf
         const options = {}
 
         const today = new Date()
-        if (isoDates[index] === dateToISODateString(today)) {
+        if (isoDates[index] === dateToSql(today)) {
             options["today"] = true
         } else {
             options["protected"] = true

@@ -1,5 +1,5 @@
 import {ExpenseFormData} from "@/types";
-import {dateToISODateString} from "@/utils/dates";
+import {dateToSql} from "@/utils/dates";
 
 // ==== ACCOUNTS ====
 
@@ -37,8 +37,8 @@ export async function updateAccount(id, {inUse}) {
 
 export async function getPayments(dateStart: Date, dateEnd: Date) {
     return doJsonGet('/api/payments', {
-        date_start: dateToISODateString(dateStart),
-        date_end: dateToISODateString(dateEnd),
+        date_start: dateToSql(dateStart),
+        date_end: dateToSql(dateEnd),
     })
 }
 
