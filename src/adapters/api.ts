@@ -1,4 +1,4 @@
-import {ExpenseFormData} from "@/types";
+import {OncePaymentData, ScheduledPaymentData} from "@/types";
 import {dateToSql} from "@/utils/dates";
 
 // ==== ACCOUNTS ====
@@ -42,17 +42,14 @@ export async function getPayments(dateStart: Date, dateEnd: Date) {
     })
 }
 
-async function saveOnceOfPayment({description, amount, atDate}) {
-    return doJsonPost('/api/payments', {description, amount, at_date: atDate});
+export async function saveOnceOfPayment(expenseFormData: OncePaymentData) {
+    const {amount, description} = expenseFormData;
+    return await doJsonPost('/api/payments', {description, amount, at_date: expenseFormData.plannedAt.date});
 }
 
-export async function savePayment(expenseFormData: ExpenseFormData) {
-    const {amount, description} = expenseFormData;
-    if (expenseFormData.type === "once") {
-        // @ts-ignore
-        const atDate = expenseFormData.plannedAt.date;
-        await saveOnceOfPayment({amount, description, atDate});
-    }
+export async function saveScheduledPayment(expenseFormData: ScheduledPaymentData) {
+    const {amount, description, schedule} = expenseFormData;
+    return await doJsonPost('/api/payments/with_schedule', {description, amount, schedule});
 }
 
 

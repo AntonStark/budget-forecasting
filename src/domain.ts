@@ -1,7 +1,7 @@
 import {addDays} from "date-fns";
 
-import {AccountBalance, AccountData, Mode, PaymentData} from "@/types";
-import {dateToSql, euroWeekOffset, Week} from "@/utils/dates";
+import {AccountBalance, AccountData, Mode, PaymentData, PaymentSchedule, PaymentScheduleType} from "@/types";
+import {dateToSql, euroWeekOffset, makeDatesGivenNumber, makeDatesGivenWeekday, nextDay, Week} from "@/utils/dates";
 
 export class DayBalancesInfo {
   payments: PaymentData[]
@@ -149,4 +149,21 @@ export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData
   }
 
   return result;
+}
+
+
+export function generateScheduleDates(
+  schedule: PaymentSchedule, untilDate: string | undefined, limit: number = undefined
+): Array<Date> {
+  // надо сформировать массив дат в которые нужны конкретные платежи
+  // для этого из полу-интервала (applied_until, untilDate] надо выбрать дни с подходящим number
+  const intervalStart = (
+    schedule.applied_until ? nextDay(new Date(schedule.applied_until)) : new Date(schedule.date_start)
+  );
+  const intervalEnd = (untilDate ? nextDay(new Date(untilDate)) : undefined);
+  if (schedule.type === PaymentScheduleType.monthly) {
+    return makeDatesGivenNumber(intervalStart, intervalEnd, schedule.number, limit);
+  } else {  // weekly
+    return makeDatesGivenWeekday(intervalStart, intervalEnd, schedule.number, limit);
+  }
 }

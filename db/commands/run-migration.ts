@@ -1,8 +1,7 @@
-import pkg from "better-sqlite3";
-const {Database} = pkg;
+import {Database} from "better-sqlite3";
 import parseArgs from "minimist";
 
-import {connect} from "../../src/utils/database.ts";
+import {connect} from "@/utils/database";
 
 const argv = parseArgs(process.argv, {
     string: ['f'],

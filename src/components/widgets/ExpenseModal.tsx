@@ -1,17 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 
-import {ExpenseFormData, PaymentType} from "@/types";
+import {OncePaymentData, PaymentScheduleType, PaymentType, ScheduledPaymentData} from "@/types";
 
-export default function ExpenseModal({ onClose, onSubmit }: {
+export default function ExpenseModal({ onClose, onSubmitOnce, onSubmitScheduled }: {
   onClose: () => void,
-  onSubmit: (arg0: ExpenseFormData) => void
+  onSubmitOnce: (arg0: OncePaymentData) => void,
+  onSubmitScheduled: (arg0: ScheduledPaymentData) => void
 }) {
   const ref = useRef<HTMLDivElement>();
-  const [type, setType] = useState<PaymentType>("once");
+  const [type, setType] = useState<PaymentType>(PaymentType.once);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [dayOfMonth, setDayOfMonth] = useState("");
+  const [scheduleType, setScheduleType] = useState<PaymentScheduleType>(PaymentScheduleType.monthly)
+  const [scheduleNumber, setScheduleNumber] = useState("");
   const [date, setDate] = useState("");
 
   useEffect(() => {
@@ -25,15 +27,46 @@ export default function ExpenseModal({ onClose, onSubmit }: {
   }, [onClose]);
 
   function handleSubmit() {
-    const payload = {
-      type,
-      amount: Number(amount),
-      description,
-      plannedAt: (type === "monthly" ? { dayOfMonth: Number(dayOfMonth) } : { date }),
-    };
+    switch (type) {
+      case PaymentType.once:
+        onSubmitOnce({
+          amount: Number(amount),
+          description,
+          plannedAt: {date}
+        });
+        break;
+      case PaymentType.regular:
+        onSubmitScheduled({
+          amount: Number(amount),
+          description,
+          schedule: {type: scheduleType, number: Number(scheduleNumber)}
+        });
+        break;
+    }
 
-    onSubmit(payload);
     onClose();
+  }
+
+  const typeOption = (option, title) => {
+    return (
+      <button
+        onClick={() => setType(option)}
+        className={`flex-1 py-1 rounded-xl text-sm ${
+          type === option ? "bg-white shadow" : "text-gray-500"
+        }`}
+      >{title}</button>
+    )
+  }
+
+  const regularityOption = (option, title) => {
+    return (
+      <button
+        onClick={() => setScheduleType(option)}
+        className={`flex-1 py-1 rounded-xl text-sm ${
+          scheduleType === option ? "bg-white shadow" : "text-gray-500"
+        }`}
+      >{title}</button>
+    )
   }
 
   return (
@@ -45,22 +78,11 @@ export default function ExpenseModal({ onClose, onSubmit }: {
         className="bg-white rounded-2xl shadow p-6 w-80 space-y-4"
       >
         <div className="flex gap-2 bg-gray-100 p-1 rounded-xl">
-          <button
-            onClick={() => setType("once")}
-            className={`flex-1 py-1 rounded-xl text-sm ${
-              type === "once" ? "bg-white shadow" : "text-gray-500"
-            }`}
-          >Единоразовый</button>
-
-          <button
-            onClick={() => setType("monthly")}
-            className={`flex-1 py-1 rounded-xl text-sm ${
-              type === "monthly" ? "bg-white shadow" : "text-gray-500"
-            }`}
-          >Каждый месяц</button>
+          {typeOption(PaymentType.once, 'Единоразовый')}
+          {typeOption(PaymentType.regular, 'Регулярный')}
         </div>
 
-        {type === "once" && (
+        {type === PaymentType.once && (
           <input
             type="date"
             value={date}
@@ -69,12 +91,19 @@ export default function ExpenseModal({ onClose, onSubmit }: {
           />
         )}
 
-        {type === "monthly" && (
+        {type === PaymentType.regular && (
+          <div className="flex gap-2 bg-gray-100 p-1 rounded-xl">
+            {regularityOption(PaymentScheduleType.monthly, 'Ежемесячный')}
+            {regularityOption(PaymentScheduleType.weekly, 'Еженедельный')}
+          </div>
+        )}
+
+        {type === PaymentType.regular && (
           <input
             type="number"
-            placeholder="День месяца"
-            value={dayOfMonth}
-            onChange={(e) => setDayOfMonth(e.target.value)}
+            placeholder={scheduleType === PaymentScheduleType.monthly ? "Число месяца" : "День недели 1..7"}
+            value={scheduleNumber}
+            onChange={(e) => setScheduleNumber(e.target.value)}
             className="w-full p-2 rounded-xl bg-gray-50 text-sm outline-none"
           />
         )}

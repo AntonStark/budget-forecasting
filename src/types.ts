@@ -31,6 +31,9 @@ export interface PaymentData {
   currency_iso_code: string
   currency_symbol: string
   account_id?: number
+  schedule_type?: string
+  schedule_number?: number
+  schedule_date_start?: string
 }
 
 export interface PaymentInSchema {
@@ -38,6 +41,12 @@ export interface PaymentInSchema {
   at_date: string
   amount: number
   payment_schedule_id?: number
+}
+
+export interface ScheduleShortSchema {
+  type: string
+  number: number
+  date_start: string
 }
 
 export type PlannerState = {
@@ -51,16 +60,22 @@ export type PlannerState = {
   prev: () => void;
 };
 
-export type PaymentType = "once" | "monthly";
+export enum PaymentType {once = "once", regular = "regular"}
 
-export interface ExpenseFormData {
-  type: PaymentType
+interface PaymentDataBase {
   amount: number
   description: string
-  plannedAt: {dayOfMonth: number} | {date: string}
 }
 
-export type PaymentScheduleType = "monthly";
+export interface OncePaymentData extends PaymentDataBase {
+  plannedAt: {date: string}
+}
+
+export enum PaymentScheduleType {monthly = "monthly", weekly = "weekly"}
+
+export interface ScheduledPaymentData extends PaymentDataBase {
+  schedule: {type: PaymentScheduleType, number: number}
+}
 
 export interface PaymentSchedule {
   id: number

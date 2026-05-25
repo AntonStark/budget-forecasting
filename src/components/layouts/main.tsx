@@ -7,7 +7,7 @@ import MonthTable from "@/components/widgets/MonthTable";
 import ExpenseModal from "@/components/widgets/ExpenseModal";
 import {usePlannerContext} from "@/components/context/PlannerContext";
 
-import {getAccounts, getPayments, savePayment} from "@/adapters/api";
+import {getAccounts, getPayments, saveOnceOfPayment, saveScheduledPayment} from "@/adapters/api";
 import {AccountData, Mode, PaymentData} from "@/types";
 import {settingToIntervalDates} from "@/utils/dates";
 import BalanceModal from "@/components/widgets/BalanceModal";
@@ -54,7 +54,8 @@ export default function PaymentsPlanner() {
       {showExpenseModal &&
           <ExpenseModal
               onClose={() => setShowExpenseModal(false)}
-              onSubmit={(formData) => savePayment(formData) && setNeedRefresh(true)}
+              onSubmitOnce={(formData) => saveOnceOfPayment(formData) && setNeedRefresh(true)}
+              onSubmitScheduled={(formData) => saveScheduledPayment(formData) && setNeedRefresh(true)}
           />
       }
       {showBalanceModal &&

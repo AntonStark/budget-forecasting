@@ -2,8 +2,8 @@ import {Database} from "better-sqlite3";
 import {NextApiRequest, NextApiResponse} from "next";
 
 import {connect} from "@/utils/database";
-import {PaymentData} from "@/types";
-import {createPayment, listPayments} from "@/sqlite/payments";
+import {PaymentData, ScheduleShortSchema} from "@/types";
+import {createPayment, ensureScheduledPayments, listPayments} from "@/sqlite/payments";
 
 let db: Database = null
 
@@ -27,6 +27,7 @@ async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
 
     db = connect(db);
 
+    ensureScheduledPayments(db, date_end);
     const payments = listPayments(db, date_start, date_end)
     // console.log(payments)
 
@@ -38,21 +39,19 @@ async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
             amount: paymentObj.amount,
             value: serializePaymentValue(paymentObj),
             account_id: paymentObj.account_id,
+            schedule: serializeScheduleInfo(paymentObj)
         }))
     })
 }
 
 async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
-    console.log('POST /api/payments/')
+    console.log('POST /api/payments/');
+    const {description, amount, at_date} = req.body;
 
     db = connect(db)
-    console.log('description', req.body['description']);
+    console.log('description', description);
 
-    createPayment(db, {
-        description: req.body['description'],
-        amount: req.body['amount'],
-        at_date: req.body['at_date'],
-    })
+    createPayment(db, {description, amount, at_date})
 
     res.status(200).json(JSON.stringify({status: "OK"}));
 }
@@ -70,4 +69,12 @@ function serializePaymentValue(paymentObj: PaymentData): string {
     } else {
         return String(paymentObj.amount);
     }
+}
+
+function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema {
+    return {
+        type: paymentObj.schedule_type,
+        number: paymentObj.schedule_number,
+        date_start: paymentObj.schedule_date_start
+    };
 }

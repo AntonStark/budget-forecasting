@@ -1,4 +1,4 @@
-import {startOfMonth, endOfMonth, startOfWeek, addWeeks, endOfWeek, format, addMonths, addDays} from "date-fns";
+import {addDays, addWeeks, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek} from "date-fns";
 
 import {Mode} from "@/types";
 import {ru} from "date-fns/locale";
@@ -6,8 +6,7 @@ import {ru} from "date-fns/locale";
 export function euroWeekOffset(date: Date) {
   // go back `getUTCDay` number of days returns previous Sunday (count starts from Sunday)
   // 0..6 = Sunday .. Saturday
-  // +6 % 7 makes
-  // 6, 0, 1, .. 5 = Sunday .. Saturday => 0..6 = Monday .. Sunday
+  // +6 % 7 makes 6, 0, 1, .. 5 = Sunday .. Saturday => 0..6 = Monday .. Sunday
   return (date.getUTCDay() + 6) % 7;
 }
 
@@ -92,17 +91,45 @@ export function getWeeksOfMonth(date = new Date()): Week[] {
 
 export const nextDay = (date: Date) => addDays(date, 1);
 
-export function makeDatesGivenDay(intervalStart: Date, intervalEnd: Date, day: number): Array<Date> {
-  const atDay = new Date(intervalStart);
+export function makeDatesGivenNumber(
+  intervalStart: Date,
+  intervalEnd: Date | undefined,
+  day: number,
+  limit: number = undefined,
+): Array<Date> {
+  // console.log({intervalStart, intervalEnd, day, limit, regularMode})
+
+  let atDay: Date;
+  atDay = new Date(intervalStart);
   atDay.setDate(day);
   if (atDay < intervalStart) {
     atDay.setMonth(atDay.getMonth() + 1);
   }
 
   const result: Array<Date> = []
-  while (atDay < intervalEnd) {
-    result.push(atDay);
+  while (intervalEnd ? atDay < intervalEnd : result.length < (limit || 1)) {
+    result.push(new Date(atDay));
     atDay.setMonth(atDay.getMonth() + 1);
+  }
+  return result;
+}
+
+export function makeDatesGivenWeekday(
+  intervalStart: Date,
+  intervalEnd: Date | undefined,
+  day: number,
+  limit: number = undefined,
+) {
+  let atDay: Date;
+  atDay = addDays(startOfWeek(intervalStart, { weekStartsOn: 1 }), day - 1);
+  if (atDay < intervalStart) {
+    atDay.setDate(atDay.getDate() + 7);
+  }
+
+  const result: Array<Date> = []
+  while (intervalEnd ? atDay < intervalEnd : result.length < (limit || 1)) {
+    result.push(new Date(atDay));
+    atDay.setDate(atDay.getDate() + 7);
   }
   return result;
 }

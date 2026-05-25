@@ -1,5 +1,4 @@
-import pkg from "better-sqlite3";
-const {Database} = pkg;
+import {Database} from "better-sqlite3";
 
 export default (db: Database) => {
   db.exec(`
