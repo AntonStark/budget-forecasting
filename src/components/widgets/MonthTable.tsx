@@ -14,7 +14,7 @@ export default function MonthTable({currentDate, payments, accounts}) {
     <div className="bg-white rounded-2xl shadow-sm">
       <div className="p-4 overflow-x-auto">
         <div
-          className="grid gap-1"
+          className="grid gap-y-1"
           style={{
             gridAutoColumns: `${BASE_WIDTH}px`,
             gridTemplateRows: "auto 1fr"
@@ -43,10 +43,10 @@ function OneWeekColumn({weekBudget}: {weekBudget: PeriodBudget}) {
     <>
       {/* Контент */}
       <div
-        className="col-span-4 row-start-2 bg-gray-50 p-2 h-40 overflow-auto"
+        className="col-span-4 row-start-2 h-40 overflow-auto"
         style={{borderBottom: "1px solid black"}}
       >
-        <PeriodPayments payments={weekBudget.payments}/>
+        <PeriodPayments payments={weekBudget.payments} period={weekBudget.period}/>
       </div>
 
       {/* Итоги */}

@@ -12,6 +12,31 @@ export function createPayment(db: Database, item: PaymentInSchema) {
   insert.run(item.amount, item.description, item.at_date, item.payment_schedule_id || null);
 }
 
+export function updatePayment(
+  db: Database, amount: number | undefined, description: string | undefined, at_date: string | undefined, id: number
+) {
+  if (amount === undefined && description === undefined && at_date === undefined) {
+    return;
+  }
+
+  const setClauseParts = [];
+  const runArgs = [];
+  if (amount !== undefined) {
+    setClauseParts.push('amount = ?');
+    runArgs.push(amount);
+  }
+  if (description !== undefined) {
+    setClauseParts.push('description = ?');
+    runArgs.push(description);
+  }
+  if (at_date !== undefined) {
+    setClauseParts.push('at_date = ?');
+    runArgs.push(at_date);
+  }
+
+  db.prepare(`UPDATE payments SET ${setClauseParts.join(', ')} WHERE id = ?;`).run(...runArgs, id);
+}
+
 function setScheduleApplied(db: Database, untilDate: string, scheduleId: number) {
   db.prepare(`UPDATE payment_schedules SET applied_until = ? WHERE id = ?`).run([untilDate, scheduleId]);
 }

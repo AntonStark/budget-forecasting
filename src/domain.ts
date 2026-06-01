@@ -4,6 +4,7 @@ import {AccountBalance, AccountData, Mode, PaymentData, PaymentSchedule, Payment
 import {dateToSql, euroWeekOffset, makeDatesGivenNumber, makeDatesGivenWeekday, nextDay, Week} from "@/utils/dates";
 
 export class DayBalancesInfo {
+  date: string
   payments: PaymentData[]
   accounts: AccountBalance[]
   total: number
@@ -43,13 +44,17 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
       result[i].accounts.push({
         atDate,
         account_id: account.id,
-        value: balancesByDate[atDate] || lastBalance,
+        value: (balancesByDate.hasOwnProperty(atDate) ? balancesByDate[atDate] : lastBalance),
         inferred: !balancesByDate.hasOwnProperty(atDate),
       });
       if (balancesByDate.hasOwnProperty(atDate)) {
         lastBalance = balancesByDate[atDate];
       }
     }
+  }
+
+  for (let i = 0; i < 7; i++) {
+    result[i].date = dateToSql(addDays(dateMonday, i));
   }
 
   for (const dayBalances of result) {

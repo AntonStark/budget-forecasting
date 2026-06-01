@@ -3,7 +3,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 
 import {connect} from "@/utils/database";
 import {PaymentData, ScheduleShortSchema} from "@/types";
-import {createPayment, ensureScheduledPayments, listPayments} from "@/sqlite/payments";
+import {createPayment, ensureScheduledPayments, listPayments, updatePayment} from "@/sqlite/payments";
 
 let db: Database = null
 
@@ -11,16 +11,21 @@ export default async (req: NextApiRequest, rep: NextApiResponse) => {
     // console.log(req)
     switch (req.method) {
         case 'GET':
+            console.log('GET /api/payments/');
             await handleListPayments(req, rep);
             break;
         case 'POST':
+            console.log('POST /api/payments/');
             await handleCreatePayment(req, rep);
+            break;
+        case 'PATCH':
+            console.log('PUT /api/payments/');
+            await handleUpdatePayment(req, rep);
             break;
     }
 }
 
 async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
-    console.log('GET /api/payments/');
     let {date_start, date_end} = req.query;
     date_start = Array.isArray(date_start) ? date_start[0] : date_start;
     date_end = Array.isArray(date_end) ? date_end[0] : date_end;
@@ -45,13 +50,22 @@ async function handleListPayments(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handleCreatePayment(req: NextApiRequest, res: NextApiResponse) {
-    console.log('POST /api/payments/');
     const {description, amount, at_date} = req.body;
 
-    db = connect(db)
+    db = connect(db);
     console.log('description', description);
 
     createPayment(db, {description, amount, at_date})
+
+    res.status(200).json(JSON.stringify({status: "OK"}));
+}
+
+async function handleUpdatePayment(req: NextApiRequest, res: NextApiResponse) {
+    const {id, description, amount, at_date} = req.body;
+
+    db = connect(db);
+
+    updatePayment(db, amount, description, at_date, id);
 
     res.status(200).json(JSON.stringify({status: "OK"}));
 }

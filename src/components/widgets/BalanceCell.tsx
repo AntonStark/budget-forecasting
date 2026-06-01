@@ -1,103 +1,43 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import {EditableCell} from "@/components/widgets/EditableCell";
 
-export default function BalanceCell ({
-  value,
-  inferred,
-  editable = true,
-  onSubmit,
-}: {
+export default function BalanceCell ({value, inferred, onSubmit}: {
   value: number,
   inferred: boolean,
-  editable: boolean,
   onSubmit: (arg0: number) => void,
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [draftValue, setDraftValue] = useState(value ?? '');
   const wrapperRef = useRef(null);
+  const isOutsideClick = (event: MouseEvent) => wrapperRef.current && !wrapperRef.current.contains(event.target);
 
-  useEffect(() => {
-    setDraftValue(value ?? '');
-  }, [value]);
-
-  useEffect(() => {
-    if (!isEditing) return;
-
-    function handleOutsideClick(event) {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target)
-      ) {
-        submitIfNeeded();
-      }
-    }
-
-    document.addEventListener('mousedown', handleOutsideClick);
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [isEditing, draftValue]);
-
-  function handleClick() {
-    if (!editable) {
-      return;
-    }
-
-    setIsEditing(true);
-  }
-
-  function submitIfNeeded() {
-    setIsEditing(false);
-
+  function submitIfNeeded(val: string): boolean {
     // пустой ввод — ничего не отправляем
-    if (draftValue === '' || draftValue === null) {
-      return;
+    if (val === '' || val === null) {
+      return false;
     }
 
-    const numericValue = Number(draftValue);
+    const numericValue = Number(val);
 
     // NaN тоже пропускаем
     if (Number.isNaN(numericValue)) {
-      return;
+      return false;
     }
 
     // если значение не изменилось — тоже можно пропустить
     if (numericValue === value) {
-      return;
+      return false;
     }
 
     onSubmit(numericValue);
-  }
-
-  function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-      submitIfNeeded();
-    }
-
-    if (event.key === 'Escape') {
-      setDraftValue(value ?? '');
-      setIsEditing(false);
-    }
+    return true;
   }
 
   return (
-    <div ref={wrapperRef}>
-      {isEditing ? (
-        <input
-          autoFocus
-          type="number"
-          value={draftValue}
-          onChange={(e) => setDraftValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="hide-spin-buttons"
-          style={{width: '100%'}}
-        />
-      ) : (
-        <div
-          onClick={handleClick}
-          className={inferred? "text-gray-300" : ""}
-        >{value}</div>
-      )}
+    <div ref={wrapperRef} className={inferred? "text-gray-300" : ""}>
+      <EditableCell
+        inputType={"number"}
+        initialValue={String(value) || ''}
+        submitIfNeeded={submitIfNeeded}
+        isOutsideClick={isOutsideClick}/>
     </div>
   );
 }

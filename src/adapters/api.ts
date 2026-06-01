@@ -20,15 +20,7 @@ export async function setBalance({accountId, atDate, value}) {
 
 export async function updateAccount(id, {inUse}) {
     console.log(`updateAccount id:${id}`, {inUse})
-    return fetch('/api/accounts/' + id, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            in_use: inUse,
-        })
-    }).then((res) => res.json())
+    return doJsonPatch('/api/accounts/' + id, {in_use: inUse});
 }
 
 
@@ -52,12 +44,27 @@ export async function saveScheduledPayment(expenseFormData: ScheduledPaymentData
     return await doJsonPost('/api/payments/with_schedule', {description, amount, schedule});
 }
 
+export async function updateOnceOfPayment(expenseFormData: Partial<OncePaymentData>, paymentId: number) {
+    const {amount, description} = expenseFormData;
+    return await doJsonPatch('/api/payments', {id: paymentId, description, amount, at_date: expenseFormData.plannedAt?.date});
+}
+
 
 // ==== HELPERS ====
 
 async function doJsonPost(url: string, bodyArg: any) {
     return fetch(url, {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyArg)
+    }).then((res) => res.json());
+}
+
+async function doJsonPatch(url: string, bodyArg: any) {
+    return fetch(url, {
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },

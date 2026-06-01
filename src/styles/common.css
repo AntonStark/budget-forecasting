@@ -16,10 +16,6 @@
     text-align: center;
 }
 
-.border-bottom {
-    border-bottom: 1px solid black;
-}
-
 input.hide-spin-buttons::-webkit-inner-spin-button {
     appearance: none;
 }

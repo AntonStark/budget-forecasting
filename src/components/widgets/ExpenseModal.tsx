@@ -10,9 +10,9 @@ export default function ExpenseModal({ onClose, onSubmitOnce, onSubmitScheduled 
 }) {
   const ref = useRef<HTMLDivElement>();
   const [type, setType] = useState<PaymentType>(PaymentType.once);
+  const [scheduleType, setScheduleType] = useState<PaymentScheduleType>(PaymentScheduleType.monthly)
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [scheduleType, setScheduleType] = useState<PaymentScheduleType>(PaymentScheduleType.monthly)
   const [scheduleNumber, setScheduleNumber] = useState("");
   const [date, setDate] = useState("");
 
@@ -47,7 +47,7 @@ export default function ExpenseModal({ onClose, onSubmitOnce, onSubmitScheduled 
     onClose();
   }
 
-  const typeOption = (option, title) => {
+  const typeOption = (option: PaymentType, title: string) => {
     return (
       <button
         onClick={() => setType(option)}
@@ -58,7 +58,7 @@ export default function ExpenseModal({ onClose, onSubmitOnce, onSubmitScheduled 
     )
   }
 
-  const regularityOption = (option, title) => {
+  const regularityOption = (option: PaymentScheduleType, title: string) => {
     return (
       <button
         onClick={() => setScheduleType(option)}
