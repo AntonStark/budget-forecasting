@@ -28,6 +28,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
+    "lucide-react": "^1.17.0",
     "typescript": "^6.0.3"
   }
 }

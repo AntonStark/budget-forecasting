@@ -11,6 +11,8 @@ import {getAccounts, getPayments, saveOnceOfPayment, saveScheduledPayment} from 
 import {AccountData, Mode, PaymentData} from "@/types";
 import {settingToIntervalDates} from "@/utils/dates";
 import BalanceModal from "@/components/widgets/BalanceModal";
+import {DisplaySettingsProvider} from "@/components/context/DisplayContext";
+import {LeftPanel} from "@/components/widgets/LeftPanel";
 
 export default function PaymentsPlanner() {
   const [showExpenseModal, setShowExpenseModal] = useState<boolean>(false);
@@ -38,17 +40,22 @@ export default function PaymentsPlanner() {
           onLog={() => setShowBalanceModal(true)}
         />
 
-        <motion.div
-          key={mode}
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.2}}
-        >
-          {mode === Mode.week ?
-            <WeekTable currentDate={currentDate} payments={payments} accounts={accounts} refreshHandle={() => setNeedRefresh(true)} /> :
-            <MonthTable currentDate={currentDate} payments={payments} accounts={accounts}/>
-          }
-        </motion.div>
+        <DisplaySettingsProvider>
+          <LeftPanel/>
+
+          <motion.div
+            key={mode}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.2}}
+          >
+            {mode === Mode.week ?
+              <WeekTable currentDate={currentDate} payments={payments} accounts={accounts}
+                         refreshHandle={() => setNeedRefresh(true)}/> :
+              <MonthTable currentDate={currentDate} payments={payments} accounts={accounts}/>
+            }
+          </motion.div>
+        </DisplaySettingsProvider>
       </div>
 
       {showExpenseModal &&
