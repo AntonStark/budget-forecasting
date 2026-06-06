@@ -13,7 +13,7 @@ export function euroWeekOffset(date: Date) {
 export function getWeek(date: Date): Week {
   const start = startOfWeek(date, { weekStartsOn: 1 });
   const end = endOfWeek(date, { weekStartsOn: 1 });
-  return {start, end}
+  return {start, end, active: false}
 }
 
 export function settingToIntervalDates(
@@ -30,9 +30,11 @@ export function settingToIntervalDates(
     case Mode.month:
       let monthStart = new Date(today);
       monthStart.setUTCDate(1);
+      const mondayBeforeMonthStart = startOfWeek(monthStart, { weekStartsOn: 1 });
       let monthEnd = new Date(monthStart)
-      monthEnd.setUTCMonth(monthEnd.getUTCMonth() + 1, 0)
-      return [monthStart, monthEnd];
+      monthEnd.setUTCMonth(monthEnd.getUTCMonth() + 1, 0);
+      const dateSundayAfterMonthEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+      return [mondayBeforeMonthStart, dateSundayAfterMonthEnd];
     default:
       throw Error('Unknown type in mode: ' + mode);
   }
@@ -61,8 +63,9 @@ export const formatWeek = (week: Week) => (
 
 
 export interface Week {
-  start: Date,
+  start: Date
   end: Date
+  active: boolean
 }
 
 export function getWeeksOfMonth(date = new Date()): Week[] {
@@ -71,6 +74,7 @@ export function getWeeksOfMonth(date = new Date()): Week[] {
 
   const weeks: Week[] = [];
 
+  const todayDate = new Date();
   let current = startOfWeek(monthStart, { weekStartsOn: 1 }); // 1 = понедельник
 
   while (current <= monthEnd) {
@@ -80,6 +84,7 @@ export function getWeeksOfMonth(date = new Date()): Week[] {
     weeks.push({
       start: weekStart,
       end: weekEnd,
+      active: weekStart <= todayDate && todayDate <= weekEnd,
     });
 
     current = addWeeks(current, 1);

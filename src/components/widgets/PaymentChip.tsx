@@ -1,23 +1,25 @@
 import React, {useRef, useState} from "react";
+
 import {PaymentData} from "@/types";
 import {EditableCell} from "@/components/widgets/EditableCell";
 
-function PaymentChip({payment} : {payment: PaymentData}) {
+export function PaymentChip({payment, periodIndex, rowIndex} : {
+  payment: PaymentData,
+  periodIndex: number,
+  rowIndex: number
+}) {
   return (
-    <div className="grid grid-cols-3 border-gray-300">
-      <div className="col-span-2 text-right bg-gray-50 text-wrap">{payment.description}</div>
-      <div className="text-right whitespace-nowrap">{payment.amount}</div>
-    </div>
+    <>
+      <div
+        className="col-span-2 p-1 text-right text-xs text-wrap"
+        style={{gridColumnStart: 3 * periodIndex + 1, gridRow: `payments-${rowIndex + 1}`}}
+      >{payment.description}</div>
+      <div
+        className="text-right p-1 text-xs whitespace-nowrap"
+        style={{gridColumnStart: 3 * periodIndex + 3, gridRow: `payments-${rowIndex + 1}`}}
+      >{payment.amount}</div>
+    </>
   );
-}
-
-
-export default function PeriodPayments({payments, period}) {
-  return (
-    <div className="text-xs">
-      {payments.map((pData, pi) => <PaymentChip key={pi} payment={pData}/>)}
-    </div>
-  )
 }
 
 export function PaymentChipCompact({payment, onUpdate, rowIndex, colIndex} : {
@@ -47,13 +49,13 @@ export function PaymentChipCompact({payment, onUpdate, rowIndex, colIndex} : {
 
   return (
     <>
-      <div ref={valueCellRef} className="text-sm text-right whitespace-nowrap"
+      <div ref={valueCellRef} className="px-1 pt-1 text-sm text-right whitespace-nowrap"
            style={{gridRow: `payment-${rowIndex+1}-v`, gridColumnStart: 2* colIndex + 4}}>
         {payment.amount}
       </div>
 
       <div ref={descriptionCellRef}
-           className="col-span-2 text-sm text-wrap"
+           className="col-span-2 px-1 pb-1 text-sm text-wrap"
            style={{gridRow: `payment-${rowIndex+1}-d`, gridColumnStart: 2* colIndex + 3}}
       >
         <EditableCell

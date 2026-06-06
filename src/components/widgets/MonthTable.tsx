@@ -1,61 +1,86 @@
 import React from "react";
 
 import {formatWeek, getWeeksOfMonth} from "@/utils/dates";
-import PeriodPayments from "@/components/widgets/PeriodPayments";
+import {PaymentChip} from "@/components/widgets/PaymentChip";
 import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
 
-const BASE_WIDTH = 50;
+const BASE_WIDTH = 66;
 
 export default function MonthTable({currentDate, payments, accounts}) {
   const weeks = getWeeksOfMonth(currentDate);
-  const budgets = makeBudgetsByWeek(payments, accounts, weeks);
+  const periods: PeriodBudget[] = makeBudgetsByWeek(payments, accounts, weeks);
+
+  const nPayments = periods.map(week => week.payments.length);
+  const paymentNRows = nPayments.reduce((a, b) => Math.max(a, b), 0) + 2;
+
+  let paymentRowsTemplate = [];
+  for (let n = 1; n <= paymentNRows; ++n) {
+    paymentRowsTemplate.push(`[payments-${n}] auto`);
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-sm">
       <div className="p-4 overflow-x-auto">
         <div
-          className="grid gap-y-1"
+          className={`grid grid-cols-${3 * weeks.length}`}
           style={{
             gridAutoColumns: `${BASE_WIDTH}px`,
-            gridTemplateRows: "auto 1fr"
+            gridTemplateRows: `
+            [header] auto
+            ${paymentRowsTemplate.join('\n')}
+            [plan-total] auto
+            [fact-total] auto`
           }}
         >
           {/* Заголовки */}
           {weeks.map((week, i) => (
             <div
               key={`h${i}`}
-              className="col-span-4 row-start-1 text-center text-xs text-gray-500"
-              style={{borderBottom: "1px solid black"}}
+              className="col-span-3 z-20 text-center text-xs text-gray-500"
+              style={{gridRow: "header", gridColumnStart: 3 * i + 1}}
             >
               <a href={`?mode=week&date=${week.start}`}>{formatWeek(week)}</a>
             </div>
           ))}
-          {budgets.map((weekBudget, i) => <OneWeekColumn key={i} weekBudget={weekBudget}/>)}
+
+          {/* ЭЛЕМЕНТЫ ФОНА */}
+          <div className="border-b z-10" style={{gridRow: "header", gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
+          <div className="h-20" style={{gridRow: `payments-${paymentNRows}`, gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
+          <div className="border-t z-10" style={{gridRow: "plan-total", gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
+
+          {/* Контент */}
+          {periods.map((week, w_i) => (
+            <React.Fragment key={w_i}>
+              {/* Подложка колонок с текстом */}
+              <div className={`col-span-2 ${week.period.active ? "bg-blue-50" : "bg-gray-50"}`}
+                   style={{gridRow: `header / -1`, gridColumnStart: 3 * w_i + 1}}/>
+
+              {/* Расходы */}
+              {week.payments.map((pData, r_i) => (
+                <PaymentChip payment={pData} periodIndex={w_i} rowIndex={r_i} key={r_i}/>
+              ))}
+
+              {/* Итоги */}
+              <div
+                className="col-span-3 text-right p-1 text-xs text-gray-500"
+                style={{gridRow: "plan-total", gridColumnStart: 3 * w_i + 1}}>
+                {week.value_after.plan}
+              </div>
+              <div
+                className="col-span-3 text-right px-1 text-xs"
+                style={{gridRow: "fact-total", gridColumnStart: 3 * w_i + 1}}>
+                {week.value_after.fact || ""}
+              </div>
+
+              {/* Вертикальная граница колонки, кроме последней */}
+              {w_i !== periods.length - 1 && (
+                <div className="border-l z-10 border-gray-300"
+                     style={{gridColumnStart: 3 * w_i + 4, gridRow: "1 / -1", width: 0}}/>
+              )}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </div>
   );
-}
-
-
-function OneWeekColumn({weekBudget}: {weekBudget: PeriodBudget}) {
-  return (
-    <>
-      {/* Контент */}
-      <div
-        className="col-span-4 row-start-2 h-40 overflow-auto"
-        style={{borderBottom: "1px solid black"}}
-      >
-        <PeriodPayments payments={weekBudget.payments} period={weekBudget.period}/>
-      </div>
-
-      {/* Итоги */}
-      <div className="col-span-4 row-start-3 text-right text-xs text-gray-300">
-        {weekBudget.value_after.plan}
-      </div>
-      <div className="col-span-4 row-start-4 text-right text-xs">
-        {weekBudget.value_after.fact || ""}
-      </div>
-    </>
-  )
 }

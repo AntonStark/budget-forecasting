@@ -5,12 +5,15 @@ import {dateToSql, euroWeekOffset, makeDatesGivenNumber, makeDatesGivenWeekday, 
 
 export class DayBalancesInfo {
   date: string
+  isToday: boolean
+
   payments: PaymentData[]
   accounts: AccountBalance[]
   total: number
   balances_touched: boolean
 
   constructor() {
+    this.isToday = false;
     this.payments = [];
     this.accounts = [];
     this.total = 0;
@@ -34,27 +37,27 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
 
   const dateMonday = week.start;
   let balancesByDate: Record<string, number>;
-  let atDate: string;
   for (const account of accounts) {
     balancesByDate = Object.fromEntries(account.balances.map(b => [b.atDate, b.value]));
 
     let lastBalance: number = account.lastBalanceBefore?.value || 0;
     for (let i = 0; i < 7; i++) {
-      atDate = dateToSql(addDays(dateMonday, i));
-      result[i].accounts.push({
-        atDate,
-        account_id: account.id,
-        value: (balancesByDate.hasOwnProperty(atDate) ? balancesByDate[atDate] : lastBalance),
-        inferred: !balancesByDate.hasOwnProperty(atDate),
-      });
+      let atDate = dateToSql(addDays(dateMonday, i));
+      let [value, inferred] = (balancesByDate.hasOwnProperty(atDate) ? [balancesByDate[atDate], false] : [lastBalance, true]);
+      result[i].accounts.push({ atDate, value, inferred, account_id: account.id });
       if (balancesByDate.hasOwnProperty(atDate)) {
         lastBalance = balancesByDate[atDate];
       }
     }
   }
 
+  const today = dateToSql(new Date());
   for (let i = 0; i < 7; i++) {
     result[i].date = dateToSql(addDays(dateMonday, i));
+
+    if (result[i].date === today) {
+      result[i].isToday = true;
+    }
   }
 
   for (const dayBalances of result) {
@@ -73,7 +76,7 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
 
 
 export class PeriodBudget {
-  period: { type: Mode, start: Date, end: Date }
+  period: { type: Mode, start: Date, end: Date, active: boolean }
 
   payments: PaymentData[]
   saldo: number
@@ -132,7 +135,7 @@ export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData
   let budget: PeriodBudget;
   for (let w = 0; w < weeks.length; w++) {
     [week, budget] = [weeks[w], result[w]];
-    budget.period = {type: Mode.week, start: week.start, end: week.end};
+    budget.period = {type: Mode.week, start: week.start, end: week.end, active: week.active};
 
     budget.payments = payments.filter((p) => {
       const date = new Date(p.at_date);
