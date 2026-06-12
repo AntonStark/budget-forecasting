@@ -1,31 +1,38 @@
+'use client'
+
+import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import {createContext, useContext, useEffect, useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
 
 import {Mode, PlannerState} from "@/types";
 import {dateToSql} from "@/utils/dates";
 
-const PlannerContext = createContext(null);
+const PlannerContext = createContext<PlannerState | null>(null);
 
-export function PlannerProvider({ searchParams, children }) {
+export function PlannerProvider({children}) {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
   // --- INIT FROM URL ---
-  const initialMode = searchParams.mode;
-  const initialDate = searchParams.date ? new Date(searchParams.date) : new Date();
+  const modePart = (pathname && pathname.split('/').length > 2 ? pathname.split('/')[2] : "");
+  console.log('modePart', modePart);
+  const initialMode = modePart in Mode ? modePart as Mode : Mode.month;
+  console.log('initialMode', initialMode);
+  const dateParam = searchParams?.get('date');
+  const initialDate = dateParam ? new Date(dateParam) : new Date();
 
   const [mode, setMode] = useState<Mode>(initialMode);
   const [currentDate, setCurrentDate] = useState<Date>(initialDate);
 
   // --- SYNC TO URL ---
   useEffect(() => {
-    const params = new URLSearchParams();
-
-    params.set("mode", mode);
-    params.set("date", dateToSql(currentDate));
-
+    const params = new URLSearchParams({'date': dateToSql(currentDate)});
     router.replace(`${pathname}?${params.toString()}`);
-  }, [mode, currentDate]);
+  }, [currentDate]);
+  useEffect(() => {
+    const params = new URLSearchParams({'date': dateToSql(currentDate)});
+    router.push(`${mode}?${params.toString()}`);
+  }, [mode]);
 
   // --- NAVIGATION ---
   const next = () => {
@@ -49,10 +56,9 @@ export function PlannerProvider({ searchParams, children }) {
   return (
     <PlannerContext.Provider
       value={{ mode, setMode, currentDate, setCurrentDate, next, prev }}
-    >
-      {children}
-    </PlannerContext.Provider>
-  );
+    >{ children }</PlannerContext.Provider>
+  )
 }
 
+// @ts-ignore
 export const usePlannerContext = () => useContext<PlannerState>(PlannerContext);

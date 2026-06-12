@@ -3,11 +3,12 @@ import {EditableCell} from "@/components/widgets/EditableCell";
 
 export default function BalanceCell ({value, inferred, onSubmit}: {
   value: number,
-  inferred: boolean,
+  inferred: boolean | undefined,
   onSubmit: (arg0: number) => void,
 }) {
-  const wrapperRef = useRef(null);
-  const isOutsideClick = (event: MouseEvent) => wrapperRef.current && !wrapperRef.current.contains(event.target);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  // @ts-ignore
+  const isOutsideClick = (event: MouseEvent) => Boolean(wrapperRef.current) && !wrapperRef.current.contains(event.target);
 
   function submitIfNeeded(val: string): boolean {
     // пустой ввод — ничего не отправляем

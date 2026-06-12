@@ -1,11 +1,11 @@
 import {createContext, useContext, useState} from "react";
-import {DisplaySettings} from "@/types";
+import {AccountsRowsDisplay, DisplaySettings, PaymentsSort} from "@/types";
 
-const DisplaySettingsContext = createContext(null);
+const DisplaySettingsContext = createContext<DisplaySettings | null>(null);
 
 export function DisplaySettingsProvider({children}) {
-  const [paymentsSort, setPaymentsSort] = useState("as_is");
-  const [accountsRows, setAccountsRows] = useState("display");
+  const [paymentsSort, setPaymentsSort] = useState<PaymentsSort>("as_is" as PaymentsSort);
+  const [accountsRows, setAccountsRows] = useState<AccountsRowsDisplay>("display" as AccountsRowsDisplay);
 
   return (
     <DisplaySettingsContext.Provider value={{paymentsSort, setPaymentsSort, accountsRows, setAccountsRows}}>
@@ -14,4 +14,5 @@ export function DisplaySettingsProvider({children}) {
   );
 }
 
+// @ts-ignore
 export const useDisplaySettingsContext = () => useContext<DisplaySettings>(DisplaySettingsContext);

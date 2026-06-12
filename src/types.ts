@@ -88,7 +88,7 @@ export interface PaymentSchedule {
 
 export enum PaymentsSort {asIs = "as_is", category = "category", coloredCategory = "colored_category"}
 
-enum AccountsRowsDisplay {display = "display", hide = "hide"}
+export enum AccountsRowsDisplay {display = "display", hide = "hide"}
 
 export interface DisplaySettings {
   paymentsSort: PaymentsSort

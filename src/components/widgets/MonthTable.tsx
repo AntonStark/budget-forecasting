@@ -1,19 +1,24 @@
+import Link from "next/link";
 import React from "react";
 
-import {formatWeek, getWeeksOfMonth} from "@/utils/dates";
+import {dateToSql, formatWeek, getWeeksOfMonth} from "@/utils/dates";
 import {PaymentChip} from "@/components/widgets/PaymentChip";
 import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
+import {Mode} from "@/types";
+import {usePlannerContext} from "../context/PlannerProvider";
 
 const BASE_WIDTH = 66;
 
 export default function MonthTable({currentDate, payments, accounts}) {
+  const { setMode } = usePlannerContext();
+
   const weeks = getWeeksOfMonth(currentDate);
   const periods: PeriodBudget[] = makeBudgetsByWeek(payments, accounts, weeks);
 
   const nPayments = periods.map(week => week.payments.length);
   const paymentNRows = nPayments.reduce((a, b) => Math.max(a, b), 0) + 2;
 
-  let paymentRowsTemplate = [];
+  let paymentRowsTemplate: string[] = [];
   for (let n = 1; n <= paymentNRows; ++n) {
     paymentRowsTemplate.push(`[payments-${n}] auto`);
   }
@@ -39,7 +44,10 @@ export default function MonthTable({currentDate, payments, accounts}) {
               className="col-span-3 z-20 text-center text-xs text-gray-500"
               style={{gridRow: "header", gridColumnStart: 3 * i + 1}}
             >
-              <a href={`?mode=week&date=${week.start}`}>{formatWeek(week)}</a>
+              <Link
+                href={`${Mode.week}?date=${dateToSql(week.start)}`}
+                onNavigate={() => setMode(Mode.week)}
+              >{formatWeek(week)}</Link>
             </div>
           ))}
 

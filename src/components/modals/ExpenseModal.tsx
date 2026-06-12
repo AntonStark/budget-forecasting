@@ -8,7 +8,7 @@ export default function ExpenseModal({ onClose, onSubmitOnce, onSubmitScheduled 
   onSubmitOnce: (arg0: OncePaymentData) => void,
   onSubmitScheduled: (arg0: ScheduledPaymentData) => void
 }) {
-  const ref = useRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
   const [type, setType] = useState<PaymentType>(PaymentType.once);
   const [scheduleType, setScheduleType] = useState<PaymentScheduleType>(PaymentScheduleType.monthly)
   const [amount, setAmount] = useState("");

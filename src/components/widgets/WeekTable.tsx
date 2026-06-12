@@ -21,7 +21,7 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
   const nPayments = dailyInfo.map(dayInfo => dayInfo.payments.length);
   const paymentNRows = nPayments.reduce((a, b) => Math.max(a, b), 0) + 2;
 
-  let paymentRowsTemplate = [];
+  let paymentRowsTemplate: string[] = [];
   for (let n = 1; n <= paymentNRows; ++n) {
     paymentRowsTemplate.push(`[payment-${n}-v] auto [payment-${n}-d] auto`);
   }
@@ -51,7 +51,6 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
       <div className="p-4">
         <div
           className="grid grid-cols-16"
-          // лейаут для недели
           style={{
             gridTemplateRows: `
             [header] auto
