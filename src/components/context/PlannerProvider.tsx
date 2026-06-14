@@ -3,7 +3,7 @@
 import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import {createContext, useContext, useEffect, useState} from "react";
 
-import {Mode, PlannerState} from "@/types";
+import {ExpenseModalData, Mode, PlannerState} from "@/types";
 import {dateToSql} from "@/utils/dates";
 
 const PlannerContext = createContext<PlannerState | null>(null);
@@ -23,6 +23,10 @@ export function PlannerProvider({children}) {
 
   const [mode, setMode] = useState<Mode>(initialMode);
   const [currentDate, setCurrentDate] = useState<Date>(initialDate);
+
+  const [showExpenseModal, setShowExpenseModal] = useState<boolean>(false);
+  const [showBalanceModal, setShowBalanceModal] = useState<boolean>(false);
+  const [editingPayment, setEditingPayment] = useState<ExpenseModalData | null>(null);
 
   // --- SYNC TO URL ---
   useEffect(() => {
@@ -55,8 +59,15 @@ export function PlannerProvider({children}) {
 
   return (
     <PlannerContext.Provider
-      value={{ mode, setMode, currentDate, setCurrentDate, next, prev }}
-    >{ children }</PlannerContext.Provider>
+      value={{
+        mode, setMode,
+        currentDate, setCurrentDate, next, prev,
+        showExpenseModal, setShowExpenseModal,
+        showBalanceModal, setShowBalanceModal,
+        editingPayment, setEditingPayment
+    }}>
+      { children }
+    </PlannerContext.Provider>
   )
 }
 

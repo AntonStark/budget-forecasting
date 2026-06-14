@@ -4,8 +4,9 @@ import {saveOnceOfPayment, setBalance, updateOnceOfPayment} from "@/adapters/api
 import BalanceCell from "@/components/widgets/BalanceCell";
 import {PaymentChipAppender, PaymentChipCompact} from "@/components/widgets/PaymentChip";
 import {balancesByWeekday} from "@/domain";
-import {AccountBalance, AccountData, PaymentData} from "@/types";
+import {AccountBalance, AccountData, PaymentData, PaymentType} from "@/types";
 import {getWeek} from "@/utils/dates";
+import {usePlannerContext} from "@/components/context/PlannerProvider";
 
 
 export default function WeekTable({currentDate, payments, accounts, refreshHandle}: {
@@ -14,6 +15,8 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
   accounts: AccountData[],
   refreshHandle: () => void,
 }) {
+  const { setShowExpenseModal, setEditingPayment } = usePlannerContext();
+
   const week = getWeek(currentDate);
   const dayTitles = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
@@ -43,6 +46,12 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
         atDate: balanceObj.atDate,
         value
       }).then(() => refreshHandle());
+    }
+  }
+  function makeEnterEditingPayment(payment: PaymentData) {
+    return () => {
+      setEditingPayment({...payment, date: payment.at_date, type: PaymentType.once});
+      setShowExpenseModal(true);
     }
   }
 
@@ -89,8 +98,8 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
 
               {/* Расходы */}
               {dInfo.payments.map((pData, pi) => (
-                <PaymentChipCompact payment={pData} onUpdate={makeUpdateDescription(pData)} rowIndex={pi} colIndex={d}
-                                    key={`p_${d}_${pi}`}/>
+                <PaymentChipCompact payment={pData} onUpdate={makeUpdateDescription(pData)} enterEdit={makeEnterEditingPayment(pData)}
+                                    rowIndex={pi} colIndex={d} key={`p_${d}_${pi}`}/>
               ))}
               <PaymentChipAppender onSubmit={makeSubmitDayPayment(dInfo.date)} rowIndex={dInfo.payments.length}
                                    colIndex={d}/>

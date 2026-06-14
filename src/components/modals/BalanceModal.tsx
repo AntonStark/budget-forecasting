@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import {usePlannerContext} from "@/components/context/PlannerProvider";
 
 type Account = {
   id: string;
@@ -18,12 +19,16 @@ const ACCOUNTS: Account[] = [
   { id: "4", title: "озон" },
 ];
 
-export default function BalanceModal({onClose, onSubmit}: {
-  onClose: () => void;
+export default function BalanceModal({onSubmit}: {
   onSubmit: (data: BalanceFormData) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const {showBalanceModal, setShowBalanceModal} = usePlannerContext();
+  if (!showBalanceModal) {
+    return null;
+  }
 
+  const onClose = () => setShowBalanceModal(false);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [values, setValues] = useState<Record<string, number>>({});
 
@@ -36,7 +41,7 @@ export default function BalanceModal({onClose, onSubmit}: {
 
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [onClose]);
+  }, []);
 
   function handleChange(accountId: string, value: string) {
     setValues((prev) => ({
@@ -51,6 +56,7 @@ export default function BalanceModal({onClose, onSubmit}: {
       balances: []
     }
     for (let accountId in values) {
+      // @ts-ignore
       payload.balances.push({accountId, value: values[accountId]});
     }
 

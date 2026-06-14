@@ -58,6 +58,15 @@ export type PlannerState = {
 
   next: () => void;
   prev: () => void;
+
+  showExpenseModal: boolean;
+  setShowExpenseModal: (v: boolean) => void;
+
+  showBalanceModal: boolean;
+  setShowBalanceModal: (v: boolean) => void;
+
+  editingPayment: ExpenseModalData | null;
+  setEditingPayment: (p: ExpenseModalData | null) => void;
 };
 
 export enum PaymentType {once = "once", regular = "regular"}
@@ -97,3 +106,20 @@ export interface DisplaySettings {
   accountsRows: AccountsRowsDisplay
   setAccountsRows: (s: AccountsRowsDisplay) => void
 }
+
+export type ExpenseModalData =
+  | {
+  id?: number;
+  type: PaymentType.once;
+  amount: number;
+  description: string;
+  date: string;
+}
+  | {
+  id?: number;
+  type: PaymentType.regular;
+  amount: number;
+  description: string;
+  scheduleType: PaymentScheduleType;
+  scheduleNumber: number;
+};

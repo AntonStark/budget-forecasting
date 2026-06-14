@@ -22,18 +22,19 @@ export function PaymentChip({payment, periodIndex, rowIndex} : {
   );
 }
 
-export function PaymentChipCompact({payment, onUpdate, rowIndex, colIndex} : {
+export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colIndex} : {
   payment: PaymentData,
   onUpdate: (arg0: string) => void,
+  enterEdit: () => void,
   rowIndex: number,
   colIndex: number
 }) {
-  const valueCellRef = useRef(null);
-  const descriptionCellRef = useRef(null);
+  const valueCellRef = useRef<HTMLDivElement | null>(null);
+  const descriptionCellRef = useRef<HTMLDivElement | null>(null);
 
   function isOutsideClick(event: MouseEvent) {
-    const notOnValueCell = valueCellRef.current && !valueCellRef.current.contains(event.target);
-      const notOnDescriptionCell = descriptionCellRef.current && !descriptionCellRef.current.contains(event.target);
+    const notOnValueCell = Boolean(valueCellRef.current && !valueCellRef.current.contains(event.target as Node));
+    const notOnDescriptionCell = Boolean(descriptionCellRef.current && !descriptionCellRef.current.contains(event.target as Node));
     return notOnValueCell && notOnDescriptionCell;
   }
 
@@ -50,7 +51,8 @@ export function PaymentChipCompact({payment, onUpdate, rowIndex, colIndex} : {
   return (
     <>
       <div ref={valueCellRef} className="px-1 pt-1 text-sm text-right whitespace-nowrap"
-           style={{gridRow: `payment-${rowIndex+1}-v`, gridColumnStart: 2* colIndex + 4}}>
+           style={{gridRow: `payment-${rowIndex+1}-v`, gridColumnStart: 2* colIndex + 3}}>
+        <span className="not-hover:text-gray-200 px-3" onClick={enterEdit}>/</span>
         {payment.amount}
       </div>
 
@@ -75,12 +77,12 @@ export function PaymentChipAppender({onSubmit, rowIndex, colIndex} : {
   colIndex: number
 }) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const valueCellRef = useRef(null);
-  const descriptionCellRef = useRef(null);
+  const valueCellRef = useRef<HTMLDivElement | null>(null);
+  const descriptionCellRef = useRef<HTMLDivElement | null>(null);
 
   function isOutsideClick(event: MouseEvent) {
-    const notOnValueCell = valueCellRef.current && !valueCellRef.current.contains(event.target);
-      const notOnDescriptionCell = descriptionCellRef.current && !descriptionCellRef.current.contains(event.target);
+    const notOnValueCell = Boolean(valueCellRef.current && !valueCellRef.current.contains(event.target as Node));
+      const notOnDescriptionCell = Boolean(descriptionCellRef.current && !descriptionCellRef.current.contains(event.target as Node));
     return notOnValueCell && notOnDescriptionCell;
   }
 

@@ -5,9 +5,14 @@ import {usePlannerContext} from "@/components/context/PlannerProvider";
 import {formatMonth, formatWeek, getWeek} from "@/utils/dates";
 import {Mode} from "@/types";
 
-export default function Header({ onAdd, onLog }) {
-  const { mode, setMode, currentDate, next, prev, setCurrentDate } = usePlannerContext();
+export default function Header() {
+  const {
+    mode, setMode, currentDate, setCurrentDate, next, prev,
+    setShowExpenseModal, setShowBalanceModal
+  } = usePlannerContext();
 
+  const onAdd= () => setShowExpenseModal(true);
+  const onLog = () => setShowBalanceModal(true);
   const goToday = () => setCurrentDate(new Date());
 
   return (
