@@ -37,6 +37,23 @@ export function EditableCell({editing = undefined, initialValue, submitIfNeeded,
       setDraftValue('');
       setIsEditing(false);
     }
+
+    if (inputType === "formula") {
+      const allowedKeys = [
+        'Backspace',
+        'Delete',
+        'ArrowLeft',
+        'ArrowRight',
+        'Tab',
+      ];
+
+      const isDigit = /^\d$/.test(event.key);
+      const isOperator = event.key === '+' || event.key === '-';
+
+      if (!isDigit && !isOperator && !allowedKeys.includes(event.key)) {
+        event.preventDefault();
+      }
+    }
   }
 
   function _submitIfNeeded() {
@@ -54,7 +71,7 @@ export function EditableCell({editing = undefined, initialValue, submitIfNeeded,
   return (
     <input
       autoFocus
-      type={inputType}
+      type={inputType === "number" ? "number" : "text"}
       value={draftValue}
       onChange={(e) => setDraftValue(e.target.value)}
       onKeyDown={handleKeyDown}

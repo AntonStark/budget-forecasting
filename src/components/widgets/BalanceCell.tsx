@@ -16,26 +16,34 @@ export default function BalanceCell ({value, inferred, onSubmit}: {
       return false;
     }
 
-    const numericValue = Number(val);
+    try {
+      const numericValue = Number(eval(val));
 
-    // NaN тоже пропускаем
-    if (Number.isNaN(numericValue)) {
+      // NaN тоже пропускаем
+      if (Number.isNaN(numericValue)) {
+        return false;
+      }
+
+      // если значение не изменилось — тоже можно пропустить
+      if (numericValue === value) {
+        return false;
+      }
+
+      onSubmit(numericValue);
+      return true;
+    }
+
+    catch (e) {
+      console.log(e)
       return false;
     }
 
-    // если значение не изменилось — тоже можно пропустить
-    if (numericValue === value) {
-      return false;
-    }
-
-    onSubmit(numericValue);
-    return true;
   }
 
   return (
     <div ref={wrapperRef} className={inferred? "text-gray-300" : ""}>
       <EditableCell
-        inputType={"number"}
+        inputType={"formula"}
         initialValue={String(value) || ''}
         submitIfNeeded={submitIfNeeded}
         isOutsideClick={isOutsideClick}/>

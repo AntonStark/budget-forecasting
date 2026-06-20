@@ -1,18 +1,20 @@
+'use client'
+
 import Link from "next/link";
 import React from "react";
 
-import {dateToSql, formatWeek, getWeeksOfMonth} from "@/utils/dates";
 import {PaymentChip} from "@/components/widgets/PaymentChip";
+import {usePlannerContext} from "@/components/context/PlannerProvider";
 import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
 import {Mode} from "@/types";
-import {usePlannerContext} from "../context/PlannerProvider";
+import {formatWeek} from "@/utils/dates";
+import {serializeSearchParams} from "@/utils/searchParams";
 
 const BASE_WIDTH = 66;
 
-export default function MonthTable({currentDate, payments, accounts}) {
+export default function MonthTable({weeks, payments, accounts}) {
   const { setMode } = usePlannerContext();
 
-  const weeks = getWeeksOfMonth(currentDate);
   const periods: PeriodBudget[] = makeBudgetsByWeek(payments, accounts, weeks);
 
   const nPayments = periods.map(week => week.payments.length);
@@ -45,7 +47,7 @@ export default function MonthTable({currentDate, payments, accounts}) {
               style={{gridRow: "header", gridColumnStart: 3 * i + 1}}
             >
               <Link
-                href={`${Mode.week}?date=${dateToSql(week.start)}`}
+                href={`${Mode.week}?${serializeSearchParams(week.start)}`}
                 onNavigate={() => setMode(Mode.week)}
               >{formatWeek(week)}</Link>
             </div>

@@ -50,7 +50,7 @@ export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colI
 
   return (
     <>
-      <div ref={valueCellRef} className="px-1 pt-1 text-sm text-right whitespace-nowrap"
+      <div ref={valueCellRef} className="col-span-2 px-1 pt-1 text-sm text-right whitespace-nowrap"
            style={{gridRow: `payment-${rowIndex+1}-v`, gridColumnStart: 2* colIndex + 3}}>
         <span className="not-hover:text-gray-200 px-3" onClick={enterEdit}>/</span>
         {payment.amount}

@@ -21,6 +21,9 @@
       "@/adapters/api": [
         "adapters/api"
       ],
+      "@/app/*": [
+        "app/*"
+      ],
       "@/components/*": [
         "components/*"
       ],

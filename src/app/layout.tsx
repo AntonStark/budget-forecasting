@@ -3,7 +3,8 @@ import "@/styles/common.css";
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Бюджет',
+  title: "Бюджет",
+  icons: "/icon.svg",
 }
 
 export default function RootLayout({

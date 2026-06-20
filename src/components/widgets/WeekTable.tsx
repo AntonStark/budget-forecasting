@@ -1,24 +1,22 @@
+'use client'
+
 import React from "react";
 
-import {saveOnceOfPayment, setBalance, updateOnceOfPayment} from "@/adapters/api";
+import {saveOnceOfPayment, setBalance, updateOnceOfPayment} from "@/app/actions";
 import BalanceCell from "@/components/widgets/BalanceCell";
 import {PaymentChipAppender, PaymentChipCompact} from "@/components/widgets/PaymentChip";
 import {balancesByWeekday} from "@/domain";
 import {AccountBalance, AccountData, PaymentData, PaymentType} from "@/types";
-import {getWeek} from "@/utils/dates";
+import {Week} from "@/utils/dates";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
 
 
-export default function WeekTable({currentDate, payments, accounts, refreshHandle}: {
-  currentDate: Date,
+export default function WeekTable({week, payments, accounts}: {
+  week: Week,
   payments: PaymentData[],
   accounts: AccountData[],
-  refreshHandle: () => void,
 }) {
   const { setShowExpenseModal, setEditingPayment } = usePlannerContext();
-
-  const week = getWeek(currentDate);
-  const dayTitles = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
   const dailyInfo = balancesByWeekday(payments, accounts, week);
   const nPayments = dailyInfo.map(dayInfo => dayInfo.payments.length);
@@ -30,22 +28,22 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
   }
 
   function makeSubmitDayPayment(date: string): (arg0: number) => void {
-    return (amount) => {
-      saveOnceOfPayment({ amount, description: '?', plannedAt: {date} }).then(() => refreshHandle());
+    return async (amount) => {
+      await saveOnceOfPayment({ amount, description: '?', plannedAt: {date} });
     }
   }
   function makeUpdateDescription(payment: PaymentData): (arg0: string) => void {
-    return (newDescription) => {
-      updateOnceOfPayment({description: newDescription}, payment.id).then(() => refreshHandle());
+    return async (newDescription) => {
+      await updateOnceOfPayment({description: newDescription}, payment.id);
     }
   }
   function makeSetBalance(balanceObj: AccountBalance): (arg0: number) => void {
-    return (value: number) => {
-      setBalance({
+    return async (value: number) => {
+      await setBalance({
         accountId: balanceObj.account_id,
         atDate: balanceObj.atDate,
         value
-      }).then(() => refreshHandle());
+      });
     }
   }
   function makeEnterEditingPayment(payment: PaymentData) {
@@ -54,6 +52,7 @@ export default function WeekTable({currentDate, payments, accounts, refreshHandl
       setShowExpenseModal(true);
     }
   }
+  const dayTitles = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm">

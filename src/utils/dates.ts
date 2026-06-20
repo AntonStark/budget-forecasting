@@ -40,7 +40,6 @@ export function settingToIntervalDates(
   }
 }
 
-export const dateToDateString = (date: Date): string => `${date.getUTCDate()}`;
 export const dateToSql = (date: Date): string => format(date, 'yyyy-MM-dd');
 
 export function parseJsDateToSql(dateStr: string): string {
@@ -100,7 +99,7 @@ export function makeDatesGivenNumber(
   intervalStart: Date,
   intervalEnd: Date | undefined,
   day: number,
-  limit: number = undefined,
+  limit: number | undefined = undefined,
 ): Array<Date> {
   // console.log({intervalStart, intervalEnd, day, limit, regularMode})
 
@@ -123,7 +122,7 @@ export function makeDatesGivenWeekday(
   intervalStart: Date,
   intervalEnd: Date | undefined,
   day: number,
-  limit: number = undefined,
+  limit: number | undefined = undefined,
 ) {
   let atDay: Date;
   atDay = addDays(startOfWeek(intervalStart, { weekStartsOn: 1 }), day - 1);

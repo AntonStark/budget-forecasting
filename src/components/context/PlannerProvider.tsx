@@ -4,7 +4,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import {createContext, useContext, useEffect, useState} from "react";
 
 import {ExpenseModalData, Mode, PlannerState} from "@/types";
-import {dateToSql} from "@/utils/dates";
+import {parseSearchParams, serializeSearchParams} from "@/utils/searchParams";
 
 const PlannerContext = createContext<PlannerState | null>(null);
 
@@ -15,14 +15,12 @@ export function PlannerProvider({children}) {
 
   // --- INIT FROM URL ---
   const modePart = (pathname && pathname.split('/').length > 2 ? pathname.split('/')[2] : "");
-  console.log('modePart', modePart);
+  // console.log('modePart', modePart);
   const initialMode = modePart in Mode ? modePart as Mode : Mode.month;
-  console.log('initialMode', initialMode);
-  const dateParam = searchParams?.get('date');
-  const initialDate = dateParam ? new Date(dateParam) : new Date();
+  // console.log('initialMode', initialMode);
 
   const [mode, setMode] = useState<Mode>(initialMode);
-  const [currentDate, setCurrentDate] = useState<Date>(initialDate);
+  const [currentDate, setCurrentDate] = useState<Date>(parseSearchParams(searchParams));
 
   const [showExpenseModal, setShowExpenseModal] = useState<boolean>(false);
   const [showBalanceModal, setShowBalanceModal] = useState<boolean>(false);
@@ -30,12 +28,10 @@ export function PlannerProvider({children}) {
 
   // --- SYNC TO URL ---
   useEffect(() => {
-    const params = new URLSearchParams({'date': dateToSql(currentDate)});
-    router.replace(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${serializeSearchParams(currentDate)}`);
   }, [currentDate]);
   useEffect(() => {
-    const params = new URLSearchParams({'date': dateToSql(currentDate)});
-    router.push(`${mode}?${params.toString()}`);
+    router.push(`${mode}?${serializeSearchParams(currentDate)}`);
   }, [mode]);
 
   // --- NAVIGATION ---

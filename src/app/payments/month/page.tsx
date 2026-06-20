@@ -1,26 +1,22 @@
-'use client'
+// 'use client' // note теперь серверный компонент
 
-import React, {useEffect, useState} from "react";
+import React from "react";
 
-import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {getAccounts, getPayments} from "@/app/actions";
 import MonthTable from "@/components/widgets/MonthTable";
 
-import {getAccounts, getPayments} from "@/adapters/api";
-import {AccountData, Mode, PaymentData} from "@/types";
-import {settingToIntervalDates} from "@/utils/dates";
+import {AccountData, Mode} from "@/types";
+import {getWeeksOfMonth, settingToIntervalDates} from "@/utils/dates";
+import {parseSearchParams} from "@/utils/searchParams";
 
-export default function Page() {
-  const { currentDate } = usePlannerContext();
-  const [payments, setPayments] = useState<PaymentData[]>([]);
-  const [accounts, setAccounts] = useState<AccountData[]>([]);
+export default async function Page({ searchParams }) {
+  const currentDate = parseSearchParams(await searchParams);
 
-  useEffect(() => {
-    const [dateStart, dateEnd] = settingToIntervalDates(Mode.month, currentDate);
-    getPayments(dateStart, dateEnd).then(data => setPayments(data.payments));
-    getAccounts({dateStart, dateEnd}).then(data => setAccounts(data.accounts));
-  }, [currentDate]);
+  const [dateStart, dateEnd] = settingToIntervalDates(Mode.month, currentDate);
+  const payments = await getPayments(dateStart, dateEnd);
+  const accounts: AccountData[] = await getAccounts(dateStart, dateEnd);
 
   return (
-    <MonthTable currentDate={currentDate} payments={payments} accounts={accounts}/>
+    <MonthTable weeks={getWeeksOfMonth(currentDate)} payments={payments} accounts={accounts}/>
   );
 }

@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 
-export function connect(db: Database.Database) {
+export function connect(db: Database.Database | null = null) {
     // Check if the database instance has been initialized
     if (!db) {
         // If the database instance is not initialized, open the database connection

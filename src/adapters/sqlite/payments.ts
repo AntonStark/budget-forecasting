@@ -19,8 +19,8 @@ export function updatePayment(
     return;
   }
 
-  const setClauseParts = [];
-  const runArgs = [];
+  const setClauseParts: string[] = [];
+  const runArgs: string[] = [];
   if (amount !== undefined) {
     setClauseParts.push('amount = ?');
     runArgs.push(amount);

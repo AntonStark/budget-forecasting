@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {motion} from "framer-motion";
 
 import {PaymentScheduleType, PaymentType} from "@/types";
-import {saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/adapters/api";
+import {saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/app/actions";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
 
 export default function ExpenseModal() {

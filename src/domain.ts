@@ -161,7 +161,7 @@ export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData
 
 
 export function generateScheduleDates(
-  schedule: PaymentSchedule, untilDate: string | undefined, limit: number = undefined
+  schedule: PaymentSchedule, untilDate: string | undefined, limit: number | undefined = undefined
 ): Array<Date> {
   // надо сформировать массив дат в которые нужны конкретные платежи
   // для этого из полу-интервала (applied_until, untilDate] надо выбрать дни с подходящим number
