@@ -1,8 +1,9 @@
 import {dateToSql} from "@/utils/dates";
 
 export function parseSearchParams(searchParams: Object | null): Date {
-  console.log('searchParams', searchParams)
+  // console.log('searchParams', searchParams)
   const dateParam = searchParams ? searchParams['date'] : undefined;
+  // console.log('parseSearchParams::dateParam', dateParam);
   const initialDate = dateParam ? new Date(dateParam) : new Date();
   return initialDate;
 }

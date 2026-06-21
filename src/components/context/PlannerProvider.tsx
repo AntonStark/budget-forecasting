@@ -20,7 +20,7 @@ export function PlannerProvider({children}) {
   // console.log('initialMode', initialMode);
 
   const [mode, setMode] = useState<Mode>(initialMode);
-  const [currentDate, setCurrentDate] = useState<Date>(parseSearchParams(searchParams));
+  const [currentDate, setCurrentDate] = useState<Date>(parseSearchParams(Object.fromEntries(searchParams)));
 
   const [showExpenseModal, setShowExpenseModal] = useState<boolean>(false);
   const [showBalanceModal, setShowBalanceModal] = useState<boolean>(false);

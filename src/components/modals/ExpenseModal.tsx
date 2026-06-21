@@ -1,12 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
 import {motion} from "framer-motion";
+import { Calendar } from "lucide-react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {PaymentScheduleType, PaymentType} from "@/types";
 import {saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/app/actions";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {dateToSql} from "@/utils/dates";
 
 export default function ExpenseModal() {
-  const { showExpenseModal, setShowExpenseModal, editingPayment, setEditingPayment } = usePlannerContext();
+  const { currentDate, showExpenseModal, setShowExpenseModal, editingPayment, setEditingPayment } = usePlannerContext();
 
   const ref = useRef<HTMLDivElement>(null);
   const isEdit = !!editingPayment?.id;
@@ -31,6 +33,9 @@ export default function ExpenseModal() {
       }
     }
   }, [editingPayment]);
+  useEffect(() => {
+    setDate(dateToSql(currentDate));
+  }, [currentDate]);
 
   function closeModal() {
     setEditingPayment(null);
@@ -116,12 +121,9 @@ export default function ExpenseModal() {
         )}
 
         {type === PaymentType.once && (
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full p-2 rounded-xl bg-gray-50 text-sm outline-none"
-          />
+          <div className="flex gap-2 items-start">
+            <DateInputSeparated date={date} setDate={setDate}/>
+          </div>
         )}
 
         {type === PaymentType.regular && (
@@ -164,4 +166,73 @@ export default function ExpenseModal() {
       </motion.div>
     </div>
   );
+}
+
+
+function DateInputSeparated({ date, setDate }) {
+  const dateRef = useRef<HTMLInputElement>(null);
+
+  const [year, month, day] = date.split("-");
+  function updateDateParts({
+    newYear = year,
+    newMonth = month,
+    newDay = day,
+  }: {
+    newYear?: string;
+    newMonth?: string;
+    newDay?: string;
+  }) {
+    setDate(`${newYear.padStart(4, "0")}-${newMonth.padStart(2, "0")}-${newDay.padStart(2, "0")}`);
+  }
+
+  return (
+    <>
+      <input
+        type="number"
+        min={1}
+        max={31}
+        value={Number(day)}
+        onChange={(e) => updateDateParts({ newDay: e.target.value })}
+        className="w-16 p-2 rounded-xl bg-gray-50 text-sm"
+      />
+
+      <select
+        value={month}
+        onChange={(e) => updateDateParts({ newMonth: e.target.value })}
+        className="p-2 rounded-xl bg-gray-50 text-sm"
+      >
+        <option value="01">Янв</option>
+        <option value="02">Фев</option>
+        <option value="03">Мар</option>
+        <option value="04">Апр</option>
+        <option value="05">Май</option>
+        <option value="06">Июн</option>
+        <option value="07">Июл</option>
+        <option value="08">Авг</option>
+        <option value="09">Сен</option>
+        <option value="10">Окт</option>
+        <option value="11">Ноя</option>
+        <option value="12">Дек</option>
+      </select>
+
+      <input
+        type="number"
+        value={Number(year)}
+        onChange={(e) => updateDateParts({ newYear: e.target.value })}
+        className="w-20 p-2 rounded-xl bg-gray-50 text-sm"
+      />
+
+      <button type="button" className="p-2 self-center" onClick={() => dateRef.current?.showPicker()}>
+        <Calendar size={18}/>
+      </button>
+
+      <input
+        ref={dateRef}
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="absolute opacity-0 pointer-events-none"
+      />
+    </>
+  )
 }
