@@ -20,7 +20,7 @@ export function updatePayment(
   }
 
   const setClauseParts: string[] = [];
-  const runArgs: string[] = [];
+  const runArgs: (string | number)[] = [];
   if (amount !== undefined) {
     setClauseParts.push('amount = ?');
     runArgs.push(amount);
@@ -48,7 +48,10 @@ export function createScheduledPayment(db: Database, paymentParams: PaymentInSch
     );
 
     const scheduleRes = insertSchedule.get([scheduleParams.type, scheduleParams.number, scheduleParams.date_start]);
-    console.log('scheduleRes', scheduleRes);
+    if (!scheduleRes) {
+      return;
+    }
+    // console.log('scheduleRes', scheduleRes);
     createPayment(db, {...paymentParams, payment_schedule_id: scheduleRes.id});
     setScheduleApplied(db, paymentParams.at_date, scheduleRes.id);
   })();
@@ -98,6 +101,9 @@ export function ensureScheduledPayments(db: Database, untilDate: string) {
     }
 
     const exemplarPayment = selectExemplarPayment.get(schedule.id);
+    if (!exemplarPayment) {
+      throw Error(`Not found exemplarPayment for schedule.id=${schedule.id}`);
+    }
     db.transaction(() => {
       for (const date of dates) {
         createPayment(db, {...exemplarPayment, at_date: dateToSql(date)});

@@ -15,12 +15,17 @@ export function serializePaymentValue(paymentObj: PaymentData): string {
   }
 }
 
-export function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema {
-  return {
-    type: paymentObj.schedule_type,
-    number: paymentObj.schedule_number,
-    date_start: paymentObj.schedule_date_start
-  };
+export function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema | null {
+  if (paymentObj.schedule_type && paymentObj.schedule_number && paymentObj.schedule_date_start) {
+    return {
+      type: paymentObj.schedule_type,
+      number: paymentObj.schedule_number,
+      date_start: paymentObj.schedule_date_start
+    };
+  }
+  else {
+    return null;
+  }
 }
 
 export function serializePayment(paymentObj: PaymentData) {

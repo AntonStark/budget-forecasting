@@ -64,7 +64,9 @@ export default function WeekTable({week, payments, accounts}: {
             [header] auto
             ${paymentRowsTemplate.join('\n')}
             [balances] auto
-            [totals] auto`
+            [totals] auto
+            [delta] auto
+            [delta-mean] auto`
           }}>
 
           {/* ЭЛЕМЕНТЫ ФОНА */}
@@ -117,9 +119,20 @@ export default function WeekTable({week, payments, accounts}: {
               </div>
 
               {/* Итог за день */}
-              <div className="col-span-2 px-2 text-right text-sm" style={{gridRow: "totals", gridColumnStart: 2 * d + 3}}>
-                {dInfo.balances_touched ? dInfo.total : ""}
+              <div className={`col-span-2 px-2 text-right text-sm ${dInfo.balances_touched ? "" : "text-gray-300"}`}
+                   style={{gridRow: "totals", gridColumnStart: 2 * d + 3}}>
+                {dInfo.total}
               </div>
+              {dInfo.balances_touched && (
+                <>
+                  <div className="col-span-2 px-2 text-right text-sm" style={{gridRow: "delta", gridColumnStart: 2 * d + 3}}>
+                    {dInfo.spending_delta}
+                  </div>
+                  <div className="col-span-2 px-2 text-right text-sm" style={{gridRow: "delta-mean", gridColumnStart: 2 * d + 3}}>
+                    {dInfo.spending_delta_mean}/д.
+                  </div>
+                </>
+              )}
 
               {/* Вертикальная граница колонки слева, у первой явная */}
               <div

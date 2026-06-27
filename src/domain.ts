@@ -5,20 +5,30 @@ import {dateToSql, euroWeekOffset, makeDatesGivenNumber, makeDatesGivenWeekday, 
 
 export class DayBalancesInfo {
   date: string
+  dayOfWeek: number
   isToday: boolean
 
   payments: PaymentData[]
   accounts: AccountBalance[]
-  total: number
+
   balances_touched: boolean
+  total: number
+  spending_delta: number | null
+  spending_delta_mean: number | null
 
   constructor() {
     this.isToday = false;
     this.payments = [];
     this.accounts = [];
-    this.total = 0;
     this.balances_touched = false;
+    this.total = 0;
+    this.spending_delta = this.spending_delta_mean = null;
   }
+}
+
+const dailySpendingConfig: Record<string, number> = {
+  weekdays: 2400,
+  weekends: 3600
 }
 
 
@@ -35,12 +45,13 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
     result[weekDay].payments.push(payment);
   }
 
+  let incomingTotal = 0;
   const dateMonday = week.start;
-  let balancesByDate: Record<string, number>;
   for (const account of accounts) {
-    balancesByDate = Object.fromEntries(account.balances.map(b => [b.atDate, b.value]));
+    let balancesByDate: Record<string, number> = Object.fromEntries(account.balances.map(b => [b.atDate, b.value]));
 
     let lastBalance: number = account.lastBalanceBefore?.value || 0;
+    incomingTotal += lastBalance;
     for (let i = 0; i < 7; i++) {
       let atDate = dateToSql(addDays(dateMonday, i));
       let [value, inferred] = (balancesByDate.hasOwnProperty(atDate) ? [balancesByDate[atDate], false] : [lastBalance, true]);
@@ -54,19 +65,36 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
   const today = dateToSql(new Date());
   for (let i = 0; i < 7; i++) {
     result[i].date = dateToSql(addDays(dateMonday, i));
+    result[i].dayOfWeek = i + 1;
 
     if (result[i].date === today) {
       result[i].isToday = true;
     }
   }
 
+  let [lastExplicitTotal, paymentsTotal, daysBetween] = [incomingTotal, 0, 0];
   for (const dayBalances of result) {
+    let currentDayPayments = dayBalances.payments.map(payment => payment.amount).reduce((a, b) => a + b, 0);
+    paymentsTotal += currentDayPayments;
+    daysBetween += 1;
 
-    for (const balance of dayBalances.accounts) {
-      dayBalances.total += balance.value;
-      if (!balance.inferred) {
-        dayBalances.balances_touched = true;
+    dayBalances.balances_touched = dayBalances.accounts.map(balance => balance.inferred).includes(false);
+
+    if (dayBalances.balances_touched) {
+      for (const balance of dayBalances.accounts) {
+        dayBalances.total += balance.value;
       }
+
+      // считаем траты помимо запланированных - "spending"
+      dayBalances.spending_delta = dayBalances.total + paymentsTotal - lastExplicitTotal;
+      dayBalances.spending_delta_mean = dayBalances.spending_delta / daysBetween;
+      [lastExplicitTotal, paymentsTotal, daysBetween] = [dayBalances.total, 0, 0];
+    }
+    else {
+      // для прогнозируемых остатков применяем ориентировочный расход по отношению к прошлому дню
+      const prevDayTotal =  dayBalances.dayOfWeek > 1 ? result[dayBalances.dayOfWeek - 2].total : incomingTotal;
+      const dailySpending = dayBalances.dayOfWeek < 6 ? dailySpendingConfig.weekdays : dailySpendingConfig.weekends;
+      dayBalances.total = prevDayTotal - currentDayPayments - dailySpending;
     }
 
   }
@@ -160,8 +188,15 @@ export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData
 }
 
 
+interface PaymentScheduleInfo {
+  type: PaymentScheduleType
+  number: number
+  applied_until?: string
+  date_start: string
+}
+
 export function generateScheduleDates(
-  schedule: PaymentSchedule, untilDate: string | undefined, limit: number | undefined = undefined
+  schedule: PaymentScheduleInfo, untilDate: string | undefined, limit: number | undefined = undefined
 ): Array<Date> {
   // надо сформировать массив дат в которые нужны конкретные платежи
   // для этого из полу-интервала (applied_until, untilDate] надо выбрать дни с подходящим number

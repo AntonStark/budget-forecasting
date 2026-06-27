@@ -1,4 +1,4 @@
-// 'use client' // note теперь серверный компонент
+export const dynamic = 'force-dynamic'
 
 import React from "react";
 

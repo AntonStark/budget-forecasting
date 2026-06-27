@@ -23,7 +23,7 @@ export function selectBalanceBeforeDate(db: Database, accountId: number, beforeD
   `);
 
   const result: AccountBalance | undefined = stmt.get([accountId, beforeDate]);
-  const defaultBalance = {value: 0, account_id: accountId, atDate: undefined}
+  const defaultBalance = {value: 0, account_id: accountId, atDate: ""}
   return (result? result : defaultBalance);
 }
 
