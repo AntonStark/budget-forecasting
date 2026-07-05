@@ -2,8 +2,8 @@ import {motion} from "framer-motion";
 import { Calendar } from "lucide-react";
 import React, {useEffect, useRef, useState} from "react";
 
-import {PaymentScheduleType, PaymentType} from "@/types";
-import {saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/app/actions";
+import {PaymentCategorySchema, PaymentScheduleType, PaymentType} from "@/types";
+import {fetchPaymentCategories, saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/app/actions";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
 import {dateToSql} from "@/utils/dates";
 
@@ -13,9 +13,11 @@ export default function ExpenseModal() {
   const ref = useRef<HTMLDivElement>(null);
   const isEdit = !!editingPayment?.id;
 
+  const [availableCategories, setAvailableCategories] = useState<PaymentCategorySchema[]>([]);
   const [type, setType] = useState<PaymentType>(PaymentType.once);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState<number>(0);
   const [date, setDate] = useState("");
   const [scheduleType, setScheduleType] = useState<PaymentScheduleType>(PaymentScheduleType.monthly);
   const [scheduleNumber, setScheduleNumber] = useState("");
@@ -25,6 +27,7 @@ export default function ExpenseModal() {
       setType(editingPayment.type);
       setAmount(editingPayment.amount.toString());
       setDescription(editingPayment.description);
+      setCategoryId(editingPayment.category?.id || 0);
       if (editingPayment.type === PaymentType.once) {
         setDate(editingPayment.date);
       } else if (editingPayment.type === PaymentType.regular) {
@@ -36,6 +39,9 @@ export default function ExpenseModal() {
   useEffect(() => {
     setDate(dateToSql(currentDate));
   }, [currentDate]);
+  useEffect(() => {
+    fetchPaymentCategories().then(setAvailableCategories);
+  }, []);
 
   function closeModal() {
     setEditingPayment(null);
@@ -58,7 +64,8 @@ export default function ExpenseModal() {
         const payload = {
           amount: Number(amount),
           description,
-          plannedAt: {date}
+          plannedAt: {date},
+          category: {id: categoryId}
         };
         if (editingPayment?.id) {
           await updateOnceOfPayment(payload, editingPayment?.id);
@@ -158,6 +165,20 @@ export default function ExpenseModal() {
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 rounded-xl bg-gray-50 text-sm outline-none"
         />
+
+        <div className="flex gap-2 items-start w-full p-2 rounded-xl bg-gray-50 text-sm outline-none">
+          <label className="text-gray-500">Категория:</label>
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(Number(e.target.value))}
+            style={{width: '90px'}}
+          >
+            <option value={0}></option>
+            {availableCategories.map(cat => (
+              <option value={cat.id} label={cat.name} key={cat.id}/>
+            ))}
+          </select>
+        </div>
 
         <button
           onClick={handleSubmit}

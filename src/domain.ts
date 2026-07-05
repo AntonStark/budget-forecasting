@@ -1,6 +1,6 @@
 import {addDays} from "date-fns";
 
-import {AccountBalance, AccountData, Mode, PaymentData, PaymentSchedule, PaymentScheduleType} from "@/types";
+import {AccountBalance, AccountData, Mode, PaymentOutSchema, PaymentScheduleType} from "@/types";
 import {dateToSql, euroWeekOffset, makeDatesGivenNumber, makeDatesGivenWeekday, nextDay, Week} from "@/utils/dates";
 
 export class DayBalancesInfo {
@@ -8,7 +8,7 @@ export class DayBalancesInfo {
   dayOfWeek: number
   isToday: boolean
 
-  payments: PaymentData[]
+  payments: PaymentOutSchema[]
   accounts: AccountBalance[]
 
   balances_touched: boolean
@@ -26,13 +26,14 @@ export class DayBalancesInfo {
   }
 }
 
-const dailySpendingConfig: Record<string, number> = {
+const dailySpendingConfig = {
   weekdays: 2400,
   weekends: 3600
 }
+const weekSpending = dailySpendingConfig.weekdays * 5 + dailySpendingConfig.weekends * 2;
 
 
-export function balancesByWeekday(payments: PaymentData[], accounts: AccountData[], week: Week): DayBalancesInfo[] {
+export function balancesByWeekday(payments: PaymentOutSchema[], accounts: AccountData[], week: Week): DayBalancesInfo[] {
   const result: DayBalancesInfo[] = Array.from({ length: 7 }, () => new DayBalancesInfo());
 
   for (const payment of payments) {
@@ -74,6 +75,8 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
 
   let [lastExplicitTotal, paymentsTotal, daysBetween] = [incomingTotal, 0, 0];
   for (const dayBalances of result) {
+    dayBalances.payments = dayBalances.payments.sort((p1, p2) => p1.id - p2.id);
+
     let currentDayPayments = dayBalances.payments.map(payment => payment.amount).reduce((a, b) => a + b, 0);
     paymentsTotal += currentDayPayments;
     daysBetween += 1;
@@ -87,7 +90,7 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
 
       // считаем траты помимо запланированных - "spending"
       dayBalances.spending_delta = dayBalances.total + paymentsTotal - lastExplicitTotal;
-      dayBalances.spending_delta_mean = dayBalances.spending_delta / daysBetween;
+      dayBalances.spending_delta_mean = Math.round(dayBalances.spending_delta / daysBetween);
       [lastExplicitTotal, paymentsTotal, daysBetween] = [dayBalances.total, 0, 0];
     }
     else {
@@ -106,7 +109,7 @@ export function balancesByWeekday(payments: PaymentData[], accounts: AccountData
 export class PeriodBudget {
   period: { type: Mode, start: Date, end: Date, active: boolean }
 
-  payments: PaymentData[]
+  payments: PaymentOutSchema[]
   saldo: number
 
   value_before: { plan: number, fact?: number }
@@ -121,7 +124,7 @@ export class PeriodBudget {
 }
 
 
-export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData[], weeks: Week[]): PeriodBudget[] {
+export function makeBudgetsByWeek(payments: PaymentOutSchema[], accounts: AccountData[], weeks: Week[]): PeriodBudget[] {
   const result: PeriodBudget[] = weeks.map(() => new PeriodBudget());
 
   let [total, explicitTotal] = [0, false];
@@ -169,7 +172,7 @@ export function makeBudgetsByWeek(payments: PaymentData[], accounts: AccountData
       const date = new Date(p.at_date);
       return week.start <= date && date <= week.end;
     });
-    budget.saldo = budget.payments.map(pData => -pData.amount).reduce((a, b) => a + b, 0);
+    budget.saldo = budget.payments.map(pData => -pData.amount).reduce((a, b) => a + b, 0) - weekSpending;
     budget.value_after = { plan: (budget.value_before.fact || budget.value_before.plan) + budget.saldo };
 
     // проставим budget.value_after.fact из индекса балансов по датам (если есть)

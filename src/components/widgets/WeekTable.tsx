@@ -6,17 +6,19 @@ import {saveOnceOfPayment, setBalance, updateOnceOfPayment} from "@/app/actions"
 import BalanceCell from "@/components/widgets/BalanceCell";
 import {PaymentChipAppender, PaymentChipCompact} from "@/components/widgets/PaymentChip";
 import {balancesByWeekday} from "@/domain";
-import {AccountBalance, AccountData, PaymentData, PaymentType} from "@/types";
+import {AccountBalance, AccountData, PaymentOutSchema, PaymentsSort, PaymentType} from "@/types";
 import {Week} from "@/utils/dates";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {useDisplaySettingsContext} from "@/components/context/DisplayContext";
 
 
 export default function WeekTable({week, payments, accounts}: {
   week: Week,
-  payments: PaymentData[],
+  payments: PaymentOutSchema[],
   accounts: AccountData[],
 }) {
   const { setShowExpenseModal, setEditingPayment } = usePlannerContext();
+  const { paymentsSort } = useDisplaySettingsContext();
 
   const dailyInfo = balancesByWeekday(payments, accounts, week);
   const nPayments = dailyInfo.map(dayInfo => dayInfo.payments.length);
@@ -32,7 +34,7 @@ export default function WeekTable({week, payments, accounts}: {
       await saveOnceOfPayment({ amount, description: '?', plannedAt: {date} });
     }
   }
-  function makeUpdateDescription(payment: PaymentData): (arg0: string) => void {
+  function makeUpdateDescription(payment: PaymentOutSchema): (arg0: string) => void {
     return async (newDescription) => {
       await updateOnceOfPayment({description: newDescription}, payment.id);
     }
@@ -46,7 +48,7 @@ export default function WeekTable({week, payments, accounts}: {
       });
     }
   }
-  function makeEnterEditingPayment(payment: PaymentData) {
+  function makeEnterEditingPayment(payment: PaymentOutSchema) {
     return () => {
       setEditingPayment({...payment, date: payment.at_date, type: PaymentType.once});
       setShowExpenseModal(true);
@@ -99,10 +101,16 @@ export default function WeekTable({week, payments, accounts}: {
 
               {/* Расходы */}
               {dInfo.payments.map((pData, pi) => (
-                <PaymentChipCompact payment={pData} onUpdate={makeUpdateDescription(pData)} enterEdit={makeEnterEditingPayment(pData)}
-                                    rowIndex={pi} colIndex={d} key={`p_${d}_${pi}`}/>
+                <PaymentChipCompact payment={pData}
+                                    onUpdate={makeUpdateDescription(pData)}
+                                    enterEdit={makeEnterEditingPayment(pData)}
+                                    rowIndex={pi}
+                                    colIndex={d}
+                                    colored={paymentsSort === PaymentsSort.coloredCategory}
+                                    key={`p_${d}_${pi}`}/>
               ))}
-              <PaymentChipAppender onSubmit={makeSubmitDayPayment(dInfo.date)} rowIndex={dInfo.payments.length}
+              <PaymentChipAppender onSubmit={makeSubmitDayPayment(dInfo.date)}
+                                   rowIndex={dInfo.payments.length}
                                    colIndex={d}/>
 
               {/* Остатки на счетах */}

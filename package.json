@@ -2,13 +2,14 @@
   "name": "budget-forecasting",
   "version": "1.0.0",
   "description": "App to track and estimate funds",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "start": "next start",
     "build": "next build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create-account": "node db/commands/create-account.js",
-    "run-migration": "node db/commands/run-migration.ts"
+    "create-account": "tsx db/commands/create-account.js",
+    "run-migration": "tsx db/commands/run-migration.ts"
   },
   "author": "Anton Iakovlev",
   "license": "UNLICENSED",
@@ -29,6 +30,7 @@
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
     "lucide-react": "^1.17.0",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
 }

@@ -1,4 +1,4 @@
-import {PaymentData, ScheduleShortSchema} from "@/types";
+import {PaymentCategorySchema, PaymentData, PaymentOutSchema, ScheduleShortSchema} from "@/types";
 
 export function serializePaymentValue(paymentObj: PaymentData): string {
   if (!paymentObj.currency_iso_code && !paymentObj.amount) {
@@ -15,26 +15,33 @@ export function serializePaymentValue(paymentObj: PaymentData): string {
   }
 }
 
-export function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema | null {
-  if (paymentObj.schedule_type && paymentObj.schedule_number && paymentObj.schedule_date_start) {
-    return {
-      type: paymentObj.schedule_type,
-      number: paymentObj.schedule_number,
-      date_start: paymentObj.schedule_date_start
-    };
-  }
-  else {
+function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema | null {
+  if (!(paymentObj.schedule_type && paymentObj.schedule_number && paymentObj.schedule_date_start)) {
     return null;
   }
+  return {
+    type: paymentObj.schedule_type,
+    number: paymentObj.schedule_number,
+    date_start: paymentObj.schedule_date_start
+  };
 }
 
-export function serializePayment(paymentObj: PaymentData) {
+function serializeCategoryInfo(paymentObj: PaymentData): PaymentCategorySchema | null {
+  if (!(paymentObj.category_id && paymentObj.category_name && paymentObj.category_color)) {
+    return null;
+  }
+
+  return {id: paymentObj.category_id, name: paymentObj.category_name, color: paymentObj.category_color};
+}
+
+export function serializePayment(paymentObj: PaymentData): PaymentOutSchema {
   return {
     id: paymentObj.id,
     description: paymentObj.description,
     at_date: paymentObj.at_date,
     amount: paymentObj.amount,
     value: serializePaymentValue(paymentObj),
+    category: serializeCategoryInfo(paymentObj),
     currency_iso_code: paymentObj.currency_iso_code,
     currency_symbol: paymentObj.currency_symbol,
     account_id: paymentObj.account_id,

@@ -28,25 +28,53 @@ export interface PaymentData {
   description: string
   at_date: string
   amount: number
-  currency_iso_code: string
-  currency_symbol: string
-  account_id?: number
-  schedule_type?: string
-  schedule_number?: number
-  schedule_date_start?: string
+
+  currency_iso_code: string | null
+  currency_symbol: string | null
+  category_id: number | null
+  category_name: string | null
+  category_color: string | null
+
+  account_id: number | null
+
+  schedule_type: string | null
+  schedule_number: number | null
+  schedule_date_start: string | null
 }
 
 export interface PaymentInSchema {
   description: string
   at_date: string
   amount: number
-  payment_schedule_id?: number
+  schedule_id?: number
+  categoryId?: number
 }
 
 export interface ScheduleShortSchema {
   type: string
   number: number
   date_start: string
+}
+
+export interface PaymentCategorySchema {
+  id: number
+  name: string
+  color: string
+}
+
+export interface PaymentOutSchema {
+  id: number
+  description: string
+  at_date: string
+
+  amount: number
+  value: string
+  currency_iso_code: string | null
+  currency_symbol: string | null
+
+  account_id: number | null
+  category: PaymentCategorySchema | null
+  schedule: ScheduleShortSchema | null
 }
 
 export type PlannerState = {
@@ -78,6 +106,7 @@ interface PaymentDataBase {
 
 export interface OncePaymentData extends PaymentDataBase {
   plannedAt: {date: string}
+  category?: {id: number}
 }
 
 export enum PaymentScheduleType {monthly = "monthly", weekly = "weekly"}
@@ -113,6 +142,7 @@ export type ExpenseModalData =
   type: PaymentType.once;
   amount: number;
   description: string;
+  category: PaymentCategorySchema | null;
   date: string;
 }
   | {
@@ -120,6 +150,7 @@ export type ExpenseModalData =
   type: PaymentType.regular;
   amount: number;
   description: string;
+  category: PaymentCategorySchema | null;
   scheduleType: PaymentScheduleType;
   scheduleNumber: number;
 };

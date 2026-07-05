@@ -63,6 +63,16 @@ Table `payment_schedules`
 Повторяющиеся платежи. Порождает конкретные в заданных числах, привязанные к нему
 
 
+## PaymentCategory
+
+Table `payment_categories`
+- `id` INTEGER PRIMARY KEY
+- `name` TEXT
+- `color` TEXT
+
+Категории платежей
+
+
 ## Payment
 
 Table `payments`
@@ -72,6 +82,7 @@ Table `payments`
 - `amount` REAL
 - `currency_id` INTEGER
 - `account_id` INTEGER
-- `payment_schedule_id` INTEGER
+- `schedule_id` INTEGER REFERENCES payment_schedules(id)
+- `category_id` INTEGER REFERENCES payment_categories(id)
 
 Запланированный платёж (в случае положительного `amount`) или доход (отрицательный `amount`)

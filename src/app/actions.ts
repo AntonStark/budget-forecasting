@@ -7,7 +7,7 @@ import {AccountBalance, AccountShortData, OncePaymentData, ScheduledPaymentData}
 import {
   createPayment,
   createScheduledPayment,
-  ensureScheduledPayments,
+  ensureScheduledPayments, listPaymentCategories,
   listPayments,
   updatePayment
 } from "@/sqlite/payments";
@@ -66,10 +66,13 @@ export async function getPayments(dateStart: Date, dateEnd: Date) {
 export async function saveOnceOfPayment(expenseFormData: OncePaymentData) {
   const {amount, description} = expenseFormData;
   const at_date = expenseFormData.plannedAt.date;
+  const categoryId = expenseFormData.category?.id;
 
   const db = connect();
 
-  createPayment(db, {description, amount, at_date})
+  createPayment(db, {description, amount, at_date, categoryId})
+
+  revalidatePath('/payments/week');
 }
 
 export async function saveScheduledPayment(expenseFormData: ScheduledPaymentData) {
@@ -89,7 +92,14 @@ export async function updateOnceOfPayment(expenseFormData: Partial<OncePaymentDa
 
   const db = connect();
 
-  updatePayment(db, amount, description, expenseFormData.plannedAt?.date, paymentId);
+  updatePayment(db, amount, description, expenseFormData.plannedAt?.date, expenseFormData.category?.id, paymentId);
 
   refresh();
+}
+
+
+export async function fetchPaymentCategories() {
+  const db = connect();
+
+  return listPaymentCategories(db);
 }

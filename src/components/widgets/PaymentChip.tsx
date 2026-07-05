@@ -1,18 +1,23 @@
 import React, {useRef, useState} from "react";
 
-import {PaymentData} from "@/types";
+import {PaymentOutSchema} from "@/types";
 import {EditableCell} from "@/components/widgets/EditableCell";
 
-export function PaymentChip({payment, periodIndex, rowIndex} : {
-  payment: PaymentData,
+export function PaymentChip({payment, periodIndex, rowIndex, colored = false} : {
+  payment: PaymentOutSchema,
   periodIndex: number,
-  rowIndex: number
+  rowIndex: number,
+  colored?: boolean
 }) {
   return (
     <>
       <div
         className="col-span-2 p-1 text-right text-xs text-wrap"
-        style={{gridColumnStart: 3 * periodIndex + 1, gridRow: `payments-${rowIndex + 1}`}}
+        style={{
+          gridColumnStart: 3 * periodIndex + 1,
+          gridRow: `payments-${rowIndex + 1}`,
+          background: colored ? payment.category?.color : ""
+      }}
       >{payment.description}</div>
       <div
         className="text-right p-1 text-xs whitespace-nowrap"
@@ -22,12 +27,13 @@ export function PaymentChip({payment, periodIndex, rowIndex} : {
   );
 }
 
-export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colIndex} : {
-  payment: PaymentData,
+export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colIndex, colored = false} : {
+  payment: PaymentOutSchema,
   onUpdate: (arg0: string) => void,
   enterEdit: () => void,
   rowIndex: number,
-  colIndex: number
+  colIndex: number,
+  colored?: boolean
 }) {
   const valueCellRef = useRef<HTMLDivElement | null>(null);
   const descriptionCellRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +64,11 @@ export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colI
 
       <div ref={descriptionCellRef}
            className="col-span-2 px-1 pb-1 text-sm text-wrap"
-           style={{gridRow: `payment-${rowIndex+1}-d`, gridColumnStart: 2* colIndex + 3}}
+           style={{
+             gridRow: `payment-${rowIndex+1}-d`,
+             gridColumnStart: 2* colIndex + 3,
+             background: colored ? payment.category?.color : ""
+      }}
       >
         <EditableCell
           inputType={"text"}

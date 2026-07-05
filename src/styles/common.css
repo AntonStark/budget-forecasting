@@ -1,21 +1,5 @@
 @import "tailwindcss";
 
-#accounts_panel {
-    display: inline-block;
-    margin: 10px 20px;
-}
-
-#payments_panel {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.flag-in-use {
-    color: gray;
-    font-size: small;
-    text-align: center;
-}
-
 input.hide-spin-buttons::-webkit-inner-spin-button {
     appearance: none;
 }

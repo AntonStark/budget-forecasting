@@ -6,14 +6,20 @@ import React from "react";
 import {PaymentChip} from "@/components/widgets/PaymentChip";
 import {usePlannerContext} from "@/components/context/PlannerProvider";
 import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
-import {Mode} from "@/types";
-import {formatWeek} from "@/utils/dates";
+import {AccountData, Mode, PaymentOutSchema, PaymentsSort} from "@/types";
+import {formatWeek, Week} from "@/utils/dates";
 import {serializeSearchParams} from "@/utils/searchParams";
+import {useDisplaySettingsContext} from "@/components/context/DisplayContext";
 
 const BASE_WIDTH = 66;
 
-export default function MonthTable({weeks, payments, accounts}) {
+export default function MonthTable({weeks, payments, accounts}: {
+  weeks: Week[],
+  payments: PaymentOutSchema[],
+  accounts: AccountData[]
+}) {
   const { setMode } = usePlannerContext();
+  const { paymentsSort } = useDisplaySettingsContext();
 
   const periods: PeriodBudget[] = makeBudgetsByWeek(payments, accounts, weeks);
 
@@ -67,7 +73,8 @@ export default function MonthTable({weeks, payments, accounts}) {
 
               {/* Расходы */}
               {week.payments.map((pData, r_i) => (
-                <PaymentChip payment={pData} periodIndex={w_i} rowIndex={r_i} key={r_i}/>
+                <PaymentChip payment={pData} periodIndex={w_i} rowIndex={r_i}
+                             colored={paymentsSort === PaymentsSort.coloredCategory} key={r_i}/>
               ))}
 
               {/* Итоги */}

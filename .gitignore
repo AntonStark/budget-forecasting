@@ -1,4 +1,6 @@
 /node_modules/
 /db/data.db
+/db/data.db-shm
+/db/data.db-wal
 /db/exports/*.csv
 /service/logs/
