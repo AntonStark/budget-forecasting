@@ -70,7 +70,7 @@ export function listPayments(db: Database, dateStart: string, dateEnd: string): 
   const stmt = db.prepare<any, PaymentData>(`
     SELECT 
         p.id, p.description, p.at_date, p.amount, p.account_id, 
-        cat.id as category_id, cat.name as category_name, cat.color as category_color,
+        cat.id as category_id, cat.name as category_name, cat.color as category_color, cat.n_order as category_order,
         cur.iso_code as currency_iso_code, cur.symbol as currency_symbol,
         ps.type as schedule_type, ps.number as schedule_number, ps.date_start as schedule_date_start
     FROM payments p
@@ -95,7 +95,7 @@ export function ensureScheduledPayments(db: Database, untilDate: string) {
 
   const selectExemplarPayment = db.prepare<any, PaymentInSchema>(`
     SELECT 
-        p.description, p.at_date, p.amount, p.schedule_id
+        p.description, p.at_date, p.amount, p.schedule_id, p.category_id as categoryId
     FROM payments p
     WHERE p.schedule_id = ?
     ORDER BY p.at_date DESC 
@@ -128,7 +128,7 @@ export function ensureScheduledPayments(db: Database, untilDate: string) {
 
 export function listPaymentCategories(db: Database): PaymentCategorySchema[] {
   const stmt = db.prepare<[], PaymentCategorySchema>(`
-    SELECT cat.id, cat.name, cat.color FROM payment_categories cat;
+    SELECT cat.id, cat.name, cat.color FROM payment_categories cat ORDER BY n_order;
   `);
   const categories = stmt.all();
   return categories;

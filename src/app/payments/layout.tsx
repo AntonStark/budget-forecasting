@@ -1,4 +1,4 @@
-import PaymentsTableLayout from "./PaymentsTableLayout";
+import PaymentsTableLayout from "@/shared/components/PaymentsTableLayout";
 
 export default function Layout({ children }) {
 

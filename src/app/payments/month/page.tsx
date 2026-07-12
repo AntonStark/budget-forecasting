@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import React from "react";
 
 import {getAccounts, getPayments} from "@/app/actions";
-import MonthTable from "@/components/widgets/MonthTable";
+import MonthTable from "@/features/month_view/MonthTable";
 
 import {AccountData, Mode} from "@/types";
 import {getWeeksOfMonth, settingToIntervalDates} from "@/utils/dates";

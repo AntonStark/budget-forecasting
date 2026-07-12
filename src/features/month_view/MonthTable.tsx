@@ -3,13 +3,19 @@
 import Link from "next/link";
 import React from "react";
 
-import {PaymentChip} from "@/components/widgets/PaymentChip";
-import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {
+  makeCategoryConfig,
+  makePaymentLayoutByCategory,
+  makeSimplePaymentLayout,
+  PaymentSection
+} from "@/features/month_view/PaymentSection";
+import {usePlannerContext} from "@/shared/contexts/PlannerProvider";
+import {useDisplaySettingsContext} from "@/shared/contexts/DisplayContext";
+
 import {makeBudgetsByWeek, PeriodBudget} from "@/domain";
 import {AccountData, Mode, PaymentOutSchema, PaymentsSort} from "@/types";
 import {formatWeek, Week} from "@/utils/dates";
 import {serializeSearchParams} from "@/utils/searchParams";
-import {useDisplaySettingsContext} from "@/components/context/DisplayContext";
 
 const BASE_WIDTH = 66;
 
@@ -21,15 +27,14 @@ export default function MonthTable({weeks, payments, accounts}: {
   const { setMode } = usePlannerContext();
   const { paymentsSort } = useDisplaySettingsContext();
 
+  const categoryConfig = makeCategoryConfig(payments);
   const periods: PeriodBudget[] = makeBudgetsByWeek(payments, accounts, weeks);
 
-  const nPayments = periods.map(week => week.payments.length);
-  const paymentNRows = nPayments.reduce((a, b) => Math.max(a, b), 0) + 2;
-
-  let paymentRowsTemplate: string[] = [];
-  for (let n = 1; n <= paymentNRows; ++n) {
-    paymentRowsTemplate.push(`[payments-${n}] auto`);
-  }
+  let paymentsLayout = (
+    paymentsSort === PaymentsSort.asIs
+      ? makeSimplePaymentLayout(periods)
+      : makePaymentLayoutByCategory(periods, categoryConfig)
+  );
 
   return (
     <div className="bg-white rounded-2xl shadow-sm">
@@ -40,7 +45,7 @@ export default function MonthTable({weeks, payments, accounts}: {
             gridAutoColumns: `${BASE_WIDTH}px`,
             gridTemplateRows: `
             [header] auto
-            ${paymentRowsTemplate.join('\n')}
+            ${paymentsLayout.gridTemplateRows}
             [plan-total] auto
             [fact-total] auto`
           }}
@@ -61,21 +66,16 @@ export default function MonthTable({weeks, payments, accounts}: {
 
           {/* ЭЛЕМЕНТЫ ФОНА */}
           <div className="border-b z-10" style={{gridRow: "header", gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
-          <div className="h-20" style={{gridRow: `payments-${paymentNRows}`, gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
           <div className="border-t z-10" style={{gridRow: "plan-total", gridColumn: `1 / ${3 * weeks.length + 1}`}}/>
 
           {/* Контент */}
+          <PaymentSection periods={periods} paymentsLayout={paymentsLayout} categoryDisplayConfig={categoryConfig}/>
+
           {periods.map((week, w_i) => (
             <React.Fragment key={w_i}>
-              {/* Подложка колонок с текстом */}
+              {/* Фон колонок описания */}
               <div className={`col-span-2 ${week.period.active ? "bg-blue-50" : "bg-gray-50"}`}
                    style={{gridRow: `header / -1`, gridColumnStart: 3 * w_i + 1}}/>
-
-              {/* Расходы */}
-              {week.payments.map((pData, r_i) => (
-                <PaymentChip payment={pData} periodIndex={w_i} rowIndex={r_i}
-                             colored={paymentsSort === PaymentsSort.coloredCategory} key={r_i}/>
-              ))}
 
               {/* Итоги */}
               <div

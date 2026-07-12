@@ -1,6 +1,6 @@
 import {motion} from "framer-motion";
 
-import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {usePlannerContext} from "@/shared/contexts/PlannerProvider";
 
 import {formatMonth, formatWeek, getWeek} from "@/utils/dates";
 import {Mode} from "@/types";

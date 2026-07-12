@@ -168,10 +168,14 @@ export function makeBudgetsByWeek(payments: PaymentOutSchema[], accounts: Accoun
     [week, budget] = [weeks[w], result[w]];
     budget.period = {type: Mode.week, start: week.start, end: week.end, active: week.active};
 
-    budget.payments = payments.filter((p) => {
-      const date = new Date(p.at_date);
-      return week.start <= date && date <= week.end;
-    });
+    budget.payments = (payments
+      .filter(
+        (p) => {
+          const date = new Date(p.at_date);
+          return week.start <= date && date <= week.end;
+        }
+      )
+      .sort((p1, p2) => p1.id - p2.id));
     budget.saldo = budget.payments.map(pData => -pData.amount).reduce((a, b) => a + b, 0) - weekSpending;
     budget.value_after = { plan: (budget.value_before.fact || budget.value_before.plan) + budget.saldo };
 

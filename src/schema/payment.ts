@@ -27,11 +27,16 @@ function serializeScheduleInfo(paymentObj: PaymentData): ScheduleShortSchema | n
 }
 
 function serializeCategoryInfo(paymentObj: PaymentData): PaymentCategorySchema | null {
-  if (!(paymentObj.category_id && paymentObj.category_name && paymentObj.category_color)) {
+  if (!(paymentObj.category_id && paymentObj.category_name && paymentObj.category_color && paymentObj.category_order)) {
     return null;
   }
 
-  return {id: paymentObj.category_id, name: paymentObj.category_name, color: paymentObj.category_color};
+  return {
+    id: paymentObj.category_id,
+    name: paymentObj.category_name,
+    color: paymentObj.category_color,
+    order: paymentObj.category_order
+  };
 }
 
 export function serializePayment(paymentObj: PaymentData): PaymentOutSchema {

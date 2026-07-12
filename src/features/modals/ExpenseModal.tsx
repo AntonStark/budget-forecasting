@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 
 import {PaymentCategorySchema, PaymentScheduleType, PaymentType} from "@/types";
 import {fetchPaymentCategories, saveOnceOfPayment, saveScheduledPayment, updateOnceOfPayment} from "@/app/actions";
-import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {usePlannerContext} from "@/shared/contexts/PlannerProvider";
 import {dateToSql} from "@/utils/dates";
 
 export default function ExpenseModal() {

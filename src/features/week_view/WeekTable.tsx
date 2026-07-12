@@ -3,13 +3,14 @@
 import React from "react";
 
 import {saveOnceOfPayment, setBalance, updateOnceOfPayment} from "@/app/actions";
-import BalanceCell from "@/components/widgets/BalanceCell";
-import {PaymentChipAppender, PaymentChipCompact} from "@/components/widgets/PaymentChip";
+import BalanceCell from "@/features/week_view/BalanceCell";
+import {PaymentChipAppender, PaymentChipCompact} from "@/features/week_view/PaymentChip";
+import {usePlannerContext} from "@/shared/contexts/PlannerProvider";
+import {useDisplaySettingsContext} from "@/shared/contexts/DisplayContext";
+
 import {balancesByWeekday} from "@/domain";
 import {AccountBalance, AccountData, PaymentOutSchema, PaymentsSort, PaymentType} from "@/types";
 import {Week} from "@/utils/dates";
-import {usePlannerContext} from "@/components/context/PlannerProvider";
-import {useDisplaySettingsContext} from "@/components/context/DisplayContext";
 
 
 export default function WeekTable({week, payments, accounts}: {

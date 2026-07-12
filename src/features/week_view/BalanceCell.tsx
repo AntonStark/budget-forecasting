@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import {EditableCell} from "@/components/widgets/EditableCell";
+import {EditableCell} from "@/shared/components/EditableCell";
 
 export default function BalanceCell ({value, inferred, onSubmit}: {
   value: number,

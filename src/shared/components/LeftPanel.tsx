@@ -1,6 +1,7 @@
 import React from "react";
 import { List, Rows3, Palette } from "lucide-react";
-import { useDisplaySettingsContext } from "@/components/context/DisplayContext";
+
+import { useDisplaySettingsContext } from "@/shared/contexts/DisplayContext";
 import {PaymentsSort} from "@/types";
 
 

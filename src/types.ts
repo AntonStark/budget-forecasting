@@ -34,6 +34,7 @@ export interface PaymentData {
   category_id: number | null
   category_name: string | null
   category_color: string | null
+  category_order: number | null
 
   account_id: number | null
 
@@ -60,6 +61,7 @@ export interface PaymentCategorySchema {
   id: number
   name: string
   color: string
+  order: number
 }
 
 export interface PaymentOutSchema {

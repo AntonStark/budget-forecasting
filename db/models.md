@@ -69,6 +69,7 @@ Table `payment_categories`
 - `id` INTEGER PRIMARY KEY
 - `name` TEXT
 - `color` TEXT
+- `n_order` INTEGER
 
 Категории платежей
 

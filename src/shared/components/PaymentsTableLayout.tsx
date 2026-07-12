@@ -2,13 +2,12 @@
 
 import React from "react";
 
-import {DisplaySettingsProvider} from "@/components/context/DisplayContext";
-import {PlannerProvider} from "@/components/context/PlannerProvider";
-import BalanceModal from "@/components/modals/BalanceModal";
-import ExpenseModal from "@/components/modals/ExpenseModal";
-
-import { LeftPanel } from "./LeftPanel";
-import Header from "./Header";
+import Header from "@/shared/components/Header";
+import { LeftPanel } from "@/shared/components/LeftPanel";
+import {PlannerProvider} from "@/shared/contexts/PlannerProvider";
+import {DisplaySettingsProvider} from "@/shared/contexts/DisplayContext";
+import BalanceModal from "@/features/modals/BalanceModal";
+import ExpenseModal from "@/features/modals/ExpenseModal";
 
 export default function PaymentsTableLayout({children}) {
 

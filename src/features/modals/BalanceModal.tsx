@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import {usePlannerContext} from "@/components/context/PlannerProvider";
+import {usePlannerContext} from "@/shared/contexts/PlannerProvider";
 
 type Account = {
   id: string;

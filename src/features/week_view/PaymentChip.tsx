@@ -1,31 +1,7 @@
 import React, {useRef, useState} from "react";
 
 import {PaymentOutSchema} from "@/types";
-import {EditableCell} from "@/components/widgets/EditableCell";
-
-export function PaymentChip({payment, periodIndex, rowIndex, colored = false} : {
-  payment: PaymentOutSchema,
-  periodIndex: number,
-  rowIndex: number,
-  colored?: boolean
-}) {
-  return (
-    <>
-      <div
-        className="col-span-2 p-1 text-right text-xs text-wrap"
-        style={{
-          gridColumnStart: 3 * periodIndex + 1,
-          gridRow: `payments-${rowIndex + 1}`,
-          background: colored ? payment.category?.color : ""
-      }}
-      >{payment.description}</div>
-      <div
-        className="text-right p-1 text-xs whitespace-nowrap"
-        style={{gridColumnStart: 3 * periodIndex + 3, gridRow: `payments-${rowIndex + 1}`}}
-      >{payment.amount}</div>
-    </>
-  );
-}
+import {EditableCell} from "@/shared/components/EditableCell";
 
 export function PaymentChipCompact({payment, onUpdate, enterEdit, rowIndex, colIndex, colored = false} : {
   payment: PaymentOutSchema,

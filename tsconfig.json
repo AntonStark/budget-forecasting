@@ -24,11 +24,11 @@
       "@/app/*": [
         "app/*"
       ],
-      "@/components/*": [
-        "components/*"
-      ],
       "@/domain": [
         "domain"
+      ],
+      "@/features/*": [
+        "features/*"
       ],
       "@/pages/*": [
         "pages/*"
@@ -36,17 +36,20 @@
       "@/schema/*": [
         "schema/*"
       ],
+      "@/shared/*": [
+        "shared/*"
+      ],
       "@/styles/*": [
         "styles/*"
+      ],
+      "@/sqlite/*": [
+        "adapters/sqlite/*"
       ],
       "@/types": [
         "types"
       ],
       "@/utils/*": [
         "utils/*"
-      ],
-      "@/sqlite/*": [
-        "adapters/sqlite/*"
       ]
     },
     "resolveJsonModule": true,
